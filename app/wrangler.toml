@@ -1,0 +1,72 @@
+# Cloudflare Workers Configuration
+# DONA NOVA — The World's Infrastructure Intelligence Platform
+
+name = "dona-nova"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+main = ".open-next/worker.js"
+
+# Assets from Next.js build
+assets = { directory = ".open-next/assets", binding = "ASSETS" }
+
+# ── App Environment Variables ──────────────────────────────────────────
+[vars]
+NODE_ENV = "production"
+NEXT_PUBLIC_APP_NAME = "DONA NOVA"
+NEXT_PUBLIC_APP_VERSION = "1.0.0"
+
+# ── IMPORTANT: Secrets (API Keys) ──────────────────────────────────────
+# DO NOT put API keys here as plain text!
+# Add them as Cloudflare Workers secrets using:
+#
+#   npx wrangler secret put EIA_API_KEY
+#   npx wrangler secret put ENTSOE_API_KEY
+#   npx wrangler secret put ELECTRICITY_MAPS_API_KEY
+#
+# OR set them in GitHub Secrets for CI/CD (see .github/workflows/deploy.yml)
+# The secrets are automatically injected during deployment.
+
+# ── Cloudflare KV (Cache Layer) ────────────────────────────────────────
+# Uncomment after creating KV namespace:
+#   npx wrangler kv namespace create "DONA_NOVA_CACHE"
+#
+# [[kv_namespaces]]
+# binding = "CACHE"
+# id = "YOUR_KV_NAMESPACE_ID_HERE"
+
+# ── Cloudflare D1 (Database) ───────────────────────────────────────────
+# Uncomment after creating D1 database:
+#   npx wrangler d1 create dona-nova-db
+#
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "dona-nova-db"
+# database_id = "YOUR_D1_DATABASE_ID_HERE"
+
+# ── Cloudflare R2 (Object Storage for GPPD CSV cache) ─────────────────
+# Uncomment after creating R2 bucket:
+#   npx wrangler r2 bucket create dona-nova-data
+#
+# [[r2_buckets]]
+# binding = "DATA"
+# bucket_name = "dona-nova-data"
+
+# ── Cloudflare AI Gateway ──────────────────────────────────────────────
+# Uncomment for AI query engine:
+#
+# [ai]
+# binding = "AI"
+
+# ── Staging environment ────────────────────────────────────────────────
+[env.staging]
+name = "dona-nova-staging"
+
+[env.staging.vars]
+NODE_ENV = "staging"
+
+# ── Production environment ─────────────────────────────────────────────
+[env.production]
+name = "dona-nova-production"
+
+[env.production.vars]
+NODE_ENV = "production"
