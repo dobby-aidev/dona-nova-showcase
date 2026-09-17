@@ -27,7 +27,7 @@ function GithubIcon({ className }: { className?: string }) {
 
 export default function PricingPage() {
   return (
-    <div className="min-h-screen text-[#fcf8ee] flex flex-col bg-[#08090d] select-none">
+    <div className="min-h-screen text-slate-800 flex flex-col bg-slate-50 select-none">
       <PublicHeader />
 
       <main className="flex-1 flex flex-col items-center justify-start px-4 sm:px-6 py-12 sm:py-16 w-full max-w-3xl mx-auto">
@@ -35,77 +35,77 @@ export default function PricingPage() {
         <DocNavTabs />
 
         {/* Hero Title Section - Perfectly Centered */}
-        <div className="w-full text-center mb-10 space-y-3.5">
-          <div className="inline-flex items-center gap-2 rounded-full border border-pink-500/30 bg-pink-950/30 px-4 py-1 text-xs font-mono font-bold text-pink-300 shadow-sm">
-            <Heart className="h-3.5 w-3.5 fill-pink-400 text-pink-400" />
+        <div className="w-full text-center mb-10 space-y-3.5 mt-8">
+          <div className="inline-flex items-center gap-2 rounded-full border border-pink-200 bg-pink-50 px-4 py-1.5 text-xs font-mono font-bold text-pink-700 shadow-sm">
+            <Heart className="h-4 w-4 fill-pink-500 text-pink-500" />
             <span>%100 Açık Kaynak • Tüm İnsanlığa Ücretsiz</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#fcf8ee] tracking-tight font-sans">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight font-sans mt-4">
             Açık Kaynak & Erişim Manifestosu
           </h1>
 
-          <p className="text-xs sm:text-sm text-[#dad3c1] max-w-xl mx-auto leading-relaxed">
+          <p className="text-sm text-slate-600 max-w-xl mx-auto leading-relaxed mt-4">
             DONA NOVA'da ücretli planlar, kilitli özellikler veya üyelik zorunluluğu yoktur. Dünya üzerindeki enerji ve su altyapısı kamu malıdır ve herkese şeffaf olmalıdır.
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-3 text-[11px] font-mono text-[#a89f8d] pt-2">
-            <span className="rounded-md border border-white/10 bg-white/5 px-2 py-0.5">Lisans: MIT</span>
+          <div className="flex flex-wrap items-center justify-center gap-3 text-[11px] font-mono text-slate-500 pt-4">
+            <span className="rounded-md border border-slate-200 bg-white px-2 py-1">Lisans: MIT</span>
             <span>•</span>
-            <span className="rounded-md border border-white/10 bg-white/5 px-2 py-0.5">Maliyet: $0 / Sonsuza Kadar</span>
+            <span className="rounded-md border border-slate-200 bg-white px-2 py-1">Maliyet: $0 / Sonsuza Kadar</span>
             <span>•</span>
-            <span className="rounded-md border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 font-bold px-2 py-0.5">Kayıtsız Doğrudan Erişim</span>
+            <span className="rounded-md border border-emerald-200 bg-emerald-50 text-emerald-700 font-bold px-2 py-1">Kayıtsız Doğrudan Erişim</span>
           </div>
         </div>
 
         {/* 3 Value Propositions - Centered Cards */}
-        <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-3.5 mb-8">
-          <div className="rounded-2xl border border-[#faebd7]/15 bg-[#12141f]/85 p-5 text-center space-y-2.5 shadow-lg">
-            <div className="mx-auto flex h-8 w-8 items-center justify-center rounded-xl bg-cyan-950/80 border border-cyan-500/30 text-cyan-400">
-              <Globe2 className="h-4 w-4" />
+        <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center space-y-3 shadow-sm transition-shadow hover:shadow-md">
+            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 border border-blue-100 text-blue-600">
+              <Globe2 className="h-5 w-5" />
             </div>
-            <h3 className="text-xs font-bold text-[#fcf8ee] font-sans">35.000+ Tesis</h3>
-            <p className="text-[11px] text-slate-400 leading-relaxed">
+            <h3 className="text-sm font-bold text-slate-900 font-sans">35.000+ Tesis</h3>
+            <p className="text-[12px] text-slate-600 leading-relaxed">
               Dünya genelindeki tüm elektrik santralleri, su barajları ve veri merkezlerine sınırsız ve engelsiz erişim.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-[#faebd7]/15 bg-[#12141f]/85 p-5 text-center space-y-2.5 shadow-lg">
-            <div className="mx-auto flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-950/80 border border-emerald-500/30 text-emerald-400">
-              <ShieldCheck className="h-4 w-4" />
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center space-y-3 shadow-sm transition-shadow hover:shadow-md">
+            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-600">
+              <ShieldCheck className="h-5 w-5" />
             </div>
-            <h3 className="text-xs font-bold text-[#fcf8ee] font-sans">Kayıtsız Doğrudan Erişim</h3>
-            <p className="text-[11px] text-slate-400 leading-relaxed">
+            <h3 className="text-sm font-bold text-slate-900 font-sans">Kayıtsız Erişim</h3>
+            <p className="text-[12px] text-slate-600 leading-relaxed">
               Hesap açma, e-posta onaylama veya kredi kartı girme zorunluluğu yok. Sayfayı açın ve anında keşfedin.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-[#faebd7]/15 bg-[#12141f]/85 p-5 text-center space-y-2.5 shadow-lg">
-            <div className="mx-auto flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-950/80 border border-indigo-500/30 text-indigo-400">
-              <Terminal className="h-4 w-4" />
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center space-y-3 shadow-sm transition-shadow hover:shadow-md">
+            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-600">
+              <Terminal className="h-5 w-5" />
             </div>
-            <h3 className="text-xs font-bold text-[#fcf8ee] font-sans">Açık Kaynak & Kod</h3>
-            <p className="text-[11px] text-slate-400 leading-relaxed">
+            <h3 className="text-sm font-bold text-slate-900 font-sans">Açık Kaynak & Kod</h3>
+            <p className="text-[12px] text-slate-600 leading-relaxed">
               Tüm kaynak kodları GitHub üzerinde MIT lisansıyla sunulur. Kendi sunucunuzda özgürce çalıştırabilirsiniz.
             </p>
           </div>
         </div>
 
         {/* Action Button Strip - Centered */}
-        <div className="w-full flex flex-wrap items-center justify-center gap-3.5 pt-2">
+        <div className="w-full flex flex-wrap items-center justify-center gap-3.5 pt-4">
           <Link
             href="/"
-            className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-400 to-cyan-500 hover:from-cyan-300 hover:to-cyan-400 text-slate-950 font-bold px-5 py-2.5 text-xs transition-all shadow-lg shadow-cyan-500/20"
+            className="flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2.5 text-sm transition-all shadow-md"
           >
             <span>Radarı Keşfet</span>
-            <ArrowRight className="h-3.5 w-3.5" />
+            <ArrowRight className="h-4 w-4" />
           </Link>
 
           <a
             href="https://github.com/dobby-aidev/dona-nova-showcase"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 rounded-xl border border-[#faebd7]/20 bg-[#141624] hover:bg-[#1f2235] text-white font-bold px-5 py-2.5 text-xs transition-all shadow-md"
+            className="flex items-center gap-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 font-semibold px-5 py-2.5 text-sm transition-all shadow-sm"
           >
             <GithubIcon className="h-4 w-4" />
             <span>GitHub'da İncele</span>
@@ -115,23 +115,23 @@ export default function PricingPage() {
             href="https://donacodex.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 rounded-xl border border-white/[0.08] bg-black/40 hover:bg-black/60 px-4 py-2.5 text-xs font-mono text-slate-300 hover:text-white transition-all"
+            className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-all shadow-sm"
           >
             <span>donacodex.com</span>
-            <ArrowUpRight className="h-3 w-3 text-slate-400" />
+            <ArrowUpRight className="h-4 w-4 text-slate-500" />
           </a>
         </div>
 
         {/* Footer Note */}
-        <div className="text-center pt-12 pb-6 text-[11px] font-mono text-[#a89f8d] space-y-1">
+        <div className="text-center pt-16 pb-8 text-xs font-mono text-slate-500 space-y-2">
           <p>DONA NOVA • An Open Source Initiative by Dona Codex & dobby</p>
-          <div className="flex items-center justify-center gap-3 text-cyan-400">
-            <a href="https://donacodex.com" target="_blank" rel="noopener noreferrer" className="hover:underline inline-flex items-center gap-0.5">
+          <div className="flex items-center justify-center gap-4 text-slate-700">
+            <a href="https://donacodex.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 hover:underline inline-flex items-center gap-1 font-semibold transition-colors">
               <span>donacodex.com</span>
               <ArrowUpRight className="h-3 w-3" />
             </a>
-            <span>•</span>
-            <a href="https://dobby.donacodex.com" target="_blank" rel="noopener noreferrer" className="hover:underline inline-flex items-center gap-0.5">
+            <span className="text-slate-300">•</span>
+            <a href="https://dobby.donacodex.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 hover:underline inline-flex items-center gap-1 font-semibold transition-colors">
               <span>dobby.donacodex.com</span>
               <ArrowUpRight className="h-3 w-3" />
             </a>

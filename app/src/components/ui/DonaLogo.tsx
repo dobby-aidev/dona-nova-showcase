@@ -72,14 +72,14 @@ export function DonaLogo({ size = "md", showText = true }: DonaLogoProps) {
       {showText && (
         <div className="flex flex-col">
           <div className="flex items-center gap-1.5 leading-none">
-            <span className="text-[15px] font-black tracking-wider text-slate-100 font-mono">
+            <span className="text-[15px] font-black tracking-wider text-slate-900 font-mono">
               DONA
             </span>
-            <span className="text-[15px] font-black tracking-widest bg-gradient-to-r from-cyan-300 via-sky-200 to-indigo-300 bg-clip-text text-transparent">
+            <span className="text-[15px] font-black tracking-widest bg-gradient-to-r from-cyan-600 via-sky-500 to-indigo-600 bg-clip-text text-transparent">
               NOVA
             </span>
           </div>
-          <span className="mt-0.5 text-[8.5px] font-bold uppercase tracking-[0.2em] text-slate-400">
+          <span className="mt-0.5 text-[8.5px] font-bold uppercase tracking-[0.2em] text-slate-500">
             Infrastructure Radar
           </span>
         </div>

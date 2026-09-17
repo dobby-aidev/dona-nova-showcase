@@ -84,30 +84,26 @@ export function AppSidebar({ activeNav, setActiveNav, lang }: AppSidebarProps) {
       <motion.aside
         animate={{ width: collapsed ? 76 : 268 }}
         transition={{ type: "spring", stiffness: 380, damping: 34 }}
-        className="relative flex h-full flex-col shrink-0 overflow-hidden z-30 select-none shadow-[6px_0_35px_rgba(0,0,0,0.65)]"
-        style={{
-          background: "linear-gradient(180deg, #0d0f17 0%, #08090e 55%, #050608 100%)",
-          borderRight: "1px solid rgba(250, 235, 215, 0.12)",
-        }}
+        className="relative flex h-full flex-col shrink-0 overflow-hidden z-30 select-none bg-[hsl(var(--dn-bg-base))] border-r border-[hsl(var(--dn-border-subtle))]"
       >
         {/* Brand Area */}
-        <div className="flex items-center h-[68px] shrink-0 px-4 overflow-hidden border-b border-[#faebd7]/10 bg-[#0a0b12]/50">
+        <div className="flex items-center h-[68px] shrink-0 px-4 overflow-hidden border-b border-[hsl(var(--dn-border-subtle))] bg-[hsl(var(--dn-bg-surface))]">
           {collapsed ? (
             <button
               onClick={() => setCollapsed(false)}
-              className="mx-auto cursor-pointer hover:scale-105 transition-transform p-1 rounded-xl hover:bg-white/5"
+              className="mx-auto cursor-pointer hover:scale-105 transition-transform p-1 rounded-xl hover:bg-slate-100"
               aria-label="Expand sidebar"
             >
               <DonaLogo size="sm" showText={false} />
             </button>
           ) : (
             <div className="flex items-center justify-between w-full">
-              <Link href="/" className="hover:opacity-95 transition-opacity">
+              <Link href="/" className="hover:opacity-80 transition-opacity">
                 <DonaLogo size="md" showText={true} />
               </Link>
               <div className="flex items-center gap-1.5">
-                <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="rounded-md border border-[#faebd7]/25 bg-[#faebd7]/10 px-2 py-0.5 text-[8.5px] font-mono font-black text-[#faebd7] tracking-wider shadow-sm">
+                <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="rounded-md border border-slate-200 bg-slate-100 px-2 py-0.5 text-[8.5px] font-mono font-black text-slate-600 tracking-wider">
                   v1.0 PROD
                 </span>
               </div>
@@ -120,22 +116,22 @@ export function AppSidebar({ activeNav, setActiveNav, lang }: AppSidebarProps) {
           {/* Quick Search Button */}
           <button
             onClick={triggerSearch}
-            className="flex w-full items-center rounded-xl border border-[#faebd7]/18 bg-[#131622]/90 hover:bg-[#1a1e30] hover:border-cyan-400/40 px-3 py-2 text-[12px] font-semibold text-[#fcf8ee] transition-all shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] group"
+            className="flex w-full items-center rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 px-3 py-2 text-[12px] font-semibold text-slate-700 transition-all shadow-sm group"
             style={{
               justifyContent: collapsed ? "center" : "flex-start",
               gap: collapsed ? 0 : 10,
             }}
             title={collapsed ? "Tesis Ara (⌘K)" : undefined}
           >
-            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-cyan-950/60 border border-cyan-500/30 text-cyan-400 group-hover:scale-105 group-hover:text-cyan-300 transition-all">
+            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500 group-hover:scale-105 group-hover:text-slate-700 transition-all">
               <Search className="h-3.5 w-3.5" />
             </div>
             {!collapsed && (
               <div className="flex items-center justify-between flex-1 min-w-0">
-                <span className="truncate text-slate-300 font-sans group-hover:text-white transition-colors">
+                <span className="truncate font-sans transition-colors">
                   {lang === "tr" ? "Hızlı Tesis Ara..." : "Quick Search..."}
                 </span>
-                <span className="rounded-md border border-white/20 bg-white/5 px-1.5 py-0.5 font-mono text-[9px] text-[#dad3c1] shrink-0 ml-1">
+                <span className="rounded-md border border-slate-200 bg-slate-100 px-1.5 py-0.5 font-mono text-[9px] text-slate-500 shrink-0 ml-1">
                   ⌘K
                 </span>
               </div>
@@ -154,10 +150,9 @@ export function AppSidebar({ activeNav, setActiveNav, lang }: AppSidebarProps) {
               <div key={key} className="space-y-1.5">
                 {!collapsed && (
                   <div className="flex items-center justify-between px-2.5 pb-1">
-                    <p className="text-[9px] font-mono font-bold uppercase tracking-[0.22em] text-[#b8ad9b]">
+                    <p className="text-[9px] font-bold uppercase tracking-[0.1em] text-slate-400">
                       {lang === "tr" ? labelTr : labelEn}
                     </p>
-                    <div className="h-px flex-1 ml-2.5 bg-gradient-to-r from-[#faebd7]/15 to-transparent" />
                   </div>
                 )}
 
@@ -170,24 +165,24 @@ export function AppSidebar({ activeNav, setActiveNav, lang }: AppSidebarProps) {
 
                     const content = (
                       <>
-                        {/* Glowing Left Indicator Pill */}
+                        {/* Active Indicator Line */}
                         {isActive && (
-                          <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r-full bg-cyan-400 shadow-[0_0_10px_rgba(0,240,255,0.9)]" />
+                          <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r-full bg-[hsl(var(--dn-brand-secondary))]" />
                         )}
 
                         <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg transition-all ${
                           isActive
-                            ? "bg-cyan-950/80 border border-cyan-400/40 text-cyan-300 shadow-[0_0_8px_rgba(0,240,255,0.3)]"
-                            : "bg-white/[0.04] border border-white/[0.06] text-slate-400 group-hover:text-[#faebd7] group-hover:border-[#faebd7]/30 group-hover:bg-white/[0.08]"
+                            ? "bg-blue-50 text-blue-600"
+                            : "bg-transparent text-slate-500 group-hover:bg-slate-100 group-hover:text-slate-800"
                         }`}>
-                          <Icon className="h-3.5 w-3.5" />
+                          <Icon className="h-4 w-4" />
                         </div>
 
                         {!collapsed && (
                           <span className={`truncate min-w-0 flex-1 text-left font-sans transition-all ${
                             isActive
-                              ? "text-white font-bold tracking-tight"
-                              : "text-slate-300 group-hover:text-white group-hover:translate-x-0.5"
+                              ? "text-slate-900 font-semibold"
+                              : "text-slate-600 group-hover:text-slate-900"
                           }`}>
                             {lang === "tr" ? item.labelTr : item.labelEn}
                           </span>
@@ -196,10 +191,10 @@ export function AppSidebar({ activeNav, setActiveNav, lang }: AppSidebarProps) {
                         {item.badge && !collapsed && (
                           <span className={`ml-auto shrink-0 rounded-md px-1.5 py-0.5 text-[8.5px] font-mono font-bold uppercase tracking-wider ${
                             item.badgeType === "emerald"
-                              ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
+                              ? "bg-emerald-50 text-emerald-600 border border-emerald-200"
                               : item.badgeType === "cyan"
-                              ? "bg-cyan-500/15 text-cyan-300 border border-cyan-500/30"
-                              : "bg-[#faebd7]/15 text-[#faebd7] border border-[#faebd7]/30"
+                              ? "bg-cyan-50 text-cyan-600 border border-cyan-200"
+                              : "bg-slate-100 text-slate-600 border border-slate-200"
                           }`}>
                             {item.badge}
                           </span>
@@ -207,10 +202,10 @@ export function AppSidebar({ activeNav, setActiveNav, lang }: AppSidebarProps) {
                       </>
                     );
 
-                    const baseClasses = `relative flex w-full items-center rounded-xl px-2.5 py-2 text-[12.5px] transition-all duration-200 group ${
+                    const baseClasses = `relative flex w-full items-center rounded-xl px-2.5 py-2 text-[13px] transition-all duration-200 group ${
                       isActive
-                        ? "bg-gradient-to-r from-[#faebd7]/18 via-[#faebd7]/8 to-transparent text-[#fcf8ee] border border-[#faebd7]/35 shadow-[0_4px_16px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.12)]"
-                        : "border border-transparent hover:border-[#faebd7]/15 hover:bg-white/[0.04] text-slate-300"
+                        ? "bg-white shadow-sm border border-slate-200"
+                        : "border border-transparent hover:bg-slate-50 text-slate-600"
                     }`;
 
                     if (item.href) {
@@ -252,46 +247,46 @@ export function AppSidebar({ activeNav, setActiveNav, lang }: AppSidebarProps) {
         </nav>
 
         {/* Footer: Executive Dona Codex & Dobby Ecosystem Hub */}
-        <div className="shrink-0 p-3 border-t border-[#faebd7]/10 bg-[#07080d]/80 space-y-2">
+        <div className="shrink-0 p-3 border-t border-slate-200 bg-white space-y-2">
           {!collapsed ? (
-            <div className="rounded-2xl border border-[#faebd7]/18 bg-[#12141f]/90 p-3 text-[11px] space-y-2.5 shadow-xl">
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-[11px] space-y-2.5 shadow-sm">
               {/* Creator Header */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-gradient-to-tr from-amber-600 via-indigo-600 to-cyan-600 text-white font-black text-[9px] shadow-sm">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-slate-800 text-white font-black text-[9px] shadow-sm">
                     DC
                   </div>
                   <div>
-                    <h4 className="font-black text-[#fcf8ee] text-[11.5px] leading-tight font-sans tracking-wide">DONA CODEX</h4>
-                    <p className="text-[8.5px] text-[#a89f8d] font-mono uppercase tracking-wider">Official Ecosystem</p>
+                    <h4 className="font-bold text-slate-900 text-[11.5px] leading-tight font-sans tracking-wide">DONA CODEX</h4>
+                    <p className="text-[8.5px] text-slate-500 uppercase tracking-wider">Official Ecosystem</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
-                  <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="text-[8.5px] font-mono text-emerald-400 font-bold">ONLINE</span>
+                  <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="text-[8.5px] font-mono text-emerald-600 font-bold">ONLINE</span>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="grid grid-cols-2 gap-1.5 pt-1 border-t border-white/[0.06]">
+              <div className="grid grid-cols-2 gap-1.5 pt-1 border-t border-slate-200">
                 <a
                   href="https://donacodex.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-1 rounded-xl border border-white/[0.10] bg-white/[0.03] hover:bg-white/[0.08] py-1.5 px-2 text-[10px] font-bold text-[#dad3c1] hover:text-white transition-all text-center group"
+                  className="flex items-center justify-center gap-1 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 py-1.5 px-2 text-[10px] font-bold text-slate-600 hover:text-slate-900 transition-all text-center group"
                 >
                   <span>Dona Codex</span>
-                  <ArrowUpRight className="h-3 w-3 text-slate-400 group-hover:text-white transition-colors" />
+                  <ArrowUpRight className="h-3 w-3 text-slate-400 group-hover:text-slate-600 transition-colors" />
                 </a>
 
                 <a
                   href="https://dobby.donacodex.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-1 rounded-xl border border-cyan-500/30 bg-cyan-950/25 hover:bg-cyan-950/50 py-1.5 px-2 text-[10px] font-bold text-cyan-300 hover:text-white transition-all text-center group"
+                  className="flex items-center justify-center gap-1 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 py-1.5 px-2 text-[10px] font-bold text-slate-600 hover:text-slate-900 transition-all text-center group"
                 >
                   <span>dobby</span>
-                  <ArrowUpRight className="h-3 w-3 text-cyan-400 group-hover:text-white transition-colors" />
+                  <ArrowUpRight className="h-3 w-3 text-slate-400 group-hover:text-slate-600 transition-colors" />
                 </a>
               </div>
 
@@ -300,13 +295,13 @@ export function AppSidebar({ activeNav, setActiveNav, lang }: AppSidebarProps) {
                 href="https://github.com/dobby-aidev/dona-nova-showcase"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-between rounded-xl border border-white/[0.08] bg-black/40 px-2.5 py-1.5 hover:border-white/20 transition-all text-[10.5px] font-semibold text-slate-300 hover:text-white group"
+                className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 hover:border-slate-300 transition-all text-[10.5px] font-semibold text-slate-600 hover:text-slate-900 group shadow-sm"
               >
                 <div className="flex items-center gap-1.5">
-                  <GithubIcon className="h-3.5 w-3.5 text-slate-300 group-hover:text-white" />
+                  <GithubIcon className="h-3.5 w-3.5 text-slate-500 group-hover:text-slate-700" />
                   <span className="font-mono">GitHub Repo</span>
                 </div>
-                <span className="text-[9px] font-mono font-bold text-amber-300 bg-amber-400/10 border border-amber-400/30 rounded px-1.5 py-0.5">
+                <span className="text-[9px] font-mono font-bold text-amber-600 bg-amber-50 border border-amber-200 rounded px-1.5 py-0.5">
                   ★ Star
                 </span>
               </a>
@@ -316,11 +311,11 @@ export function AppSidebar({ activeNav, setActiveNav, lang }: AppSidebarProps) {
           {/* Settings Trigger */}
           <button
             onClick={() => setIsSettingsOpen(true)}
-            className="flex w-full items-center rounded-xl px-3 py-2 text-[11.5px] font-semibold text-slate-300 hover:bg-white/[0.06] hover:text-white transition-colors"
+            className="flex w-full items-center rounded-xl px-3 py-2 text-[12px] font-semibold text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors"
             style={{ justifyContent: collapsed ? "center" : "flex-start", gap: collapsed ? 0 : 10 }}
             title={collapsed ? "Radar Tercihleri" : undefined}
           >
-            <Settings className="h-4 w-4 shrink-0 text-slate-400" />
+            <Settings className="h-4 w-4 shrink-0 text-slate-500" />
             {!collapsed && <span className="truncate min-w-0">{lang === "tr" ? "Radar Tercihleri" : "Preferences"}</span>}
           </button>
         </div>
@@ -328,7 +323,7 @@ export function AppSidebar({ activeNav, setActiveNav, lang }: AppSidebarProps) {
         {/* Collapse Trigger Pill */}
         <button
           onClick={() => setCollapsed(c => !c)}
-          className="absolute -right-3 top-[76px] z-30 flex h-6 w-6 items-center justify-center rounded-full border border-slate-700 bg-slate-900 text-slate-400 shadow-xl hover:text-white hover:border-[#faebd7]/50 transition-all hover:scale-110"
+          className="absolute -right-3 top-[76px] z-30 flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-md hover:text-slate-900 hover:border-slate-300 transition-all hover:scale-110"
           aria-label="Toggle sidebar"
         >
           {collapsed ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronLeft className="h-3.5 w-3.5" />}

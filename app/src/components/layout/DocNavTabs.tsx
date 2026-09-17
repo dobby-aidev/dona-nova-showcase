@@ -20,14 +20,14 @@ export function DocNavTabs() {
       {/* Return to Globe Button */}
       <Link
         href="/"
-        className="inline-flex items-center gap-2 rounded-full border border-[#faebd7]/20 bg-[#131622]/90 hover:bg-[#1c2033] px-4 py-1.5 text-xs font-mono font-bold text-cyan-300 hover:text-cyan-200 transition-all shadow-md group"
+        className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white hover:bg-slate-50 px-4 py-1.5 text-xs font-mono font-bold text-slate-700 hover:text-slate-900 transition-all shadow-sm group"
       >
         <ArrowLeft className="h-3.5 w-3.5 group-hover:-translate-x-1 transition-transform" />
         <span>NASA 3D Küresine Dön</span>
       </Link>
 
       {/* Centered Document Tab Strip */}
-      <nav className="flex flex-wrap items-center justify-center gap-1.5 p-1.5 rounded-2xl border border-[#faebd7]/15 bg-[#0f111c]/90 backdrop-blur-xl shadow-lg">
+      <nav className="flex flex-wrap items-center justify-center gap-1.5 p-1.5 rounded-2xl border border-slate-200 bg-white shadow-sm">
         {DOC_TABS.map((tab) => {
           const Icon = tab.icon;
           const isActive = pathname === tab.href;
@@ -38,11 +38,11 @@ export function DocNavTabs() {
               href={tab.href}
               className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold transition-all duration-200 ${
                 isActive
-                  ? "bg-gradient-to-r from-[#faebd7]/20 via-[#faebd7]/10 to-transparent text-[#ffffff] border border-[#faebd7]/30 shadow-sm"
-                  : "text-slate-400 hover:text-[#faebd7] hover:bg-white/[0.04]"
+                  ? "bg-blue-50 text-blue-700 border border-blue-200 shadow-sm"
+                  : "text-slate-500 hover:text-slate-900 hover:bg-slate-50 border border-transparent"
               }`}
             >
-              <Icon className={`h-3.5 w-3.5 ${isActive ? "text-cyan-400" : "text-slate-400"}`} />
+              <Icon className={`h-3.5 w-3.5 ${isActive ? "text-blue-600" : "text-slate-400"}`} />
               <span>{tab.label}</span>
             </Link>
           );

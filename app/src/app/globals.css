@@ -1,61 +1,53 @@
 @import "tailwindcss";
 
-/* ── DONA NOVA Design System ──────────────────────────────────────────── */
+/* ── DONA NOVA Design System (Minimalist Corporate Cream) ──────── */
 
 @layer base {
   :root {
-    /* Brand Core — Luxury Warm Cream, Dark Platinum & Nova Cyan */
-    --dn-brand-primary: 42 90% 88%;        /* Luxury Champagne Cream #faebd7 */
-    --dn-brand-secondary: 186 100% 50%;    /* Nova Cyan Pulse #00f0ff */
-    --dn-brand-accent: 40 40% 70%;         /* Warm Platinum Gold #d5c7a3 */
+    /* Brand Core — Corporate Platinum & Nova Blue */
+    --dn-brand-primary: 220 30% 20%;       /* Deep Slate Blue (Primary Text/Accents) */
+    --dn-brand-secondary: 210 100% 45%;    /* Corporate Blue (Links, Highlights) */
+    --dn-brand-accent: 40 20% 40%;         /* Matte Gold/Bronze Accent */
 
-    /* Background Scale — Deep Obsidian & Platinum Titanium */
-    --dn-bg-void: 228 15% 4.5%;            /* #090a0e — deep space obsidian */
-    --dn-bg-base: 228 14% 6.5%;            /* #0d0f14 — warm dark base */
-    --dn-bg-surface: 228 12% 9.5%;         /* #14161e — dark titanium surface */
-    --dn-bg-elevated: 228 10% 13.5%;       /* #1c1e28 — elevated container */
-    --dn-bg-overlay: 228 8% 18%;           /* #262936 — overlay container */
+    /* Background Scale — Minimalist Warm Cream */
+    --dn-bg-void: 42 30% 96%;              /* #f5f3ee — Main background (Soft Cream) */
+    --dn-bg-base: 42 40% 98%;              /* #faf8f5 — Sidebar/Card Base */
+    --dn-bg-surface: 0 0% 100%;            /* #ffffff — Pure White Surface */
+    --dn-bg-elevated: 0 0% 100%;           /* Elevated panels */
+    --dn-bg-overlay: 42 20% 92%;           /* Hover states / overlays */
 
-    /* Text Scale — Warm Luxury Cream & Platinum Silver */
-    --dn-text-primary: 40 60% 96%;         /* #fcf8ee — brilliant warm cream */
-    --dn-text-secondary: 40 25% 82%;       /* #dad3c1 — soft champagne cream */
-    --dn-text-tertiary: 220 10% 55%;       /* #858a96 — titanium grey */
-    --dn-text-disabled: 220 8% 35%;        /* #4f535d — muted border */
+    /* Text Scale — High Contrast Dark */
+    --dn-text-primary: 220 30% 15%;        /* Almost Black for maximum readability */
+    --dn-text-secondary: 220 20% 35%;      /* Dark Gray for secondary text */
+    --dn-text-tertiary: 220 15% 50%;       /* Medium Gray for meta info */
+    --dn-text-disabled: 220 10% 75%;       /* Light Gray for disabled */
 
-    /* Border Scale — Metallic Warm Platinum */
-    --dn-border-subtle: 40 20% 14%;
-    --dn-border-default: 40 20% 20%;
-    --dn-border-strong: 40 30% 32%;
-    --dn-border-focus: 42 90% 88%;
+    /* Border Scale — Subtle Cream/Gray */
+    --dn-border-subtle: 42 20% 90%;
+    --dn-border-default: 42 15% 85%;
+    --dn-border-strong: 42 15% 70%;
+    --dn-border-focus: 210 100% 45%;
 
     /* Semantic */
-    --dn-success: 152 70% 45%;
-    --dn-warning: 38 95% 55%;
-    --dn-error: 0 84% 60%;
-    --dn-info: 195 90% 55%;
+    --dn-success: 152 70% 35%;
+    --dn-warning: 38 95% 45%;
+    --dn-error: 0 84% 45%;
+    --dn-info: 195 90% 40%;
 
-    /* Glow / Effects */
-    --dn-glow-cream: 0 0 35px hsl(42 90% 88% / 0.25);
-    --dn-glow-cyan: 0 0 35px hsl(186 100% 50% / 0.35);
-    --dn-glow-platinum: 0 0 30px hsl(40 40% 70% / 0.2);
-
-    /* Motion */
-    --dn-ease-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    --dn-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-    --dn-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-    --dn-duration-fast: 120ms;
-    --dn-duration-base: 220ms;
-    --dn-duration-slow: 400ms;
-
+    /* Shadows instead of glows for Corporate feel */
+    --dn-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --dn-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    --dn-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+    
     /* Layout */
-    --dn-sidebar-width: 260px;
-    --dn-sidebar-collapsed: 68px;
-    --dn-header-height: 60px;
+    --dn-sidebar-width: 280px;
+    --dn-sidebar-collapsed: 72px;
+    --dn-header-height: 64px;
     --dn-radius-xs: 4px;
-    --dn-radius-sm: 8px;
-    --dn-radius-md: 12px;
-    --dn-radius-lg: 16px;
-    --dn-radius-xl: 24px;
+    --dn-radius-sm: 6px;
+    --dn-radius-md: 8px;
+    --dn-radius-lg: 12px;
+    --dn-radius-xl: 16px;
     --dn-radius-full: 9999px;
   }
 }
@@ -68,7 +60,7 @@
 }
 
 html {
-  color-scheme: dark;
+  color-scheme: light;
   font-feature-settings: "cv02","cv03","cv04","cv11";
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -81,29 +73,29 @@ body {
   color: hsl(var(--dn-text-primary));
   font-family: "Inter", "SF Pro Display", system-ui, -apple-system, sans-serif;
   font-size: 15px;
-  line-height: 1.55;
+  line-height: 1.6;
   min-height: 100dvh;
   overflow-x: hidden;
 }
 
 /* ── Scrollbar ──────────────────────────────────────────────────────────── */
-::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--dn-border-default));
+  background: hsl(var(--dn-border-strong));
   border-radius: 9999px;
 }
-::-webkit-scrollbar-thumb:hover { background: hsl(var(--dn-border-strong)); }
+::-webkit-scrollbar-thumb:hover { background: hsl(var(--dn-text-tertiary)); }
 
 /* ── Selection ──────────────────────────────────────────────────────────── */
 ::selection {
-  background: hsl(var(--dn-brand-primary) / 0.25);
-  color: hsl(var(--dn-text-primary));
+  background: hsl(var(--dn-brand-secondary) / 0.2);
+  color: hsl(var(--dn-brand-primary));
 }
 
 /* ── Focus Visible ──────────────────────────────────────────────────────── */
 :focus-visible {
-  outline: 2px solid hsl(var(--dn-brand-primary));
+  outline: 2px solid hsl(var(--dn-brand-secondary));
   outline-offset: 2px;
   border-radius: var(--dn-radius-xs);
 }
@@ -113,14 +105,15 @@ body {
   font-size: clamp(2.5rem, 5vw, 4.5rem);
   font-weight: 700;
   letter-spacing: -0.03em;
-  line-height: 1.05;
+  line-height: 1.1;
+  color: hsl(var(--dn-text-primary));
 }
 
 .dn-headline {
   font-size: clamp(1.5rem, 3vw, 2.5rem);
-  font-weight: 650;
+  font-weight: 600;
   letter-spacing: -0.02em;
-  line-height: 1.15;
+  line-height: 1.2;
 }
 
 .dn-title {
@@ -131,128 +124,25 @@ body {
 }
 
 .dn-body { font-size: 0.9375rem; line-height: 1.6; }
-.dn-caption { font-size: 0.8125rem; line-height: 1.5; }
-.dn-label { font-size: 0.75rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; }
+.dn-caption { font-size: 0.8125rem; line-height: 1.5; color: hsl(var(--dn-text-secondary)); }
+.dn-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: hsl(var(--dn-text-tertiary)); }
 
-/* ── Gradient Text ──────────────────────────────────────────────────────── */
-.dn-gradient-text {
-  background: linear-gradient(
-    135deg,
-    hsl(210 95% 75%) 0%,
-    hsl(220 95% 60%) 40%,
-    hsl(258 85% 65%) 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.dn-gradient-text-teal {
-  background: linear-gradient(
-    135deg,
-    hsl(174 80% 65%) 0%,
-    hsl(200 85% 55%) 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-/* ── Glow effects ──────────────────────────────────────────────────────── */
-.dn-glow-blue  { box-shadow: var(--dn-glow-blue); }
-.dn-glow-teal  { box-shadow: var(--dn-glow-teal); }
-.dn-glow-violet{ box-shadow: var(--dn-glow-violet); }
-
-/* ── Glass Surface ──────────────────────────────────────────────────────── */
-.dn-glass {
-  background: hsl(var(--dn-bg-surface) / 0.6);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+/* ── Clean Surface (Replacing Glass) ─────────────────────────────────── */
+.dn-surface {
+  background: hsl(var(--dn-bg-surface));
   border: 1px solid hsl(var(--dn-border-subtle));
+  box-shadow: var(--dn-shadow-sm);
+  border-radius: var(--dn-radius-md);
 }
 
-.dn-glass-elevated {
-  background: hsl(var(--dn-bg-elevated) / 0.8);
-  backdrop-filter: blur(24px) saturate(200%);
-  -webkit-backdrop-filter: blur(24px) saturate(200%);
+.dn-surface-elevated {
+  background: hsl(var(--dn-bg-elevated));
   border: 1px solid hsl(var(--dn-border-default));
+  box-shadow: var(--dn-shadow-md);
+  border-radius: var(--dn-radius-lg);
 }
 
-/* ── Grid Background ─────────────────────────────────────────────────── */
-.dn-grid-bg {
-  background-image:
-    linear-gradient(hsl(220 95% 60% / 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(220 95% 60% / 0.04) 1px, transparent 1px);
-  background-size: 40px 40px;
+/* Remove old animations that cause "amateur" look */
+.dn-shimmer, .dn-noise, .dn-grid-bg {
+  display: none;
 }
-
-/* ── Noise Texture ──────────────────────────────────────────────────────── */
-.dn-noise::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-  pointer-events: none;
-  border-radius: inherit;
-}
-
-/* ── Shimmer Loading ──────────────────────────────────────────────────── */
-@keyframes dn-shimmer {
-  0%   { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-.dn-shimmer {
-  background: linear-gradient(
-    90deg,
-    hsl(var(--dn-bg-elevated)) 25%,
-    hsl(var(--dn-bg-overlay)) 50%,
-    hsl(var(--dn-bg-elevated)) 75%
-  );
-  background-size: 200% 100%;
-  animation: dn-shimmer 1.5s infinite;
-}
-
-/* ── Pulse Dot ──────────────────────────────────────────────────────────── */
-@keyframes dn-pulse-dot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.5; transform: scale(0.85); }
-}
-.dn-pulse { animation: dn-pulse-dot 2s ease-in-out infinite; }
-
-/* ── Orbit ring ─────────────────────────────────────────────────────────── */
-@keyframes dn-orbit {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-.dn-orbit { animation: dn-orbit 8s linear infinite; }
-
-/* ── Float animation ─────────────────────────────────────────────────── */
-@keyframes dn-float {
-  0%, 100% { transform: translateY(0px); }
-  50%       { transform: translateY(-8px); }
-}
-.dn-float { animation: dn-float 4s ease-in-out infinite; }
-
-/* ── Scan line ──────────────────────────────────────────────────────────── */
-@keyframes dn-scan {
-  0%   { transform: translateY(-100%); opacity: 0; }
-  20%  { opacity: 1; }
-  80%  { opacity: 1; }
-  100% { transform: translateY(400%); opacity: 0; }
-}
-.dn-scan { animation: dn-scan 3s ease-in-out infinite; }
-
-/* ── Fade in up ─────────────────────────────────────────────────────────── */
-@keyframes dn-fade-up {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-.dn-fade-up { animation: dn-fade-up 0.6s var(--dn-ease-out) forwards; }
-
-/* ── Stagger helpers ─────────────────────────────────────────────────── */
-.dn-stagger-1 { animation-delay: 0.1s; }
-.dn-stagger-2 { animation-delay: 0.2s; }
-.dn-stagger-3 { animation-delay: 0.3s; }
-.dn-stagger-4 { animation-delay: 0.4s; }
-.dn-stagger-5 { animation-delay: 0.5s; }
