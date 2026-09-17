@@ -13,9 +13,9 @@ interface StatCardProps {
 }
 
 const COLOR_MAP = {
-  blue:   { bg: "hsl(220 95% 60% / 0.08)", border: "hsl(220 95% 60% / 0.2)", glow: "hsl(220 95% 60%)", text: "hsl(220 80% 75%)" },
+  blue:   { bg: "hsl(186 100% 50% / 0.08)", border: "hsl(186 100% 50% / 0.25)", glow: "hsl(186 100% 50%)", text: "hsl(186 100% 65%)" },
   teal:   { bg: "hsl(174 80% 45% / 0.08)", border: "hsl(174 80% 45% / 0.2)", glow: "hsl(174 80% 50%)", text: "hsl(174 60% 70%)" },
-  violet: { bg: "hsl(258 85% 65% / 0.08)", border: "hsl(258 85% 65% / 0.2)", glow: "hsl(258 85% 65%)", text: "hsl(258 70% 78%)" },
+  violet: { bg: "hsl(220 20% 90% / 0.08)", border: "hsl(220 20% 90% / 0.2)", glow: "hsl(220 20% 90%)", text: "hsl(215 30% 85%)" },
   amber:  { bg: "hsl(38 95% 55% / 0.08)",  border: "hsl(38 95% 55% / 0.2)",  glow: "hsl(38 95% 60%)",  text: "hsl(38 80% 72%)" },
   green:  { bg: "hsl(145 65% 42% / 0.08)", border: "hsl(145 65% 42% / 0.2)", glow: "hsl(145 65% 50%)", text: "hsl(145 55% 65%)" },
 };

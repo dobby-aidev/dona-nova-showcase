@@ -1,13 +1,17 @@
 # DONA NOVA
 
-**The World's Infrastructure Intelligence Platform**
+**Global Open Infrastructure Intelligence Radar**
+
+[![Live Demo](https://img.shields.io/badge/🌐_Live_Radar-nova.donacodex.com-00f0ff?style=for-the-badge&logo=cloudflare)](https://nova.donacodex.com)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Next.js](https://img.shields.io/badge/Next.js-16_App_Router-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?logo=typescript)](https://www.typescriptlang.org/)
-[![Cloudflare Workers](https://img.shields.io/badge/Deployed_on-Cloudflare_Workers-F38020?logo=cloudflare)](https://workers.cloudflare.com/)
+[![Ecosystem](https://img.shields.io/badge/Ecosystem-donacodex.com-purple)](https://donacodex.com)
 
-> Open-Source Infrastructure Planet built by [DONA CODEX](https://donacodex.com)
+> 🌐 **Production Live**: [https://nova.donacodex.com](https://nova.donacodex.com)  
+> Built by [dobby](https://dobby.donacodex.com) • Part of the [Dona Codex](https://donacodex.com) Ecosystem  
+> 100% Free & Open-Source • No Sign-up Required • Real Satellite & Grid Telemetry
 
 ---
 
@@ -113,8 +117,8 @@ npm >= 10
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/your-org/dona-nova.git
-cd dona-nova/app
+git clone https://github.com/dobby-aidev/dona-nova-showcase.git
+cd dona-nova-showcase/app
 
 # 2. Install dependencies
 npm install
@@ -219,50 +223,34 @@ Planned persistent storage:
 
 ---
 
-## Pricing
+## 100% Free & Open-Source (MIT License)
 
-DONA NOVA uses a tiered subscription model:
+DONA NOVA is fully open-source and free for humanity. There are no paywalls, accounts, or proprietary subscriptions.
 
-| Plan | Price | Target |
-|------|-------|--------|
-| Explorer | Free | Individual exploration |
-| Analyst | $299/mo | Researchers & professionals |
-| Professional | $999/mo | Hedge funds, energy companies |
-| Enterprise | Custom | Large institutions |
-
-See [/pricing](http://localhost:3000/pricing) for full feature comparison.
+- **License**: [MIT License](LICENSE) — Feel free to inspect, fork, and self-host.
+- **Production Live**: [https://nova.donacodex.com](https://nova.donacodex.com)
+- **Ecosystem Platform**: [https://donacodex.com](https://donacodex.com)
+- **Creator Portfolio**: [https://dobby.donacodex.com](https://dobby.donacodex.com)
 
 ---
 
-## Roadmap
+## Security & Vulnerability Reporting
 
-### Phase 1 — Foundation (Current)
-- [x] 3D Globe with Three.js
-- [x] Real data type system
-- [x] EIA, ENTSO-E, Electricity Maps API clients
-- [x] Global Power Plant Database integration
-- [x] Unified `/api/data` endpoint
-- [x] DataBadge — source transparency on every data point
-- [x] Pricing page
+Security and data integrity are top priorities for DONA NOVA:
 
-### Phase 2 — Live Data on Globe
-- [ ] EIA + ENTSO-E live grid data on globe
-- [ ] Carbon intensity heatmap layer
-- [ ] Power plant cluster rendering (LOD system)
-- [ ] Live data feed panel
-
-### Phase 3 — Legal & Go-to-Market
-- [ ] Terms of Service
-- [ ] Privacy Policy (GDPR compliant)
-- [ ] Data Processing Agreement template
-- [ ] Beta waitlist
-
-### Phase 4 — AI Layer
-- [ ] Natural language query engine
-- [ ] Anomaly detection
-- [ ] 30/90/365 day forecasting
+- **Security & All Inquiries**: Please email **[info@donacodex.com](mailto:info@donacodex.com)** directly. Do not open public GitHub issues for security matters.
 
 ---
 
-*DONA NOVA — Infrastructure Intelligence Platform*
-*© 2026 DONA CODEX. All rights reserved.*
+## GitHub Push & Safety Guide
+
+Before pushing to GitHub, ensure no sensitive data is committed:
+- ✅ **Committed**: `app/src/`, `public/`, `package.json`, `next.config.ts`, `.env.example`, `README.md`, `LICENSE`
+- ❌ **Never Commit**: `.env.local`, `.env.production`, `node_modules/`, `.next/`, private keys (`.pem`, `.key`), Cloudflare credentials.
+
+Always review `git status` before pushing.
+
+---
+
+*DONA NOVA — Global Open Infrastructure Radar*  
+*Built with ❤️ by [dobby](https://dobby.donacodex.com) • An open-source project by [Dona Codex](https://donacodex.com)*

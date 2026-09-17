@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Bell, ChevronRight, Sparkles, Languages } from "lucide-react";
+import { ChevronRight, Sparkles, Languages, ExternalLink, Star } from "lucide-react";
 
 function GithubIcon({ className }: { className?: string }) {
   return (
@@ -31,62 +31,77 @@ export function AppHeader({ lang, setLang }: AppHeaderProps) {
   return (
     <header
       id="app-header"
-      className="flex h-[64px] w-full shrink-0 items-center justify-between px-6 z-20"
+      className="flex h-[64px] w-full shrink-0 items-center justify-between px-6 z-20 select-none"
       style={{
-        background: "hsl(222 24% 4.5% / 0.85)",
-        borderBottom: "1px solid rgba(255, 255, 255, 0.07)",
-        backdropFilter: "blur(20px)",
+        background: "hsl(var(--dn-bg-base) / 0.90)",
+        borderBottom: "1px solid rgba(245, 235, 212, 0.10)",
+        backdropFilter: "blur(24px)",
       }}
     >
-      {/* Left: Clean Breadcrumb (No duplicate logo) */}
-      <div className="flex items-center gap-2 text-xs">
-        <span className="text-slate-400 font-medium flex items-center gap-1.5">
-          {lang === "tr" ? "Altyapı Platformu" : "Infrastructure Platform"}
+      {/* Left: Telemetry Breadcrumb */}
+      <div className="flex items-center gap-2.5 text-xs">
+        <span className="text-[#858a96] font-mono tracking-wider text-[11px] uppercase">
+          {lang === "tr" ? "Açık Altyapı Radarı" : "Open Infrastructure Radar"}
         </span>
         <ChevronRight className="h-3 w-3 text-slate-600" />
-        <span className="text-slate-100 font-extrabold tracking-tight">
-          {lang === "tr" ? "Küresel Harita & Keşif" : "Global Map & Explorer"}
+        <span className="text-[#fcf8ee] font-black tracking-tight flex items-center gap-2 text-[12.5px]">
+          <span className="flex h-2 w-2 rounded-full bg-cyan-400 animate-ping" />
+          {lang === "tr" ? "NASA 3D Dünya (3,160+ Tesis)" : "NASA 3D Earth (3,160+ Assets)"}
         </span>
       </div>
 
-      {/* Right: TR/EN Language Switcher + GitHub + Status */}
-      <div className="flex items-center gap-3 ml-auto">
-        {/* GitHub Open Source Link */}
+      {/* Right: Portfolio + Ecosystem + GitHub + Language */}
+      <div className="flex items-center gap-2.5 ml-auto">
+        {/* Creator Portfolio badge: Dobby */}
         <a
-          href="https://github.com/donacodex/dona-nova"
+          href="https://dobby.donacodex.com"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1.5 rounded-xl border border-white/[0.08] bg-slate-900/80 px-3 py-1.5 text-xs font-bold text-slate-300 hover:text-white hover:border-slate-600 transition-all shadow-sm"
-          title="GitHub Open Source Repository"
+          className="hidden md:flex items-center gap-1.5 rounded-xl border border-cyan-500/30 bg-[#141620] hover:bg-[#1f2230] px-3 py-1.5 text-[11.5px] font-bold text-cyan-300 hover:text-white transition-all shadow-sm group"
+          title={lang === "tr" ? "Geliştirici Portföyü & Resmi Sitesi" : "Creator Official Portfolio"}
         >
-          <GithubIcon className="h-3.5 w-3.5 text-slate-300" />
-          <span className="hidden sm:inline">GitHub</span>
+          <span className="h-2 w-2 rounded-full bg-cyan-400" />
+          <span>dobby Portföy</span>
+          <ExternalLink className="h-3 w-3 text-slate-400 group-hover:text-cyan-300 transition-colors" />
         </a>
 
+        {/* Dona Codex Ecosystem badge */}
+        <a
+          href="https://donacodex.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hidden sm:flex items-center gap-1.5 rounded-xl border border-[#faebd7]/15 bg-[#141620] hover:bg-[#1f2230] px-3 py-1.5 text-[11.5px] font-bold text-[#dad3c1] hover:text-[#fcf8ee] transition-all shadow-sm group"
+          title={lang === "tr" ? "Dona Codex Resmi Platformu" : "Dona Codex Official Platform"}
+        >
+          <span className="text-amber-400 font-mono font-bold">DC</span>
+          <span>Dona Codex</span>
+          <ExternalLink className="h-3 w-3 text-slate-400 group-hover:text-white transition-colors" />
+        </a>
+
+        {/* GitHub Open Source Link */}
+        <a
+          href="https://github.com/dobby-aidev/dona-nova-showcase"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-1.5 rounded-xl border border-white/[0.12] bg-[#161824] hover:bg-[#202434] px-3 py-1.5 text-xs font-bold text-slate-100 hover:text-white transition-all shadow-md"
+          title={lang === "tr" ? "GitHub'da Açık Kaynak İncele ve Yıldız Ver" : "Star on GitHub"}
+        >
+          <GithubIcon className="h-3.5 w-3.5 text-slate-300" />
+          <span className="font-mono text-[11px]">GitHub</span>
+          <div className="flex items-center gap-0.5 text-amber-300 ml-1">
+            <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+          </div>
+        </a>
 
         {/* TR / EN Switcher */}
         <button
           onClick={() => setLang(lang === "tr" ? "en" : "tr")}
-          className="flex items-center gap-1.5 rounded-xl border border-white/[0.08] bg-slate-900/80 px-3 py-1.5 text-xs font-bold text-slate-300 hover:text-white hover:border-blue-500/40 transition-all"
+          className="flex items-center gap-1.5 rounded-xl border border-white/[0.10] bg-[#141620] px-3 py-1.5 text-xs font-mono font-bold text-[#dad3c1] hover:text-white hover:border-[#faebd7]/40 transition-all"
         >
-          <Languages className="h-3.5 w-3.5 text-blue-400" />
-          <span>{lang === "tr" ? "TR | EN" : "EN | TR"}</span>
-        </button>
-
-        <div className="hidden items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-[11px] font-bold text-emerald-400 sm:flex shadow-sm">
-          <Sparkles className="h-3 w-3 text-emerald-400 animate-pulse" />
-          {lang === "tr" ? "Canlı Veri Akışı" : "Live Stream"}
-        </div>
-
-        <button
-          className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-white/[0.08] bg-slate-900/60 text-slate-400 hover:border-slate-700 hover:text-slate-100 transition-colors"
-          aria-label="Notifications"
-        >
-          <Bell className="h-4 w-4" />
-          <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-blue-500 shadow-sm" />
+          <Languages className="h-3.5 w-3.5 text-cyan-400" />
+          <span>{lang === "tr" ? "TR" : "EN"}</span>
         </button>
       </div>
     </header>
   );
 }
-

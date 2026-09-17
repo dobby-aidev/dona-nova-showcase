@@ -3,17 +3,35 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import {
-  Globe, Zap, Truck, Server, BarChart2,
+  Globe, Zap, Truck, Server,
   Settings, ChevronLeft, ChevronRight,
-  LayoutDashboard, Bot, Droplets, LogOut, Search
+  LayoutDashboard, Droplets, Search, Database,
+  FileText, Shield, Terminal, ArrowUpRight
 } from "lucide-react";
 import { DonaLogo } from "@/components/ui/DonaLogo";
 import { CommandPalette } from "@/components/ui/CommandPalette";
 import { SettingsModal } from "@/components/ui/SettingsModal";
-import { ProfileModal } from "@/components/ui/ProfileModal";
-import { AuthModal } from "@/components/ui/AuthModal";
 import Link from "next/link";
-import { Shield, FileText, Database, CreditCard } from "lucide-react";
+import { usePathname } from "next/navigation";
+
+function GithubIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      width="24"
+      height="24"
+      stroke="currentColor"
+      strokeWidth="2"
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+      <path d="M9 18c-4.51 2-5-2-7-2" />
+    </svg>
+  );
+}
 
 interface NavItem {
   id: string;
@@ -21,30 +39,28 @@ interface NavItem {
   labelEn: string;
   icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
   badge?: string;
-  group: string;
+  badgeType?: "gold" | "emerald" | "cyan";
+  group: "main" | "modules" | "legal";
   href?: string;
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { id: "explore",      labelTr: "Küresel Keşif",     labelEn: "Global Explore",    icon: Globe,           group: "main" },
-  { id: "dashboard",    labelTr: "Gösterge Paneli",   labelEn: "Dashboard",         icon: LayoutDashboard, group: "main" },
-  { id: "energy",       labelTr: "Enerji Santralleri",labelEn: "Power Plants",      icon: Zap,             group: "modules", badge: "Canlı" },
-  { id: "water",        labelTr: "Su & Çevre",        labelEn: "Water & Hydrio",    icon: Droplets,        group: "modules" },
-  { id: "transport",    labelTr: "Ulaşım & Lojistik", labelEn: "Transportation",    icon: Truck,           group: "modules" },
-  { id: "datacenters",  labelTr: "Veri Merkezleri",   labelEn: "Data Centers",      icon: Server,          group: "modules" },
-  { id: "ai-agent",     labelTr: "DONA CODEX AI",     labelEn: "DONA CODEX AI",     icon: Bot,             group: "ai", badge: "AI" },
-  { id: "analytics",    labelTr: "İstatistikler",     labelEn: "Analytics",         icon: BarChart2,       group: "ai" },
-  { id: "data-sources", labelTr: "Veri Kaynakları",   labelEn: "Data Sources",      icon: Database,        group: "legal", href: "/data-sources" },
-  { id: "pricing",      labelTr: "Fiyatlandırma",     labelEn: "Pricing",           icon: CreditCard,      group: "legal", href: "/pricing" },
-  { id: "terms",        labelTr: "Kullanım Koşulları",labelEn: "Terms of Service",  icon: FileText,        group: "legal", href: "/terms" },
-  { id: "privacy",      labelTr: "Gizlilik Politikası",labelEn: "Privacy Policy",   icon: Shield,          group: "legal", href: "/privacy" },
+  { id: "explore",      labelTr: "NASA 3D Küre",        labelEn: "NASA 3D Globe",      icon: Globe,           group: "main", badge: "3.1K", badgeType: "gold" },
+  { id: "dashboard",    labelTr: "Telemetri Paneli",    labelEn: "Telemetry Deck",     icon: LayoutDashboard, group: "main" },
+  { id: "energy",       labelTr: "Elektrik Şebekesi",   labelEn: "Power Grid",         icon: Zap,             group: "modules", badge: "Canlı", badgeType: "emerald" },
+  { id: "water",        labelTr: "Su & Baraj Ağları",   labelEn: "Water & Reservoirs", icon: Droplets,        group: "modules" },
+  { id: "transport",    labelTr: "Ulaşım & Lojistik",   labelEn: "Transportation",     icon: Truck,           group: "modules" },
+  { id: "datacenters",  labelTr: "AI Veri Merkezleri",  labelEn: "AI Data Centers",    icon: Server,          group: "modules", badge: "AI", badgeType: "cyan" },
+  { id: "data-sources", labelTr: "Açık Veri Kaynakları",labelEn: "Data Sources",      icon: Database,        group: "legal", href: "/data-sources" },
+  { id: "pricing",      labelTr: "Açık Kaynak Lisansı", labelEn: "Open Source MIT",    icon: Terminal,        group: "legal", href: "/pricing" },
+  { id: "terms",        labelTr: "Kullanım Koşulları",  labelEn: "Terms of Service",   icon: FileText,        group: "legal", href: "/terms" },
+  { id: "privacy",      labelTr: "Gizlilik Politikası", labelEn: "Privacy Policy",     icon: Shield,          group: "legal", href: "/privacy" },
 ];
 
 const GROUPS = [
-  { key: "main",    labelTr: "Ana Ekranlar", labelEn: "Main Views" },
-  { key: "modules", labelTr: "Altyapı Ağları", labelEn: "Infrastructure Networks" },
-  { key: "ai",      labelTr: "Akıllı Analiz", labelEn: "AI Analytics" },
-  { key: "legal",   labelTr: "Hukuk & Kurumsal", labelEn: "Legal & Public" },
+  { key: "main",    labelTr: "Keşif & Radar",          labelEn: "Exploration" },
+  { key: "modules", labelTr: "Altyapı Katmanları",     labelEn: "Infrastructure" },
+  { key: "legal",   labelTr: "Kurumsal & Şeffaflık",   labelEn: "Institutional" },
 ];
 
 interface AppSidebarProps {
@@ -56,9 +72,7 @@ interface AppSidebarProps {
 export function AppSidebar({ activeNav, setActiveNav, lang }: AppSidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const pathname = usePathname();
 
   const triggerSearch = () => {
     const btn = document.getElementById("command-palette-trigger");
@@ -68,79 +82,150 @@ export function AppSidebar({ activeNav, setActiveNav, lang }: AppSidebarProps) {
   return (
     <>
       <motion.aside
-        animate={{ width: collapsed ? 72 : 256 }}
-        transition={{ type: "spring", stiffness: 320, damping: 32 }}
-        className="relative flex h-full flex-col shrink-0 overflow-hidden z-30 select-none"
+        animate={{ width: collapsed ? 76 : 268 }}
+        transition={{ type: "spring", stiffness: 380, damping: 34 }}
+        className="relative flex h-full flex-col shrink-0 overflow-hidden z-30 select-none shadow-[6px_0_35px_rgba(0,0,0,0.65)]"
         style={{
-          background: "hsl(222 24% 4.5%)",
-          borderRight: "1px solid rgba(255, 255, 255, 0.07)",
+          background: "linear-gradient(180deg, #0d0f17 0%, #08090e 55%, #050608 100%)",
+          borderRight: "1px solid rgba(250, 235, 215, 0.12)",
         }}
       >
-        {/* Brand Header */}
-        <div className="flex items-center h-[64px] shrink-0 px-4 overflow-hidden border-b border-white/[0.06]">
+        {/* Brand Area */}
+        <div className="flex items-center h-[68px] shrink-0 px-4 overflow-hidden border-b border-[#faebd7]/10 bg-[#0a0b12]/50">
           {collapsed ? (
-            <div className="mx-auto cursor-pointer" onClick={() => setCollapsed(false)}>
+            <button
+              onClick={() => setCollapsed(false)}
+              className="mx-auto cursor-pointer hover:scale-105 transition-transform p-1 rounded-xl hover:bg-white/5"
+              aria-label="Expand sidebar"
+            >
               <DonaLogo size="sm" showText={false} />
-            </div>
+            </button>
           ) : (
-            <DonaLogo size="md" showText={true} />
+            <div className="flex items-center justify-between w-full">
+              <Link href="/" className="hover:opacity-95 transition-opacity">
+                <DonaLogo size="md" showText={true} />
+              </Link>
+              <div className="flex items-center gap-1.5">
+                <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="rounded-md border border-[#faebd7]/25 bg-[#faebd7]/10 px-2 py-0.5 text-[8.5px] font-mono font-black text-[#faebd7] tracking-wider shadow-sm">
+                  v1.0 PROD
+                </span>
+              </div>
+            </div>
           )}
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto py-4 space-y-4 px-3 scrollbar-none">
-          {/* Quick Search Button in Sidebar */}
+        {/* Navigation Content */}
+        <nav className="flex-1 overflow-y-auto py-3.5 space-y-4 px-3 scrollbar-thin">
+          {/* Quick Search Button */}
           <button
             onClick={triggerSearch}
-            className="flex w-full items-center rounded-xl border border-blue-500/30 bg-blue-600/10 px-3 py-2.5 text-[13px] font-bold text-blue-300 hover:bg-blue-600/20 hover:border-blue-400/50 transition-all shadow-md"
+            className="flex w-full items-center rounded-xl border border-[#faebd7]/18 bg-[#131622]/90 hover:bg-[#1a1e30] hover:border-cyan-400/40 px-3 py-2 text-[12px] font-semibold text-[#fcf8ee] transition-all shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] group"
             style={{
               justifyContent: collapsed ? "center" : "flex-start",
               gap: collapsed ? 0 : 10,
             }}
-            title={collapsed ? (lang === "tr" ? "Arama Yap (⌘K)" : "Search (⌘K)") : undefined}
+            title={collapsed ? "Tesis Ara (⌘K)" : undefined}
           >
-            <Search className="h-4 w-4 shrink-0 text-blue-400" />
+            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-cyan-950/60 border border-cyan-500/30 text-cyan-400 group-hover:scale-105 group-hover:text-cyan-300 transition-all">
+              <Search className="h-3.5 w-3.5" />
+            </div>
             {!collapsed && (
               <div className="flex items-center justify-between flex-1 min-w-0">
-                <span className="truncate">{lang === "tr" ? "Arama Yap" : "Search"}</span>
-                <span className="rounded border border-blue-400/30 px-1 py-0.2 font-mono text-[9px] text-blue-300 shrink-0 ml-1">⌘K</span>
+                <span className="truncate text-slate-300 font-sans group-hover:text-white transition-colors">
+                  {lang === "tr" ? "Hızlı Tesis Ara..." : "Quick Search..."}
+                </span>
+                <span className="rounded-md border border-white/20 bg-white/5 px-1.5 py-0.5 font-mono text-[9px] text-[#dad3c1] shrink-0 ml-1">
+                  ⌘K
+                </span>
               </div>
             )}
           </button>
 
-          {/* Hidden CommandPalette trigger container */}
+          {/* Hidden CommandPalette trigger */}
           <div className="hidden">
             <CommandPalette />
           </div>
 
+          {/* Navigation Groups */}
           {GROUPS.map(({ key, labelTr, labelEn }) => {
             const items = NAV_ITEMS.filter(i => i.group === key);
             return (
-              <div key={key}>
+              <div key={key} className="space-y-1.5">
                 {!collapsed && (
-                  <p className="px-2.5 pb-1.5 text-[9px] font-bold uppercase tracking-[0.18em] text-slate-500">
-                    {lang === "tr" ? labelTr : labelEn}
-                  </p>
+                  <div className="flex items-center justify-between px-2.5 pb-1">
+                    <p className="text-[9px] font-mono font-bold uppercase tracking-[0.22em] text-[#b8ad9b]">
+                      {lang === "tr" ? labelTr : labelEn}
+                    </p>
+                    <div className="h-px flex-1 ml-2.5 bg-gradient-to-r from-[#faebd7]/15 to-transparent" />
+                  </div>
                 )}
+
                 <div className="space-y-1">
                   {items.map((item) => {
                     const Icon = item.icon;
-                    const isActive = activeNav === item.id;
-                    
+                    const isHref = Boolean(item.href);
+                    const isPageActive = isHref && pathname === item.href;
+                    const isActive = !isHref ? activeNav === item.id : isPageActive;
+
+                    const content = (
+                      <>
+                        {/* Glowing Left Indicator Pill */}
+                        {isActive && (
+                          <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r-full bg-cyan-400 shadow-[0_0_10px_rgba(0,240,255,0.9)]" />
+                        )}
+
+                        <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg transition-all ${
+                          isActive
+                            ? "bg-cyan-950/80 border border-cyan-400/40 text-cyan-300 shadow-[0_0_8px_rgba(0,240,255,0.3)]"
+                            : "bg-white/[0.04] border border-white/[0.06] text-slate-400 group-hover:text-[#faebd7] group-hover:border-[#faebd7]/30 group-hover:bg-white/[0.08]"
+                        }`}>
+                          <Icon className="h-3.5 w-3.5" />
+                        </div>
+
+                        {!collapsed && (
+                          <span className={`truncate min-w-0 flex-1 text-left font-sans transition-all ${
+                            isActive
+                              ? "text-white font-bold tracking-tight"
+                              : "text-slate-300 group-hover:text-white group-hover:translate-x-0.5"
+                          }`}>
+                            {lang === "tr" ? item.labelTr : item.labelEn}
+                          </span>
+                        )}
+
+                        {item.badge && !collapsed && (
+                          <span className={`ml-auto shrink-0 rounded-md px-1.5 py-0.5 text-[8.5px] font-mono font-bold uppercase tracking-wider ${
+                            item.badgeType === "emerald"
+                              ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
+                              : item.badgeType === "cyan"
+                              ? "bg-cyan-500/15 text-cyan-300 border border-cyan-500/30"
+                              : "bg-[#faebd7]/15 text-[#faebd7] border border-[#faebd7]/30"
+                          }`}>
+                            {item.badge}
+                          </span>
+                        )}
+                      </>
+                    );
+
+                    const baseClasses = `relative flex w-full items-center rounded-xl px-2.5 py-2 text-[12.5px] transition-all duration-200 group ${
+                      isActive
+                        ? "bg-gradient-to-r from-[#faebd7]/18 via-[#faebd7]/8 to-transparent text-[#fcf8ee] border border-[#faebd7]/35 shadow-[0_4px_16px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.12)]"
+                        : "border border-transparent hover:border-[#faebd7]/15 hover:bg-white/[0.04] text-slate-300"
+                    }`;
+
                     if (item.href) {
                       return (
                         <Link
                           key={item.id}
                           href={item.href}
-                          className="relative flex w-full items-center rounded-xl px-3 py-2 text-[12px] font-medium text-slate-400 hover:bg-white/[0.04] hover:text-slate-100 transition-all duration-200"
+                          className={baseClasses}
                           style={{
                             justifyContent: collapsed ? "center" : "flex-start",
                             gap: collapsed ? 0 : 10,
                           }}
                           title={collapsed ? (lang === "tr" ? item.labelTr : item.labelEn) : undefined}
                         >
-                          <Icon className="h-4 w-4 shrink-0 text-slate-400" />
-                          {!collapsed && <span className="truncate min-w-0 flex-1 text-left">{lang === "tr" ? item.labelTr : item.labelEn}</span>}
+                          {content}
                         </Link>
                       );
                     }
@@ -149,32 +234,14 @@ export function AppSidebar({ activeNav, setActiveNav, lang }: AppSidebarProps) {
                       <button
                         key={item.id}
                         onClick={() => setActiveNav(item.id)}
-                        className={`relative flex w-full items-center rounded-xl px-3 py-2.5 text-[12.5px] font-medium transition-all duration-200 ${
-                          isActive
-                            ? "bg-gradient-to-r from-blue-600/25 to-purple-600/15 text-white font-semibold border border-blue-500/40 shadow-lg shadow-blue-500/15"
-                            : "text-slate-400 hover:bg-white/[0.04] hover:text-slate-100"
-                        }`}
+                        className={baseClasses}
                         style={{
                           justifyContent: collapsed ? "center" : "flex-start",
                           gap: collapsed ? 0 : 10,
                         }}
                         title={collapsed ? (lang === "tr" ? item.labelTr : item.labelEn) : undefined}
                       >
-                        <Icon className={`h-4.5 w-4.5 shrink-0 transition-colors ${isActive ? "text-blue-400" : "text-slate-400"}`} />
-                        
-                        {!collapsed && <span className="truncate min-w-0 flex-1 text-left">{lang === "tr" ? item.labelTr : item.labelEn}</span>}
-                        
-                        {item.badge && !collapsed && (
-                          <span
-                            className={`ml-auto shrink-0 rounded-full px-2 py-0.5 text-[9px] font-bold ${
-                              item.badge === "Canlı"
-                                ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
-                                : "bg-purple-500/15 text-purple-300 border border-purple-500/30"
-                            }`}
-                          >
-                            {item.badge}
-                          </span>
-                        )}
+                        {content}
                       </button>
                     );
                   })}
@@ -184,59 +251,87 @@ export function AppSidebar({ activeNav, setActiveNav, lang }: AppSidebarProps) {
           })}
         </nav>
 
-        {/* Account & Settings Footer */}
-        <div className="shrink-0 p-3 border-t border-white/[0.08] space-y-2">
+        {/* Footer: Executive Dona Codex & Dobby Ecosystem Hub */}
+        <div className="shrink-0 p-3 border-t border-[#faebd7]/10 bg-[#07080d]/80 space-y-2">
+          {!collapsed ? (
+            <div className="rounded-2xl border border-[#faebd7]/18 bg-[#12141f]/90 p-3 text-[11px] space-y-2.5 shadow-xl">
+              {/* Creator Header */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-gradient-to-tr from-amber-600 via-indigo-600 to-cyan-600 text-white font-black text-[9px] shadow-sm">
+                    DC
+                  </div>
+                  <div>
+                    <h4 className="font-black text-[#fcf8ee] text-[11.5px] leading-tight font-sans tracking-wide">DONA CODEX</h4>
+                    <p className="text-[8.5px] text-[#a89f8d] font-mono uppercase tracking-wider">Official Ecosystem</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-[8.5px] font-mono text-emerald-400 font-bold">ONLINE</span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="grid grid-cols-2 gap-1.5 pt-1 border-t border-white/[0.06]">
+                <a
+                  href="https://donacodex.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-1 rounded-xl border border-white/[0.10] bg-white/[0.03] hover:bg-white/[0.08] py-1.5 px-2 text-[10px] font-bold text-[#dad3c1] hover:text-white transition-all text-center group"
+                >
+                  <span>Dona Codex</span>
+                  <ArrowUpRight className="h-3 w-3 text-slate-400 group-hover:text-white transition-colors" />
+                </a>
+
+                <a
+                  href="https://dobby.donacodex.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-1 rounded-xl border border-cyan-500/30 bg-cyan-950/25 hover:bg-cyan-950/50 py-1.5 px-2 text-[10px] font-bold text-cyan-300 hover:text-white transition-all text-center group"
+                >
+                  <span>dobby</span>
+                  <ArrowUpRight className="h-3 w-3 text-cyan-400 group-hover:text-white transition-colors" />
+                </a>
+              </div>
+
+              {/* GitHub Star Card */}
+              <a
+                href="https://github.com/dobby-aidev/dona-nova-showcase"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between rounded-xl border border-white/[0.08] bg-black/40 px-2.5 py-1.5 hover:border-white/20 transition-all text-[10.5px] font-semibold text-slate-300 hover:text-white group"
+              >
+                <div className="flex items-center gap-1.5">
+                  <GithubIcon className="h-3.5 w-3.5 text-slate-300 group-hover:text-white" />
+                  <span className="font-mono">GitHub Repo</span>
+                </div>
+                <span className="text-[9px] font-mono font-bold text-amber-300 bg-amber-400/10 border border-amber-400/30 rounded px-1.5 py-0.5">
+                  ★ Star
+                </span>
+              </a>
+            </div>
+          ) : null}
+
+          {/* Settings Trigger */}
           <button
             onClick={() => setIsSettingsOpen(true)}
-            className="flex w-full items-center rounded-xl px-3 py-2 text-[12px] font-semibold text-slate-300 hover:bg-white/[0.06] hover:text-white transition-colors"
+            className="flex w-full items-center rounded-xl px-3 py-2 text-[11.5px] font-semibold text-slate-300 hover:bg-white/[0.06] hover:text-white transition-colors"
             style={{ justifyContent: collapsed ? "center" : "flex-start", gap: collapsed ? 0 : 10 }}
-            title={collapsed ? (lang === "tr" ? "Sistem Ayarları" : "Settings") : undefined}
+            title={collapsed ? "Radar Tercihleri" : undefined}
           >
-            <Settings className="h-4 w-4 shrink-0 text-blue-400" />
-            {!collapsed && <span className="truncate min-w-0">{lang === "tr" ? "Sistem Ayarları" : "System Settings"}</span>}
+            <Settings className="h-4 w-4 shrink-0 text-slate-400" />
+            {!collapsed && <span className="truncate min-w-0">{lang === "tr" ? "Radar Tercihleri" : "Preferences"}</span>}
           </button>
-
-          <div
-            onClick={() => setIsProfileOpen(true)}
-            className="flex items-center rounded-2xl bg-slate-900/90 p-2 border border-white/[0.08] backdrop-blur-xl cursor-pointer hover:border-blue-500/50 hover:bg-slate-900 transition-all shadow-md"
-            style={{ justifyContent: collapsed ? "center" : "flex-start", gap: collapsed ? 0 : 10 }}
-            title={collapsed ? "DONA CODEX Enterprise Account" : undefined}
-          >
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-black text-[11px] shadow-md">
-              DC
-            </div>
-            {!collapsed && (
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-[11.5px] font-extrabold text-slate-100">
-                  {isLoggedIn ? "DONA CODEX" : (lang === "tr" ? "Ziyaretçi Modu" : "Guest Mode")}
-                </p>
-                <p className="truncate text-[8.5px] text-slate-400 font-medium uppercase tracking-wider">
-                  {isLoggedIn ? (lang === "tr" ? "Kurumsal Hesabı" : "Enterprise Account") : (lang === "tr" ? "Giriş Yapılmadı" : "Not Logged In")}
-                </p>
-              </div>
-            )}
-            {!collapsed && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsAuthOpen(true);
-                }}
-                className="text-slate-400 hover:text-slate-200 p-1 rounded-lg hover:bg-white/10 shrink-0"
-                title={isLoggedIn ? (lang === "tr" ? "Çıkış Yap" : "Log Out") : (lang === "tr" ? "Giriş Yap" : "Log In")}
-              >
-                {isLoggedIn ? <LogOut className="h-3.5 w-3.5 text-red-400" /> : <LogOut className="h-3.5 w-3.5 text-emerald-400" />}
-              </button>
-            )}
-          </div>
         </div>
 
-        {/* Collapse Trigger */}
+        {/* Collapse Trigger Pill */}
         <button
           onClick={() => setCollapsed(c => !c)}
-          className="absolute -right-3 top-[76px] z-30 flex h-6 w-6 items-center justify-center rounded-full border border-slate-700 bg-slate-900 text-slate-400 shadow-xl hover:text-white hover:border-blue-500/50 transition-all hover:scale-110"
+          className="absolute -right-3 top-[76px] z-30 flex h-6 w-6 items-center justify-center rounded-full border border-slate-700 bg-slate-900 text-slate-400 shadow-xl hover:text-white hover:border-[#faebd7]/50 transition-all hover:scale-110"
           aria-label="Toggle sidebar"
         >
-          {collapsed ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}
+          {collapsed ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronLeft className="h-3.5 w-3.5" />}
         </button>
       </motion.aside>
 
@@ -244,22 +339,6 @@ export function AppSidebar({ activeNav, setActiveNav, lang }: AppSidebarProps) {
       <SettingsModal
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
-        lang={lang}
-      />
-
-      {/* Profile Modal */}
-      <ProfileModal
-        isOpen={isProfileOpen}
-        onClose={() => setIsProfileOpen(false)}
-        lang={lang}
-      />
-
-      {/* Auth Modal */}
-      <AuthModal
-        isOpen={isAuthOpen}
-        onClose={() => setIsAuthOpen(false)}
-        isLoggedIn={isLoggedIn}
-        onToggleLogin={() => setIsLoggedIn(prev => !prev)}
         lang={lang}
       />
     </>

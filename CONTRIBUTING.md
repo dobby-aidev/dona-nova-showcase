@@ -1,79 +1,92 @@
 # Contributing to DONA NOVA
 
-Thank you for your interest in contributing to **DONA NOVA** — The World's Infrastructure Intelligence Platform!
+Thank you for your interest in contributing to **DONA NOVA** — Global Open Infrastructure Intelligence Radar!
 
-We welcome contributions from developers, data engineers, GIS specialists, and UI/UX designers of all skill levels.
+We welcome contributions from developers, data engineers, GIS specialists, energy analysts, and UI/UX designers worldwide.
+
+---
+
+## Communication & Inquiries
+
+- **All Inquiries, Contributions & Security**: [info@donacodex.com](mailto:info@donacodex.com)
+- **Website & Ecosystem**: [https://donacodex.com](https://donacodex.com) • [https://dobby.donacodex.com](https://dobby.donacodex.com)
 
 ---
 
 ## Code of Conduct
 
-Please treat everyone with respect and empathy. We are committed to providing a welcoming, inclusive, and safe environment for all contributors.
+Please treat everyone with respect, empathy, and professional integrity. We are committed to maintaining a welcoming, inclusive, and safe open-source environment for all contributors.
+
+---
+
+## Git & GitHub Security Checklist (What to Commit vs What to Ignore)
+
+Before running `git add` and `git push`, make sure you strictly follow this checklist:
+
+### Allowed & Expected Files to Commit:
+- Source code in `app/src/` (`components/`, `features/`, `lib/`, `types/`, `app/`)
+- Public assets in `app/public/`
+- Configuration files: `package.json`, `package-lock.json`, `tsconfig.json`, `next.config.ts`
+- Environment template: `.env.example` (Contains only variable names, NO REAL SECRETS)
+- Documentation: `README.md`, `CONTRIBUTING.md`, `LICENSE`
+- GitHub Workflows: `.github/workflows/deploy.yml`
+
+### STRICTLY FORBIDDEN (NEVER COMMIT OR PUSH TO GITHUB):
+- Real Environment & API keys: `.env`, `.env.local`, `.env.production`, `.env.*`
+- Dependencies: `node_modules/`
+- Build outputs: `.next/`, `out/`, `dist/`, `build/`
+- Cloudflare & OpenNext artifacts: `.open-next/`, `.wrangler/`
+- Private keys & certificates: `*.pem`, `*.key`, `*.cert`
+- System cache files: `.DS_Store`, `Thumbs.db`, `*.tsbuildinfo`, `*.log`
+
+> **Safety Check**: Always run `git status` and inspect staged files before running `git commit`.
 
 ---
 
 ## How to Contribute
 
-### 1. Reporting Bugs
-- Check existing [GitHub Issues](https://github.com/donacodex/dona-nova/issues) before opening a new issue.
-- Use the **Bug Report** issue template.
-- Include detailed steps to reproduce the issue, your environment (browser, OS), and relevant logs or screenshots.
+### 1. Reporting Issues & Bugs
+- Check existing [GitHub Issues](https://github.com/dobby-aidev/dona-nova-showcase/issues) before opening a new one.
+- Use a clear title and provide detailed reproduction steps, browser/OS specs, and console logs.
 
-### 2. Suggesting Features
-- Open a feature request using the **Feature Request** issue template.
-- Describe the problem your feature solves and why it would benefit the community.
-
-### 3. Submitting Pull Requests (PRs)
+### 2. Submitting Pull Requests (PRs)
 1. **Fork** the repository and clone your fork locally:
    ```bash
-   git clone https://github.com/YOUR-USERNAME/dona-nova.git
-   cd dona-nova
+   git clone https://github.com/YOUR-USERNAME/dona-nova-showcase.git
+   cd dona-nova-showcase
    ```
-2. **Create a feature branch**:
+2. **Create a clean feature branch**:
    ```bash
-   git checkout -b feature/my-new-feature
+   git checkout -b feature/my-infrastructure-improvement
    ```
 3. **Install dependencies**:
    ```bash
    cd app
    npm install
    ```
-4. **Set up local environment**:
+4. **Set up environment**:
    ```bash
    cp .env.example .env.local
-   # Add your test API keys in .env.local (do NOT commit .env.local!)
+   # Fill in local API keys in .env.local (this file is git-ignored)
    ```
-5. **Develop & Test locally**:
+5. **Develop & Test**:
    ```bash
    npm run dev
    ```
-6. **Ensure build & lint pass**:
+6. **Verify build & types**:
    ```bash
-   npm run lint
    npm run build
    ```
-7. **Commit your changes** following conventional commit messages:
-   - `feat: add WRI Aqueduct water stress data client`
-   - `fix: resolve Globe LOD clustering rendering issue`
-   - `docs: update deployment guidelines`
-8. **Push to your fork** and submit a **Pull Request** against the `main` branch.
+7. **Commit & Push**:
+   ```bash
+   git add .
+   git commit -m "feat: enhance 3D marker LOD clustering"
+   git push origin feature/my-infrastructure-improvement
+   ```
+8. **Open a Pull Request** targeting the `main` branch.
 
 ---
 
-## Security Policy & Secrets
+## License
 
-- **NEVER** commit API keys, tokens, or credentials (`.env.local` is listed in `.gitignore`).
-- If you find a security vulnerability, please do NOT create a public issue. Email security@donacodex.com directly.
-
----
-
-## Tech Stack Quick Reference
-
-- **Framework**: Next.js 16 (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS v4
-- **3D Engine**: Three.js + React Three Fiber (@react-three/fiber, @react-three/drei)
-- **State Management**: Zustand & TanStack React Query
-- **Edge Runtime**: Cloudflare Workers (via OpenNext)
-
-Thank you for helping us build the future of infrastructure intelligence! 🚀
+By contributing to DONA NOVA, you agree that your contributions will be licensed under the project's [MIT License](LICENSE).
