@@ -9,18 +9,18 @@
     --dn-brand-secondary: 210 100% 45%;    /* Corporate Blue (Links, Highlights) */
     --dn-brand-accent: 40 20% 40%;         /* Matte Gold/Bronze Accent */
 
-    /* Background Scale — Minimalist Warm Cream */
-    --dn-bg-void: 42 30% 96%;              /* #f5f3ee — Main background (Soft Cream) */
-    --dn-bg-base: 42 40% 98%;              /* #faf8f5 — Sidebar/Card Base */
-    --dn-bg-surface: 0 0% 100%;            /* #ffffff — Pure White Surface */
-    --dn-bg-elevated: 0 0% 100%;           /* Elevated panels */
-    --dn-bg-overlay: 42 20% 92%;           /* Hover states / overlays */
+    /* Background Scale — Dark Cream (Koyu Krem / Beige) */
+    --dn-bg-void: 40 25% 88%;              /* Main background (Darker Cream / Beige) */
+    --dn-bg-base: 40 25% 91%;              /* Sidebar/Card Base (Slightly lighter cream) */
+    --dn-bg-surface: 40 25% 94%;           /* Pure Surface (Warm Beige) */
+    --dn-bg-elevated: 40 25% 96%;          /* Elevated panels */
+    --dn-bg-overlay: 40 20% 85%;           /* Hover states / overlays */
 
     /* Text Scale — High Contrast Dark */
-    --dn-text-primary: 220 30% 15%;        /* Almost Black for maximum readability */
-    --dn-text-secondary: 220 20% 35%;      /* Dark Gray for secondary text */
-    --dn-text-tertiary: 220 15% 50%;       /* Medium Gray for meta info */
-    --dn-text-disabled: 220 10% 75%;       /* Light Gray for disabled */
+    --dn-text-primary: 30 15% 15%;         /* Deep Brown/Black for primary text */
+    --dn-text-secondary: 30 15% 35%;       /* Dark warm gray for secondary */
+    --dn-text-tertiary: 30 10% 50%;        /* Medium warm gray for meta info */
+    --dn-text-disabled: 30 10% 70%;        /* Light warm gray for disabled */
 
     /* Border Scale — Subtle Cream/Gray */
     --dn-border-subtle: 42 20% 90%;
@@ -143,6 +143,10 @@ body {
 }
 
 /* Remove old animations that cause "amateur" look */
-.dn-shimmer, .dn-noise, .dn-grid-bg {
+.dn-shimmer, .dn-noise {
   display: none;
+}
+.dn-grid-bg {
+  /* Removed old grid background, keep it transparent */
+  background: transparent;
 }

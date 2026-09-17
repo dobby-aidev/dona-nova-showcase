@@ -31,22 +31,17 @@ export function AppHeader({ lang, setLang }: AppHeaderProps) {
   return (
     <header
       id="app-header"
-      className="flex h-[64px] w-full shrink-0 items-center justify-between px-6 z-20 select-none"
-      style={{
-        background: "hsl(var(--dn-bg-base) / 0.90)",
-        borderBottom: "1px solid rgba(245, 235, 212, 0.10)",
-        backdropFilter: "blur(24px)",
-      }}
+      className="flex h-[64px] w-full shrink-0 items-center justify-between px-6 z-20 select-none bg-white/70 backdrop-blur-xl border-b border-slate-200"
     >
       {/* Left: Telemetry Breadcrumb */}
       <div className="flex items-center gap-2.5 text-xs">
-        <span className="text-[#858a96] font-mono tracking-wider text-[11px] uppercase">
-          {lang === "tr" ? "Açık Altyapı Radarı" : "Open Infrastructure Radar"}
+        <span className="text-slate-500 font-mono tracking-wider text-[11px] uppercase">
+          {lang === "tr" ? "DONA NOVA" : "DONA NOVA"}
         </span>
-        <ChevronRight className="h-3 w-3 text-slate-600" />
-        <span className="text-[#fcf8ee] font-black tracking-tight flex items-center gap-2 text-[12.5px]">
-          <span className="flex h-2 w-2 rounded-full bg-cyan-400 animate-ping" />
-          {lang === "tr" ? "NASA 3D Dünya (3,160+ Tesis)" : "NASA 3D Earth (3,160+ Assets)"}
+        <ChevronRight className="h-3 w-3 text-slate-400" />
+        <span className="text-slate-800 font-black tracking-tight flex items-center gap-2 text-[12.5px]">
+          <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
+          {lang === "tr" ? "Açık Altyapı Radarı (35,000+ Tesis)" : "Open Infrastructure Radar (35,000+ Assets)"}
         </span>
       </div>
 
@@ -57,12 +52,12 @@ export function AppHeader({ lang, setLang }: AppHeaderProps) {
           href="https://dobby.donacodex.com"
           target="_blank"
           rel="noopener noreferrer"
-          className="hidden md:flex items-center gap-1.5 rounded-xl border border-cyan-500/30 bg-[#141620] hover:bg-[#1f2230] px-3 py-1.5 text-[11.5px] font-bold text-cyan-300 hover:text-white transition-all shadow-sm group"
+          className="hidden md:flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 px-3 py-1.5 text-[11.5px] font-bold text-slate-700 hover:text-slate-900 transition-all shadow-sm group"
           title={lang === "tr" ? "Geliştirici Portföyü & Resmi Sitesi" : "Creator Official Portfolio"}
         >
-          <span className="h-2 w-2 rounded-full bg-cyan-400" />
+          <span className="h-2 w-2 rounded-full bg-blue-500" />
           <span>dobby Portföy</span>
-          <ExternalLink className="h-3 w-3 text-slate-400 group-hover:text-cyan-300 transition-colors" />
+          <ExternalLink className="h-3 w-3 text-slate-400 group-hover:text-blue-600 transition-colors" />
         </a>
 
         {/* Dona Codex Ecosystem badge */}
@@ -70,12 +65,12 @@ export function AppHeader({ lang, setLang }: AppHeaderProps) {
           href="https://donacodex.com"
           target="_blank"
           rel="noopener noreferrer"
-          className="hidden sm:flex items-center gap-1.5 rounded-xl border border-[#faebd7]/15 bg-[#141620] hover:bg-[#1f2230] px-3 py-1.5 text-[11.5px] font-bold text-[#dad3c1] hover:text-[#fcf8ee] transition-all shadow-sm group"
+          className="hidden sm:flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 px-3 py-1.5 text-[11.5px] font-bold text-slate-700 hover:text-slate-900 transition-all shadow-sm group"
           title={lang === "tr" ? "Dona Codex Resmi Platformu" : "Dona Codex Official Platform"}
         >
-          <span className="text-amber-400 font-mono font-bold">DC</span>
+          <span className="text-slate-900 font-mono font-bold">DC</span>
           <span>Dona Codex</span>
-          <ExternalLink className="h-3 w-3 text-slate-400 group-hover:text-white transition-colors" />
+          <ExternalLink className="h-3 w-3 text-slate-400 group-hover:text-slate-900 transition-colors" />
         </a>
 
         {/* GitHub Open Source Link */}
@@ -83,22 +78,22 @@ export function AppHeader({ lang, setLang }: AppHeaderProps) {
           href="https://github.com/dobby-aidev/dona-nova-showcase"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1.5 rounded-xl border border-white/[0.12] bg-[#161824] hover:bg-[#202434] px-3 py-1.5 text-xs font-bold text-slate-100 hover:text-white transition-all shadow-md"
+          className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-800 transition-all shadow-sm"
           title={lang === "tr" ? "GitHub'da Açık Kaynak İncele ve Yıldız Ver" : "Star on GitHub"}
         >
-          <GithubIcon className="h-3.5 w-3.5 text-slate-300" />
+          <GithubIcon className="h-3.5 w-3.5 text-slate-600" />
           <span className="font-mono text-[11px]">GitHub</span>
-          <div className="flex items-center gap-0.5 text-amber-300 ml-1">
-            <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+          <div className="flex items-center gap-0.5 text-amber-500 ml-1">
+            <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
           </div>
         </a>
 
         {/* TR / EN Switcher */}
         <button
           onClick={() => setLang(lang === "tr" ? "en" : "tr")}
-          className="flex items-center gap-1.5 rounded-xl border border-white/[0.10] bg-[#141620] px-3 py-1.5 text-xs font-mono font-bold text-[#dad3c1] hover:text-white hover:border-[#faebd7]/40 transition-all"
+          className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 px-3 py-1.5 text-xs font-mono font-bold text-slate-700 transition-all shadow-sm"
         >
-          <Languages className="h-3.5 w-3.5 text-cyan-400" />
+          <Languages className="h-3.5 w-3.5 text-slate-500" />
           <span>{lang === "tr" ? "TR" : "EN"}</span>
         </button>
       </div>
