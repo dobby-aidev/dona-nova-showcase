@@ -27,12 +27,13 @@ interface Asset {
 interface AssetDetailPanelProps {
   asset: Asset | null;
   onClose: () => void;
+  lang?: "tr" | "en";
 }
 
 const STATUS_STYLE = {
-  operational:  { label: "Aktif Üretimde",             bg: "rgba(16,185,129,0.12)",  color: "#34d399", dot: "#34d399" },
-  construction: { label: "İnşaat / Test Aşamasında",  bg: "rgba(212,175,55,0.12)",  color: "#f5d77f", dot: "#d4af37" },
-  offline:      { label: "Bakımda / Pasif",            bg: "rgba(239,68,68,0.12)",   color: "#f87171", dot: "#ef4444" },
+  operational:  { labelTr: "Aktif Üretimde",            labelEn: "Operational",          bg: "rgba(16,185,129,0.12)",  color: "#34d399", dot: "#34d399" },
+  construction: { labelTr: "İnşaat / Test Aşamasında", labelEn: "Under Construction",   bg: "rgba(212,175,55,0.12)",  color: "#f5d77f", dot: "#d4af37" },
+  offline:      { labelTr: "Bakımda / Pasif",           labelEn: "Maintenance / Offline", bg: "rgba(239,68,68,0.12)",  color: "#f87171", dot: "#ef4444" },
 };
 
 function MetricRow({ label, value, icon: Icon }: { label: string; value: string; icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }> }) {
@@ -72,7 +73,7 @@ function MetricRow({ label, value, icon: Icon }: { label: string; value: string;
   );
 }
 
-export function AssetDetailPanel({ asset, onClose }: AssetDetailPanelProps) {
+export function AssetDetailPanel({ asset, onClose, lang = "tr" }: AssetDetailPanelProps) {
   const [saved, setSaved] = useState(false);
   const [copied, setCopied] = useState(false);
   const [focused, setFocused] = useState(false);
@@ -218,7 +219,7 @@ export function AssetDetailPanel({ asset, onClose }: AssetDetailPanelProps) {
                     }}
                   >
                     <span style={{ width: 5, height: 5, borderRadius: "50%", background: s.dot, animation: asset.status === "operational" ? "dn-pulse-glow 2s infinite" : undefined }} />
-                    {s.label}
+                    {lang === "tr" ? s.labelTr : s.labelEn}
                   </span>
                 </div>
 
@@ -239,7 +240,7 @@ export function AssetDetailPanel({ asset, onClose }: AssetDetailPanelProps) {
                       cursor: "pointer",
                       transition: "all 0.18s ease",
                     }}
-                    title={saved ? "Kayıtlardan Çıkar" : "Tesis Kaydet"}
+                    title={saved ? (lang === "tr" ? "Kayıtlardan Çıkar" : "Remove Bookmark") : (lang === "tr" ? "Tesis Kaydet" : "Save Facility")}
                     aria-label="Kaydet"
                   >
                     <Bookmark style={{ width: 13, height: 13, fill: saved ? "currentColor" : "none" }} />
@@ -260,7 +261,7 @@ export function AssetDetailPanel({ asset, onClose }: AssetDetailPanelProps) {
                       cursor: "pointer",
                       transition: "all 0.18s ease",
                     }}
-                    title={copied ? "Kopyalandı!" : "Bağlantıyı Paylaş"}
+                    title={copied ? (lang === "tr" ? "Kopyalandı!" : "Copied!") : (lang === "tr" ? "Bağlantıyı Paylaş" : "Share Link")}
                     aria-label="Paylaş"
                   >
                     {copied ? <Check style={{ width: 13, height: 13 }} /> : <Share2 style={{ width: 13, height: 13 }} />}
@@ -282,7 +283,7 @@ export function AssetDetailPanel({ asset, onClose }: AssetDetailPanelProps) {
                       transition: "all 0.18s ease",
                       marginLeft: 2,
                     }}
-                    title="Kapat"
+                    title={lang === "tr" ? "Kapat" : "Close"}
                     aria-label="Kapat"
                   >
                     <X style={{ width: 13, height: 13 }} />
@@ -349,11 +350,13 @@ export function AssetDetailPanel({ asset, onClose }: AssetDetailPanelProps) {
                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                   <span style={{ color: "var(--gold-bright)", fontSize: "0.75rem" }}>⚠️</span>
                   <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.58rem", fontWeight: 700, color: "var(--gold-bright)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
-                    VERİ KAYNAĞI • WRI & OPEN REGISTRY
+                    {lang === "tr" ? "VERİ KAYNAĞI • WRI & OPEN REGISTRY" : "DATA SOURCE • WRI & OPEN REGISTRY"}
                   </span>
                 </div>
                 <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "rgba(210,205,195,0.85)", margin: 0, lineHeight: 1.5 }}>
-                  {asset.country} bölgesinde yer alan {asset.capacity} kapasiteli doğrulanmış altyapı tesisi.
+                  {lang === "tr"
+                    ? `${asset.country} bölgesinde yer alan ${asset.capacity} kapasiteli doğrulanmış altyapı tesisi.`
+                    : `Verified physical infrastructure node in ${asset.country} with ${asset.capacity} active rating.`}
                 </p>
               </div>
 
@@ -368,15 +371,15 @@ export function AssetDetailPanel({ asset, onClose }: AssetDetailPanelProps) {
                   color: "var(--gold-bright)",
                   marginBottom: 6,
                 }}>
-                  TEMEL TESİS VERİLERİ
+                  {lang === "tr" ? "TEMEL TESİS VERİLERİ" : "FACILITY METRICS"}
                 </p>
 
                 <div style={{ display: "flex", flexDirection: "column" }}>
-                  <MetricRow label="Kurulu Kapasite" value={asset.capacity} icon={Zap} />
-                  <MetricRow label="Sahibi / İşletmeci" value={asset.owner || "Kamu / Konsorsiyum"} icon={Building2} />
-                  {asset.coordinates && <MetricRow label="Coğrafi Konum (GPS)" value={asset.coordinates} icon={MapPin} />}
-                  {asset.completionYear && <MetricRow label="Hizmete Giriş Yılı" value={asset.completionYear} icon={Calendar} />}
-                  <MetricRow label="Bağlı Olduğu Ülke" value={asset.country} icon={MapPin} />
+                  <MetricRow label={lang === "tr" ? "Kurulu Kapasite" : "Installed Capacity"} value={asset.capacity} icon={Zap} />
+                  <MetricRow label={lang === "tr" ? "Sahibi / İşletmeci" : "Owner / Operator"} value={asset.owner || (lang === "tr" ? "Kamu / Konsorsiyum" : "Public / Consortium")} icon={Building2} />
+                  {asset.coordinates && <MetricRow label={lang === "tr" ? "Coğrafi Konum (GPS)" : "GPS Coordinates"} value={asset.coordinates} icon={MapPin} />}
+                  {asset.completionYear && <MetricRow label={lang === "tr" ? "Hizmete Giriş Yılı" : "Commissioning Year"} value={asset.completionYear} icon={Calendar} />}
+                  <MetricRow label={lang === "tr" ? "Bağlı Olduğu Ülke" : "Country / Territory"} value={asset.country} icon={MapPin} />
                 </div>
               </div>
 
@@ -389,10 +392,10 @@ export function AssetDetailPanel({ asset, onClose }: AssetDetailPanelProps) {
               }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
                   <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.58rem", fontWeight: 700, color: "var(--text-main)", letterSpacing: "0.06em" }}>
-                    Üretim Kararlılık Eğrisi
+                    {lang === "tr" ? "Üretim Kararlılık Eğrisi" : "Generation Stability Curve"}
                   </span>
                   <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.54rem", color: "#34d399", fontWeight: 700 }}>
-                    Son 12 Ay (Sabit)
+                    {lang === "tr" ? "Son 12 Ay (Sabit)" : "Last 12 Months (Stable)"}
                   </span>
                 </div>
 
@@ -412,10 +415,13 @@ export function AssetDetailPanel({ asset, onClose }: AssetDetailPanelProps) {
               {/* Tags & Graph Links */}
               <div>
                 <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.56rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 6 }}>
-                  KNOWLEDGE GRAPH BAĞLANTILARI
+                  {lang === "tr" ? "KNOWLEDGE GRAPH BAĞLANTILARI" : "KNOWLEDGE GRAPH NODES"}
                 </p>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
-                  {["İletim Hatları", "Yatırımcı Ağı", "Şebeke Düğümü", "Regülasyon"].map(rel => (
+                  {(lang === "tr"
+                    ? ["İletim Hatları", "Yatırımcı Ağı", "Şebeke Düğümü", "Regülasyon"]
+                    : ["Transmission Grid", "Capital Network", "Grid Interconnect", "Regulatory Node"]
+                  ).map(rel => (
                     <button
                       key={rel}
                       onClick={handleFocusOnGlobe}
@@ -483,7 +489,7 @@ export function AssetDetailPanel({ asset, onClose }: AssetDetailPanelProps) {
                 }}
               >
                 <Activity style={{ width: 14, height: 14 }} />
-                <span>{focused ? "KÜREDE ODAKLANDI ✓" : "KÜRE'DE GÖSTER"}</span>
+                <span>{focused ? (lang === "tr" ? "KÜREDE ODAKLANDI ✓" : "FOCUSED ON GLOBE ✓") : (lang === "tr" ? "KÜRE'DE GÖSTER" : "SHOW ON GLOBE")}</span>
               </button>
 
               <button
@@ -509,7 +515,7 @@ export function AssetDetailPanel({ asset, onClose }: AssetDetailPanelProps) {
                   transition: "all 0.18s ease",
                 }}
               >
-                <span>RESMİ UYDU / KAYIT BİLGİSİ</span>
+                <span>{lang === "tr" ? "RESMİ UYDU / KAYIT BİLGİSİ" : "OFFICIAL REGISTRY / SATELLITE"}</span>
                 <ExternalLink style={{ width: 11, height: 11, color: "var(--gold-primary)" }} />
               </button>
             </div>

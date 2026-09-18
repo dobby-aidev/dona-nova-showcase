@@ -11,7 +11,7 @@
 [![Cloudflare Pages](https://img.shields.io/badge/Edge_Deployment-Cloudflare_Pages-F38020.svg?style=for-the-badge&logo=cloudflare)](https://pages.cloudflare.com)
 
 > 🌐 **Official Live Platform**: [https://nova.donacodex.com](https://nova.donacodex.com)  
-> Designed & Built by [dobby](https://dobby.donacodex.com) • Part of the [Dona Codex](https://donacodex.com) Ecosystem  
+> Designed & Built by [Dobby B](https://dobby.donacodex.com/) • Part of the [Dona Codex](https://donacodex.com) Ecosystem  
 > **100% Free & Open-Source** • Zero Registration • Real Verified Satellite & Grid Telemetry
 
 ---
@@ -94,14 +94,8 @@ Add this to your MCP configuration file (e.g. `claude_desktop_config.json` or Cu
 {
   "mcpServers": {
     "dona-nova": {
-      "command": "node",
-      "args": [
-        "c:/Users/ferda/Desktop/Dona_Nova/app/node_modules/tsx/dist/cli.mjs",
-        "c:/Users/ferda/Desktop/Dona_Nova/app/src/mcp/server.ts"
-      ],
-      "env": {
-        "NODE_ENV": "production"
-      }
+      "command": "npx",
+      "args": ["-y", "tsx", "src/mcp/server.ts"]
     }
   }
 }
@@ -225,13 +219,15 @@ In your Cloudflare Pages Dashboard, configure:
 
 ---
 
-## 📜 Open-Source License
+## 📜 Open-Source License & Star Us on GitHub ⭐
 
-DONA NOVA is released under the **[MIT License](LICENSE)**. You are free to inspect, fork, modify, self-host, and integrate this software into commercial, scientific, or academic applications.
+DONA NOVA is released under the **[MIT License](LICENSE)**. You are 100% free to inspect, fork, modify, self-host, and build commercial, scientific, or personal products upon this foundation.
+
+> ⭐ **Support Independent Open-Source**: If you find Dona Nova valuable or inspiring, please consider giving this repository a star (**⭐ Star on GitHub**) and keeping attribution to **Dona Codex** & **[Dobby B](https://dobby.donacodex.com/)**. It helps more researchers, energy engineers, and AI developers discover this open telemetry engine!
 
 * **GitHub Repository**: [github.com/dobby-aidev/dona-nova-showcase](https://github.com/dobby-aidev/dona-nova-showcase)
 * **Live Radar**: [nova.donacodex.com](https://nova.donacodex.com)
-* **Author / Ecosystem**: [Dona Codex](https://donacodex.com) • [dobby](https://dobby.donacodex.com)
+* **Author / Ecosystem**: [Dona Codex](https://donacodex.com) • [Dobby B](https://dobby.donacodex.com/)
 
 ---
 

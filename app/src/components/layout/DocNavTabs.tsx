@@ -5,15 +5,37 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Scale, ShieldCheck, Database, Terminal } from "lucide-react";
 
+interface DocNavTabsProps {
+  lang?: "tr" | "en";
+}
+
 const DOC_TABS = [
-  { href: "/data-sources", label: "Veri Kaynakları", icon: Database },
-  { href: "/pricing",      label: "Açık Kaynak",     icon: Terminal },
-  { href: "/terms",        label: "Kullanım Koşulları", icon: Scale },
-  { href: "/privacy",      label: "Gizlilik & Güvenlik", icon: ShieldCheck },
+  { href: "/data-sources", labelTr: "Veri Kaynakları",    labelEn: "Data Sources",        icon: Database },
+  { href: "/pricing",      labelTr: "Açık Kaynak",        labelEn: "Open Source",         icon: Terminal },
+  { href: "/terms",        labelTr: "Kullanım Koşulları",  labelEn: "Terms of Use",        icon: Scale },
+  { href: "/privacy",      labelTr: "Gizlilik & Güvenlik", labelEn: "Privacy & Security",  icon: ShieldCheck },
 ];
 
-export function DocNavTabs() {
+export function DocNavTabs({ lang: propLang }: DocNavTabsProps) {
   const pathname = usePathname();
+  const [lang, setLang] = React.useState<"tr" | "en">(propLang || "tr");
+
+  React.useEffect(() => {
+    if (propLang) {
+      setLang(propLang);
+      return;
+    }
+    try {
+      const stored = localStorage.getItem("dona_lang");
+      if (stored === "tr" || stored === "en") setLang(stored);
+    } catch {}
+
+    const handleLangChange = (e: any) => {
+      if (e.detail === "tr" || e.detail === "en") setLang(e.detail);
+    };
+    window.addEventListener("dona:lang-change", handleLangChange);
+    return () => window.removeEventListener("dona:lang-change", handleLangChange);
+  }, [propLang]);
 
   return (
     <div style={{
@@ -68,7 +90,7 @@ export function DocNavTabs() {
                 height: 13,
                 color: isActive ? "var(--gold-primary)" : "var(--text-muted)",
               }} />
-              <span>{tab.label}</span>
+              <span>{lang === "tr" ? tab.labelTr : tab.labelEn}</span>
             </Link>
           );
         })}

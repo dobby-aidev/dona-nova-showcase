@@ -9,12 +9,39 @@ export default function Home() {
   const [lang, setLang] = useState<"tr" | "en">("tr");
   const [activeNav, setActiveNav] = useState("explore");
 
+  React.useEffect(() => {
+    try {
+      const stored = localStorage.getItem("dona_lang");
+      if (stored === "tr" || stored === "en") {
+        setLang(stored);
+      }
+    } catch {}
+
+    const handleLangChange = (e: any) => {
+      if (e.detail === "tr" || e.detail === "en") {
+        setLang(e.detail);
+      }
+    };
+    window.addEventListener("dona:lang-change", handleLangChange);
+    return () => window.removeEventListener("dona:lang-change", handleLangChange);
+  }, []);
+
+  const handleSetLang = (l: "tr" | "en") => {
+    setLang(l);
+    try {
+      localStorage.setItem("dona_lang", l);
+    } catch {}
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("dona:lang-change", { detail: l }));
+    }
+  };
+
   return (
     <>
 
 
       {/* Fixed top HUD header — z:40 above everything */}
-      <AppHeader lang={lang} setLang={setLang} />
+      <AppHeader lang={lang} setLang={handleSetLang} />
 
       {/* App shell — Fullscreen 3D Stage with Floating Glass Sidebar & HUD */}
       <div

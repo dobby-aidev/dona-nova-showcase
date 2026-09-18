@@ -1,32 +1,28 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Terminal, Globe2, ShieldCheck, Heart, ArrowRight } from "lucide-react";
+import { Globe2, ShieldCheck, Heart, ArrowRight, Terminal } from "lucide-react";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { DocNavTabs } from "@/components/layout/DocNavTabs";
 import { CosmicBackground } from "@/components/layout/CosmicBackground";
 
-function GithubIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      width="16"
-      height="16"
-      stroke="currentColor"
-      strokeWidth="2"
-      fill="none"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
-      <path d="M9 18c-4.51 2-5-2-7-2" />
-    </svg>
-  );
-}
-
 export default function PricingPage() {
+  const [lang, setLang] = useState<"tr" | "en">("tr");
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("dona_lang");
+      if (stored === "tr" || stored === "en") setLang(stored);
+    } catch {}
+
+    const handleLangChange = (e: any) => {
+      if (e.detail === "tr" || e.detail === "en") setLang(e.detail);
+    };
+    window.addEventListener("dona:lang-change", handleLangChange);
+    return () => window.removeEventListener("dona:lang-change", handleLangChange);
+  }, []);
+
   return (
     <div style={{
       minHeight: "100vh",
@@ -42,7 +38,7 @@ export default function PricingPage() {
       <div className="dn-grid-bg" style={{ position: "fixed", inset: 0, opacity: 0.25, pointerEvents: "none", zIndex: 1 }} />
 
       <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-        <PublicHeader />
+        <PublicHeader lang={lang} setLang={setLang} />
 
         <main style={{
           flex: 1,
@@ -57,7 +53,7 @@ export default function PricingPage() {
           textAlign: "center",
         }}>
           {/* Centered Document Navigation */}
-          <DocNavTabs />
+          <DocNavTabs lang={lang} />
 
           {/* Hero Section */}
           <div style={{ width: "100%", textAlign: "center", marginBottom: "2.5rem", display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem" }}>
@@ -76,7 +72,7 @@ export default function PricingPage() {
               boxShadow: "0 0 16px rgba(212,175,55,0.15)",
             }}>
               <Heart style={{ width: 14, height: 14, color: "var(--gold-bright)" }} />
-              <span>%100 AÇIK KAYNAK • TÜM İNSANLIĞA ÜCRETSİZ</span>
+              <span>{lang === "tr" ? "%100 AÇIK KAYNAK • TÜM İNSANLIĞA ÜCRETSİZ" : "100% OPEN SOURCE • FREE FOR ALL HUMANITY"}</span>
             </div>
 
             <h1 style={{
@@ -92,7 +88,7 @@ export default function PricingPage() {
               margin: 0,
               lineHeight: 1.2,
             }}>
-              Erişim Manifestosu
+              {lang === "tr" ? "Erişim Manifestosu" : "Access Manifesto"}
             </h1>
 
             <p style={{
@@ -104,7 +100,9 @@ export default function PricingPage() {
               margin: "0 auto",
               textAlign: "center",
             }}>
-              DONA NOVA'da ücretli planlar, kilitli abonelikler veya kurumsal duvarlar yoktur. Dünya üzerindeki enerji ve kritik altyapı verileri herkese eşit ve şeffaftır.
+              {lang === "tr"
+                ? "DONA NOVA'da ücretli planlar, kilitli abonelikler veya kurumsal duvarlar yoktur. Dünya üzerindeki enerji ve kritik altyapı verileri herkese eşit ve şeffaftır."
+                : "DONA NOVA has zero paywalls, zero gated subscriptions, and zero corporate barriers. Planetary energy and critical infrastructure telemetry belong to everyone equally."}
             </p>
 
             <div style={{
@@ -118,15 +116,15 @@ export default function PricingPage() {
               color: "var(--text-muted)",
             }}>
               <span style={{ borderRadius: "6px", border: "1px solid var(--gold-border)", background: "rgba(0,0,0,0.4)", padding: "3px 8px", color: "var(--text-main)" }}>
-                LİSANS: MIT
+                {lang === "tr" ? "LİSANS: MIT" : "LICENSE: MIT"}
               </span>
               <span>•</span>
               <span style={{ borderRadius: "6px", border: "1px solid var(--gold-border)", background: "rgba(0,0,0,0.4)", padding: "3px 8px", color: "var(--text-main)" }}>
-                MALİYET: $0 / SONSUZA KADAR
+                {lang === "tr" ? "MALİYET: $0 / SONSUZA KADAR" : "COST: $0 / FOREVER"}
               </span>
               <span>•</span>
               <span style={{ borderRadius: "6px", border: "1px solid rgba(16,185,129,0.35)", background: "rgba(16,185,129,0.1)", padding: "3px 8px", color: "#34d399", fontWeight: 700 }}>
-                KAYITSIZ DOĞRUDAN ERİŞİM
+                {lang === "tr" ? "KAYITSIZ DOĞRUDAN ERİŞİM" : "DIRECT ACCESS WITHOUT SIGNUP"}
               </span>
             </div>
           </div>
@@ -166,10 +164,12 @@ export default function PricingPage() {
                 <Globe2 style={{ width: 18, height: 18 }} />
               </div>
               <h3 style={{ fontFamily: "var(--font-display)", fontSize: "0.85rem", fontWeight: 800, color: "var(--text-main)", margin: 0 }}>
-                3.160+ Tesis
+                {lang === "tr" ? "3.160+ Tesis" : "3,160+ Facilities"}
               </h3>
               <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "var(--text-muted)", margin: 0, lineHeight: 1.5 }}>
-                Küresel tüm santraller ve veri merkezlerine engelsiz doğrudan erişim.
+                {lang === "tr"
+                  ? "Küresel tüm santraller ve veri merkezlerine engelsiz doğrudan erişim."
+                  : "Unrestricted planetary access to power plants, grids, and compute clusters."}
               </p>
             </div>
 
@@ -200,10 +200,12 @@ export default function PricingPage() {
                 <ShieldCheck style={{ width: 18, height: 18 }} />
               </div>
               <h3 style={{ fontFamily: "var(--font-display)", fontSize: "0.85rem", fontWeight: 800, color: "var(--text-main)", margin: 0 }}>
-                Sıfır Kayıt
+                {lang === "tr" ? "Sıfır Kayıt" : "Zero Sign-up"}
               </h3>
               <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "var(--text-muted)", margin: 0, lineHeight: 1.5 }}>
-                Hesap açma, e-posta veya kart gerekmez. Sayfayı açın ve anında analiz yapın.
+                {lang === "tr"
+                  ? "Hesap açma, e-posta veya kart gerekmez. Sayfayı açın ve anında analiz yapın."
+                  : "No account, no passwords, no email needed. Instant browser analysis."}
               </p>
             </div>
 
@@ -234,10 +236,12 @@ export default function PricingPage() {
                 <Terminal style={{ width: 18, height: 18 }} />
               </div>
               <h3 style={{ fontFamily: "var(--font-display)", fontSize: "0.85rem", fontWeight: 800, color: "var(--text-main)", margin: 0 }}>
-                Açık Kaynak
+                {lang === "tr" ? "Açık Kaynak" : "Open Source"}
               </h3>
               <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "var(--text-muted)", margin: 0, lineHeight: 1.5 }}>
-                Tüm kaynak kodları GitHub üzerinde MIT lisansıyla özgürce sunulur.
+                {lang === "tr"
+                  ? "Tüm kaynak kodları GitHub üzerinde MIT lisansıyla özgürce sunulur."
+                  : "All frontend and MCP source codes are freely open under MIT license."}
               </p>
             </div>
           </div>
@@ -265,7 +269,7 @@ export default function PricingPage() {
                 transition: "all 0.2s ease",
               }}
             >
-              <span>3D Radara Dön</span>
+              <span>{lang === "tr" ? "3D Radara Dön" : "Back to 3D Radar"}</span>
               <ArrowRight style={{ width: 14, height: 14 }} />
             </Link>
           </div>

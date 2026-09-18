@@ -350,7 +350,7 @@ export function AppSidebar({ activeNav, setActiveNav, lang }: AppSidebarProps) {
                           flexShrink: 0,
                           marginLeft: "auto",
                         }}>
-                          {item.badge}
+                          {item.badge === "CANLI" ? (lang === "tr" ? "CANLI" : "LIVE") : item.badge}
                         </span>
                       )}
                     </button>
@@ -399,6 +399,58 @@ export function AppSidebar({ activeNav, setActiveNav, lang }: AppSidebarProps) {
               </span>
             )}
           </button>
+
+          {/* Star on GitHub link in sidebar */}
+          {!collapsed ? (
+            <a
+              href="https://github.com/dobby-aidev/dona-nova-showcase"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "6px 8px",
+                borderRadius: 8,
+                border: "1px solid rgba(212,175,55,0.3)",
+                background: "rgba(212,175,55,0.06)",
+                textDecoration: "none",
+                transition: "all 0.2s ease",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <span style={{ fontSize: "0.75rem", color: "#FFE082" }}>⭐</span>
+                <span style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.62rem",
+                  fontWeight: 700,
+                  color: "var(--gold-bright)",
+                }}>
+                  {lang === "tr" ? "GitHub'da Yıldız Ver" : "Star on GitHub"}
+                </span>
+              </div>
+              <ArrowUpRight style={{ width: 11, height: 11, color: GOLD }} />
+            </a>
+          ) : (
+            <a
+              href="https://github.com/dobby-aidev/dona-nova-showcase"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "6px",
+                borderRadius: 8,
+                border: "1px solid rgba(212,175,55,0.3)",
+                background: "rgba(212,175,55,0.06)",
+                textDecoration: "none",
+              }}
+              title={lang === "tr" ? "GitHub'da Yıldız Ver ⭐" : "Star on GitHub ⭐"}
+            >
+              <span style={{ fontSize: "0.75rem" }}>⭐</span>
+            </a>
+          )}
 
           {/* Single clean link to Open Data & Transparency */}
           {!collapsed ? (

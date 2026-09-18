@@ -1,12 +1,27 @@
 "use client";
 
-import React from "react";
-import { Scale, CheckCircle2, ShieldCheck, Mail } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Scale, CheckCircle2, Mail } from "lucide-react";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { DocNavTabs } from "@/components/layout/DocNavTabs";
 import { CosmicBackground } from "@/components/layout/CosmicBackground";
 
 export default function TermsPage() {
+  const [lang, setLang] = useState<"tr" | "en">("tr");
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("dona_lang");
+      if (stored === "tr" || stored === "en") setLang(stored);
+    } catch {}
+
+    const handleLangChange = (e: any) => {
+      if (e.detail === "tr" || e.detail === "en") setLang(e.detail);
+    };
+    window.addEventListener("dona:lang-change", handleLangChange);
+    return () => window.removeEventListener("dona:lang-change", handleLangChange);
+  }, []);
+
   return (
     <div style={{
       minHeight: "100vh",
@@ -21,7 +36,7 @@ export default function TermsPage() {
       <CosmicBackground />
 
       <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-        <PublicHeader />
+        <PublicHeader lang={lang} setLang={setLang} />
 
         <main style={{
           flex: 1,
@@ -36,7 +51,7 @@ export default function TermsPage() {
           textAlign: "center",
         }}>
           {/* Centered Document Navigation */}
-          <DocNavTabs />
+          <DocNavTabs lang={lang} />
 
           {/* Hero Section */}
           <div style={{ width: "100%", textAlign: "center", marginBottom: "2.5rem", display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem" }}>
@@ -55,7 +70,7 @@ export default function TermsPage() {
               boxShadow: "0 0 16px rgba(212,175,55,0.15)",
             }}>
               <Scale style={{ width: 14, height: 14 }} />
-              <span>RESMİ AÇIK KAYNAK LİSANSI & KOŞULLARI</span>
+              <span>{lang === "tr" ? "RESMİ AÇIK KAYNAK LİSANSI & KOŞULLARI" : "OFFICIAL OPEN-SOURCE LICENSE & TERMS"}</span>
             </div>
 
             <h1 style={{
@@ -71,7 +86,7 @@ export default function TermsPage() {
               margin: 0,
               lineHeight: 1.2,
             }}>
-              Kullanım Koşulları
+              {lang === "tr" ? "Kullanım Koşulları" : "Terms of Service"}
             </h1>
 
             <p style={{
@@ -83,7 +98,9 @@ export default function TermsPage() {
               margin: "0 auto",
               textAlign: "center",
             }}>
-              DONA NOVA, küresel enerji santralleri ve kritik altyapı verilerini insanlığın şeffaf erişimine sunmak amacıyla MIT Lisansı altında geliştirilen bir açık istihbarat platformudur.
+              {lang === "tr"
+                ? "DONA NOVA, küresel enerji santralleri ve kritik altyapı verilerini insanlığın şeffaf erişimine sunmak amacıyla MIT Lisansı altında geliştirilen bir açık istihbarat platformudur."
+                : "DONA NOVA is an open intelligence platform developed under the MIT License to make global power plants and critical infrastructure telemetry transparently accessible to humanity."}
             </p>
 
             <div style={{
@@ -97,15 +114,15 @@ export default function TermsPage() {
               color: "var(--text-muted)",
             }}>
               <span style={{ borderRadius: "6px", border: "1px solid var(--gold-border)", background: "rgba(0,0,0,0.4)", padding: "3px 8px", color: "var(--text-main)" }}>
-                YÜRÜRLÜK: 2026
+                {lang === "tr" ? "YÜRÜRLÜK: 2026" : "EFFECTIVE: 2026"}
               </span>
               <span>•</span>
               <span style={{ borderRadius: "6px", border: "1px solid var(--gold-border)", background: "rgba(0,0,0,0.4)", padding: "3px 8px", color: "var(--text-main)" }}>
-                SÜRÜM: v1.0 PRODUCTION
+                {lang === "tr" ? "SÜRÜM: v1.0 PRODUCTION" : "VERSION: v1.0 PRODUCTION"}
               </span>
               <span>•</span>
               <span style={{ borderRadius: "6px", border: "1px solid rgba(16,185,129,0.35)", background: "rgba(16,185,129,0.1)", padding: "3px 8px", color: "#34d399", fontWeight: 700 }}>
-                %100 AÇIK VERİ
+                {lang === "tr" ? "%100 AÇIK VERİ" : "100% OPEN DATA"}
               </span>
             </div>
           </div>
@@ -153,7 +170,7 @@ export default function TermsPage() {
                 margin: 0,
                 textAlign: "center",
               }}>
-                Hizmetin Niteliği ve Kapsamı
+                {lang === "tr" ? "Hizmetin Niteliği ve Kapsamı" : "Nature and Scope of Service"}
               </h2>
 
               <p style={{
@@ -165,7 +182,9 @@ export default function TermsPage() {
                 margin: 0,
                 textAlign: "center",
               }}>
-                DONA NOVA ("Platform"), dünya üzerindeki 3.160+ kritik elektrik santrali, baraj, su iletim hattı ve AI veri merkezini 3D küre üzerinde interaktif görselleştiren açık kaynak bir sistemdir.
+                {lang === "tr"
+                  ? "DONA NOVA (\"Platform\"), dünya üzerindeki 3.160+ kritik elektrik santrali, baraj, su iletim hattı ve AI veri merkezini 3D küre üzerinde interaktif görselleştiren açık kaynak bir sistemdir."
+                  : "DONA NOVA (\"Platform\") is an open-source system providing interactive 3D planetary visualization of 3,160+ critical power stations, reservoirs, water aqueducts, and AI compute clusters worldwide."}
               </p>
 
               <p style={{
@@ -177,7 +196,9 @@ export default function TermsPage() {
                 margin: 0,
                 textAlign: "center",
               }}>
-                Veriler U.S. EIA, ENTSO-E, WRI Global Power Plant Database ve Electricity Maps kamu API'larından doğrudan derlenmektedir.
+                {lang === "tr"
+                  ? "Veriler U.S. EIA, ENTSO-E, WRI Global Power Plant Database ve Electricity Maps kamu API'larından doğrudan derlenmektedir."
+                  : "Telemetry feeds are directly aggregated from U.S. EIA, ENTSO-E, WRI Global Power Plant Database, and Electricity Maps public APIs."}
               </p>
             </div>
 
@@ -222,7 +243,7 @@ export default function TermsPage() {
                 margin: 0,
                 textAlign: "center",
               }}>
-                Açık Kaynak Lisansı (MIT License)
+                {lang === "tr" ? "Açık Kaynak Lisansı (MIT License)" : "Open Source License (MIT License)"}
               </h2>
 
               <p style={{
@@ -234,7 +255,9 @@ export default function TermsPage() {
                 margin: 0,
                 textAlign: "center",
               }}>
-                DONA NOVA'nın kaynak kodları ve arayüz bileşenleri GitHub üzerinde MIT lisansı ile tüm geliştiricilere ve araştırmacılara açıktır:
+                {lang === "tr"
+                  ? "DONA NOVA'nın kaynak kodları ve arayüz bileşenleri GitHub üzerinde MIT lisansı ile tüm geliştiricilere ve araştırmacılara açıktır:"
+                  : "DONA NOVA source code and UI architecture are freely open to all developers and researchers under the MIT License on GitHub:"}
               </p>
 
               <div style={{
@@ -246,11 +269,18 @@ export default function TermsPage() {
                 width: "100%",
                 paddingTop: "0.4rem",
               }}>
-                {[
-                  "Akademik araştırmalarda ve ticari analizlerde serbestçe kullanılabilir.",
-                  "Kullanıcı hesabı, kayıt formu veya kredi kartı zorunluluğu kesinlikle yoktur.",
-                  "Kaynak kodunu dilediğiniz gibi fork edebilir ve yerelinizde çalıştırabilirsiniz.",
-                ].map((text, i) => (
+                {(lang === "tr"
+                  ? [
+                      "Akademik araştırmalarda ve ticari analizlerde serbestçe kullanılabilir.",
+                      "Kullanıcı hesabı, kayıt formu veya kredi kartı zorunluluğu kesinlikle yoktur.",
+                      "Kaynak kodunu dilediğiniz gibi fork edebilir ve yerelinizde çalıştırabilirsiniz.",
+                    ]
+                  : [
+                      "Free for academic research, grid analysis, and commercial integrations.",
+                      "Zero sign-up, zero registration forms, and zero credit card requirements.",
+                      "Freely fork the source code and host your own instance locally or on edge.",
+                    ]
+                ).map((text, i) => (
                   <div key={i} style={{
                     display: "flex",
                     alignItems: "center",
@@ -265,6 +295,70 @@ export default function TermsPage() {
                     <span>{text}</span>
                   </div>
                 ))}
+              </div>
+
+              {/* Star on GitHub Callout */}
+              <div style={{
+                marginTop: "1.2rem",
+                borderRadius: "12px",
+                border: "1px solid rgba(212, 175, 55, 0.35)",
+                background: "linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(212, 175, 55, 0.02) 100%)",
+                padding: "1rem 1.4rem",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "0.6rem",
+                maxWidth: "540px",
+                boxShadow: "0 0 24px rgba(212, 175, 55, 0.08)",
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <span style={{ fontSize: "1rem" }}>⭐</span>
+                  <span style={{
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "0.72rem",
+                    fontWeight: 800,
+                    letterSpacing: "0.08em",
+                    color: "var(--gold-bright)",
+                    textTransform: "uppercase",
+                  }}>
+                    {lang === "tr" ? "AÇIK KAYNAK DESTEĞİ & ATIF" : "OPEN-SOURCE SUPPORT & ATTRIBUTION"}
+                  </span>
+                </div>
+                <p style={{
+                  fontFamily: "var(--font-sans)",
+                  fontSize: "0.75rem",
+                  lineHeight: 1.6,
+                  color: "rgba(210, 205, 195, 0.88)",
+                  margin: 0,
+                  textAlign: "center",
+                }}>
+                  {lang === "tr"
+                    ? "MIT Lisansı kapsamında kodu çatallamakta ve kullanmakta tamamen özgürsünüz. Ancak projeyi desteklemek için GitHub depomuza bir yıldız (Star) bırakmanız ve Dona Codex ile Dobby B ismini referans göstermeniz bizi çok mutlu eder!"
+                    : "You are 100% free to fork, build, and use this codebase under the MIT License. If you find value in Dona Nova, dropping a star on GitHub and giving attribution to Dona Codex & Dobby B is the kindest way to support us!"}
+                </p>
+                <a
+                  href="https://github.com/dobby-aidev/dona-nova-showcase"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                    borderRadius: "8px",
+                    border: "1px solid var(--gold-border)",
+                    background: "rgba(212, 175, 55, 0.15)",
+                    padding: "0.4rem 1rem",
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "0.68rem",
+                    fontWeight: 700,
+                    color: "var(--gold-bright)",
+                    textDecoration: "none",
+                    transition: "all 0.2s ease",
+                    marginTop: "0.2rem",
+                  }}
+                >
+                  <span>⭐ {lang === "tr" ? "GitHub'da Yıldız Ver" : "Star Us on GitHub"}</span>
+                </a>
               </div>
             </div>
 
@@ -309,7 +403,7 @@ export default function TermsPage() {
                 margin: 0,
                 textAlign: "center",
               }}>
-                Veri Doğruluğu & İletişim
+                {lang === "tr" ? "Veri Doğruluğu & İletişim" : "Data Accuracy & Official Contact"}
               </h2>
 
               <p style={{
@@ -321,7 +415,9 @@ export default function TermsPage() {
                 margin: 0,
                 textAlign: "center",
               }}>
-                Veriler kamu kurumlarından sağlanmaktadır. Güvenlik bildirimleri ve sorularınız için resmi iletişim adresi:
+                {lang === "tr"
+                  ? "Veriler kamu kurumlarından sağlanmaktadır. Güvenlik bildirimleri ve sorularınız için resmi iletişim adresi:"
+                  : "Telemetry feeds are verified against official authorities. For questions, security inquiries, or dataset updates, reach out to:"}
               </p>
 
               <a

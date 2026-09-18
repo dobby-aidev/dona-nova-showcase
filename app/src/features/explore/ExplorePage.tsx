@@ -264,7 +264,7 @@ export default function ExplorePage({ lang = "tr", activeNav = "explore" }: Expl
               color: "var(--text-muted)",
               textTransform: "uppercase",
             }}>
-              GÜÇ
+              {lang === "tr" ? "GÜÇ" : "POWER"}
             </span>
           </div>
           <span style={{
@@ -332,7 +332,7 @@ export default function ExplorePage({ lang = "tr", activeNav = "explore" }: Expl
               color: "var(--text-muted)",
               textTransform: "uppercase",
             }}>
-              SU
+              {lang === "tr" ? "SU" : "WATER"}
             </span>
           </div>
           <span style={{
@@ -361,7 +361,7 @@ export default function ExplorePage({ lang = "tr", activeNav = "explore" }: Expl
             letterSpacing: "0.06em",
             textAlign: "center",
           }}>
-            %99.8 DOĞRULUK
+            {lang === "tr" ? "%99.8 DOĞRULUK" : "99.8% ACCURACY"}
           </span>
         </div>
       </aside>
@@ -652,6 +652,7 @@ export default function ExplorePage({ lang = "tr", activeNav = "explore" }: Expl
       <AssetDetailPanel
         asset={selectedAsset}
         onClose={() => setSelectedAsset(null)}
+        lang={lang}
       />
 
       {/* Spin animation for loader */}
