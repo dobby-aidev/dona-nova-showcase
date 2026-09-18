@@ -2,17 +2,18 @@
 
 import React from "react";
 import Link from "next/link";
-import { Terminal, Globe2, ShieldCheck, Heart, ArrowRight, ArrowUpRight, CheckCircle2 } from "lucide-react";
+import { Terminal, Globe2, ShieldCheck, Heart, ArrowRight } from "lucide-react";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { DocNavTabs } from "@/components/layout/DocNavTabs";
+import { CosmicBackground } from "@/components/layout/CosmicBackground";
 
 function GithubIcon({ className }: { className?: string }) {
   return (
     <svg
       className={className}
       viewBox="0 0 24 24"
-      width="24"
-      height="24"
+      width="16"
+      height="16"
       stroke="currentColor"
       strokeWidth="2"
       fill="none"
@@ -27,117 +28,263 @@ function GithubIcon({ className }: { className?: string }) {
 
 export default function PricingPage() {
   return (
-    <div className="min-h-screen text-slate-800 flex flex-col bg-slate-50 select-none">
-      <PublicHeader />
+    <div style={{
+      minHeight: "100vh",
+      background: "transparent",
+      color: "var(--text-main)",
+      display: "flex",
+      flexDirection: "column",
+      userSelect: "none",
+      position: "relative",
+    }}>
+      {/* 3D Photorealistic Earth & Starfield in Background */}
+      <CosmicBackground />
+      <div className="dn-grid-bg" style={{ position: "fixed", inset: 0, opacity: 0.25, pointerEvents: "none", zIndex: 1 }} />
 
-      <main className="flex-1 flex flex-col items-center justify-start px-4 sm:px-6 py-12 sm:py-16 w-full max-w-3xl mx-auto">
-        {/* Centered Document Navigation Tabs */}
-        <DocNavTabs />
+      <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+        <PublicHeader />
 
-        {/* Hero Title Section - Perfectly Centered */}
-        <div className="w-full text-center mb-10 space-y-3.5 mt-8">
-          <div className="inline-flex items-center gap-2 rounded-full border border-pink-200 bg-pink-50 px-4 py-1.5 text-xs font-mono font-bold text-pink-700 shadow-sm">
-            <Heart className="h-4 w-4 fill-pink-500 text-pink-500" />
-            <span>%100 Açık Kaynak • Tüm İnsanlığa Ücretsiz</span>
-          </div>
+        <main style={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "flex-start",
+          padding: "2.5rem 1.5rem 4rem 1.5rem",
+          width: "100%",
+          maxWidth: "760px",
+          margin: "0 auto",
+          textAlign: "center",
+        }}>
+          {/* Centered Document Navigation */}
+          <DocNavTabs />
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight font-sans mt-4">
-            Açık Kaynak & Erişim Manifestosu
-          </h1>
-
-          <p className="text-sm text-slate-600 max-w-xl mx-auto leading-relaxed mt-4">
-            DONA NOVA'da ücretli planlar, kilitli özellikler veya üyelik zorunluluğu yoktur. Dünya üzerindeki enerji ve su altyapısı kamu malıdır ve herkese şeffaf olmalıdır.
-          </p>
-
-          <div className="flex flex-wrap items-center justify-center gap-3 text-[11px] font-mono text-slate-500 pt-4">
-            <span className="rounded-md border border-slate-200 bg-white px-2 py-1">Lisans: MIT</span>
-            <span>•</span>
-            <span className="rounded-md border border-slate-200 bg-white px-2 py-1">Maliyet: $0 / Sonsuza Kadar</span>
-            <span>•</span>
-            <span className="rounded-md border border-emerald-200 bg-emerald-50 text-emerald-700 font-bold px-2 py-1">Kayıtsız Doğrudan Erişim</span>
-          </div>
-        </div>
-
-        {/* 3 Value Propositions - Centered Cards */}
-        <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center space-y-3 shadow-sm transition-shadow hover:shadow-md">
-            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 border border-blue-100 text-blue-600">
-              <Globe2 className="h-5 w-5" />
+          {/* Hero Section */}
+          <div style={{ width: "100%", textAlign: "center", marginBottom: "2.5rem", display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem" }}>
+            <div style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              borderRadius: "9999px",
+              border: "1px solid var(--gold-border)",
+              background: "rgba(212, 175, 55, 0.08)",
+              padding: "0.35rem 1rem",
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.68rem",
+              fontWeight: 700,
+              color: "var(--gold-bright)",
+              boxShadow: "0 0 16px rgba(212,175,55,0.15)",
+            }}>
+              <Heart style={{ width: 14, height: 14, color: "var(--gold-bright)" }} />
+              <span>%100 AÇIK KAYNAK • TÜM İNSANLIĞA ÜCRETSİZ</span>
             </div>
-            <h3 className="text-sm font-bold text-slate-900 font-sans">35.000+ Tesis</h3>
-            <p className="text-[12px] text-slate-600 leading-relaxed">
-              Dünya genelindeki tüm elektrik santralleri, su barajları ve veri merkezlerine sınırsız ve engelsiz erişim.
-            </p>
-          </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center space-y-3 shadow-sm transition-shadow hover:shadow-md">
-            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-600">
-              <ShieldCheck className="h-5 w-5" />
+            <h1 style={{
+              fontFamily: "var(--font-display)",
+              fontSize: "2.4rem",
+              fontWeight: 900,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              background: "linear-gradient(135deg, #ffffff 0%, #faeed9 30%, #f5d77f 60%, #d4af37 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+              margin: 0,
+              lineHeight: 1.2,
+            }}>
+              Erişim Manifestosu
+            </h1>
+
+            <p style={{
+              fontFamily: "var(--font-sans)",
+              fontSize: "0.85rem",
+              lineHeight: 1.7,
+              color: "var(--text-muted)",
+              maxWidth: "560px",
+              margin: "0 auto",
+              textAlign: "center",
+            }}>
+              DONA NOVA'da ücretli planlar, kilitli abonelikler veya kurumsal duvarlar yoktur. Dünya üzerindeki enerji ve kritik altyapı verileri herkese eşit ve şeffaftır.
+            </p>
+
+            <div style={{
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "0.6rem",
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.62rem",
+              color: "var(--text-muted)",
+            }}>
+              <span style={{ borderRadius: "6px", border: "1px solid var(--gold-border)", background: "rgba(0,0,0,0.4)", padding: "3px 8px", color: "var(--text-main)" }}>
+                LİSANS: MIT
+              </span>
+              <span>•</span>
+              <span style={{ borderRadius: "6px", border: "1px solid var(--gold-border)", background: "rgba(0,0,0,0.4)", padding: "3px 8px", color: "var(--text-main)" }}>
+                MALİYET: $0 / SONSUZA KADAR
+              </span>
+              <span>•</span>
+              <span style={{ borderRadius: "6px", border: "1px solid rgba(16,185,129,0.35)", background: "rgba(16,185,129,0.1)", padding: "3px 8px", color: "#34d399", fontWeight: 700 }}>
+                KAYITSIZ DOĞRUDAN ERİŞİM
+              </span>
             </div>
-            <h3 className="text-sm font-bold text-slate-900 font-sans">Kayıtsız Erişim</h3>
-            <p className="text-[12px] text-slate-600 leading-relaxed">
-              Hesap açma, e-posta onaylama veya kredi kartı girme zorunluluğu yok. Sayfayı açın ve anında keşfedin.
-            </p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center space-y-3 shadow-sm transition-shadow hover:shadow-md">
-            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-600">
-              <Terminal className="h-5 w-5" />
+          {/* 3 Core Pillars - Centered Grid */}
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr 1fr",
+            gap: "1rem",
+            width: "100%",
+            marginBottom: "2rem",
+          }}>
+            <div style={{
+              borderRadius: "16px",
+              border: "1px solid var(--gold-border)",
+              background: "rgba(6, 7, 12, 0.2)",
+              padding: "1.5rem 1rem",
+              boxShadow: "0 12px 35px rgba(0,0,0,0.4)",
+              backdropFilter: "blur(14px)",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              textAlign: "center",
+              gap: "0.6rem",
+            }}>
+              <div style={{
+                display: "flex",
+                width: 36,
+                height: 36,
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "10px",
+                background: "rgba(212,175,55,0.12)",
+                border: "1px solid var(--gold-border)",
+                color: "var(--gold-bright)",
+              }}>
+                <Globe2 style={{ width: 18, height: 18 }} />
+              </div>
+              <h3 style={{ fontFamily: "var(--font-display)", fontSize: "0.85rem", fontWeight: 800, color: "var(--text-main)", margin: 0 }}>
+                3.160+ Tesis
+              </h3>
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "var(--text-muted)", margin: 0, lineHeight: 1.5 }}>
+                Küresel tüm santraller ve veri merkezlerine engelsiz doğrudan erişim.
+              </p>
             </div>
-            <h3 className="text-sm font-bold text-slate-900 font-sans">Açık Kaynak & Kod</h3>
-            <p className="text-[12px] text-slate-600 leading-relaxed">
-              Tüm kaynak kodları GitHub üzerinde MIT lisansıyla sunulur. Kendi sunucunuzda özgürce çalıştırabilirsiniz.
-            </p>
+
+            <div style={{
+              borderRadius: "16px",
+              border: "1px solid var(--gold-border)",
+              background: "rgba(6, 7, 12, 0.2)",
+              padding: "1.5rem 1rem",
+              boxShadow: "0 12px 35px rgba(0,0,0,0.4)",
+              backdropFilter: "blur(14px)",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              textAlign: "center",
+              gap: "0.6rem",
+            }}>
+              <div style={{
+                display: "flex",
+                width: 36,
+                height: 36,
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "10px",
+                background: "rgba(16,185,129,0.12)",
+                border: "1px solid rgba(16,185,129,0.35)",
+                color: "#34d399",
+              }}>
+                <ShieldCheck style={{ width: 18, height: 18 }} />
+              </div>
+              <h3 style={{ fontFamily: "var(--font-display)", fontSize: "0.85rem", fontWeight: 800, color: "var(--text-main)", margin: 0 }}>
+                Sıfır Kayıt
+              </h3>
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "var(--text-muted)", margin: 0, lineHeight: 1.5 }}>
+                Hesap açma, e-posta veya kart gerekmez. Sayfayı açın ve anında analiz yapın.
+              </p>
+            </div>
+
+            <div style={{
+              borderRadius: "16px",
+              border: "1px solid var(--gold-border)",
+              background: "rgba(6, 7, 12, 0.2)",
+              padding: "1.5rem 1rem",
+              boxShadow: "0 12px 35px rgba(0,0,0,0.4)",
+              backdropFilter: "blur(14px)",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              textAlign: "center",
+              gap: "0.6rem",
+            }}>
+              <div style={{
+                display: "flex",
+                width: 36,
+                height: 36,
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "10px",
+                background: "rgba(212,175,55,0.12)",
+                border: "1px solid var(--gold-border)",
+                color: "var(--gold-bright)",
+              }}>
+                <Terminal style={{ width: 18, height: 18 }} />
+              </div>
+              <h3 style={{ fontFamily: "var(--font-display)", fontSize: "0.85rem", fontWeight: 800, color: "var(--text-main)", margin: 0 }}>
+                Açık Kaynak
+              </h3>
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "var(--text-muted)", margin: 0, lineHeight: 1.5 }}>
+                Tüm kaynak kodları GitHub üzerinde MIT lisansıyla özgürce sunulur.
+              </p>
+            </div>
           </div>
-        </div>
 
-        {/* Action Button Strip - Centered */}
-        <div className="w-full flex flex-wrap items-center justify-center gap-3.5 pt-4">
-          <Link
-            href="/"
-            className="flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2.5 text-sm transition-all shadow-md"
-          >
-            <span>Radarı Keşfet</span>
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-
-          <a
-            href="https://github.com/dobby-aidev/dona-nova-showcase"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 font-semibold px-5 py-2.5 text-sm transition-all shadow-sm"
-          >
-            <GithubIcon className="h-4 w-4" />
-            <span>GitHub'da İncele</span>
-          </a>
-
-          <a
-            href="https://donacodex.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-all shadow-sm"
-          >
-            <span>donacodex.com</span>
-            <ArrowUpRight className="h-4 w-4 text-slate-500" />
-          </a>
-        </div>
-
-        {/* Footer Note */}
-        <div className="text-center pt-16 pb-8 text-xs font-mono text-slate-500 space-y-2">
-          <p>DONA NOVA • An Open Source Initiative by Dona Codex & dobby</p>
-          <div className="flex items-center justify-center gap-4 text-slate-700">
-            <a href="https://donacodex.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 hover:underline inline-flex items-center gap-1 font-semibold transition-colors">
-              <span>donacodex.com</span>
-              <ArrowUpRight className="h-3 w-3" />
-            </a>
-            <span className="text-slate-300">•</span>
-            <a href="https://dobby.donacodex.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 hover:underline inline-flex items-center gap-1 font-semibold transition-colors">
-              <span>dobby.donacodex.com</span>
-              <ArrowUpRight className="h-3 w-3" />
-            </a>
+          {/* Focused Action Button */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "1rem", width: "100%" }}>
+            <Link
+              href="/"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.6rem",
+                borderRadius: "10px",
+                border: "none",
+                background: "linear-gradient(135deg, #d4af37 0%, #f3dfa2 50%, #d4af37 100%)",
+                padding: "0.7rem 1.6rem",
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.75rem",
+                fontWeight: 800,
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+                color: "#07080e",
+                textDecoration: "none",
+                boxShadow: "0 4px 20px rgba(212,175,55,0.35)",
+                transition: "all 0.2s ease",
+              }}
+            >
+              <span>3D Radara Dön</span>
+              <ArrowRight style={{ width: 14, height: 14 }} />
+            </Link>
           </div>
-        </div>
-      </main>
+
+          {/* Minimal Centered Footer */}
+          <div style={{
+            textAlign: "center",
+            paddingTop: "3.5rem",
+            paddingBottom: "2rem",
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.62rem",
+            letterSpacing: "0.1em",
+            color: "var(--text-muted)",
+            textTransform: "uppercase",
+          }}>
+            <p style={{ letterSpacing: "0.08em" }}>© 2026 Dona Codex. All rights reserved.</p>
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

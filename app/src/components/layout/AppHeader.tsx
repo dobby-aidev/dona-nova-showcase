@@ -1,26 +1,6 @@
 "use client";
 
 import React from "react";
-import { ChevronRight, Sparkles, Languages, ExternalLink, Star } from "lucide-react";
-
-function GithubIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      width="24"
-      height="24"
-      stroke="currentColor"
-      strokeWidth="2"
-      fill="none"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
-      <path d="M9 18c-4.51 2-5-2-7-2" />
-    </svg>
-  );
-}
 
 interface AppHeaderProps {
   lang: "tr" | "en";
@@ -31,71 +11,136 @@ export function AppHeader({ lang, setLang }: AppHeaderProps) {
   return (
     <header
       id="app-header"
-      className="flex h-[64px] w-full shrink-0 items-center justify-between px-6 z-20 select-none bg-white/70 backdrop-blur-xl border-b border-slate-200"
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        padding: "0.8rem 2rem",
+        display: "grid",
+        gridTemplateColumns: "1fr auto 1fr",
+        alignItems: "center",
+        background: "transparent",
+        border: "none",
+        borderBottom: "none",
+        boxShadow: "none",
+        pointerEvents: "none",
+        zIndex: 40,
+        boxSizing: "border-box",
+      }}
     >
-      {/* Left: Telemetry Breadcrumb */}
-      <div className="flex items-center gap-2.5 text-xs">
-        <span className="text-slate-500 font-mono tracking-wider text-[11px] uppercase">
-          {lang === "tr" ? "DONA NOVA" : "DONA NOVA"}
-        </span>
-        <ChevronRight className="h-3 w-3 text-slate-400" />
-        <span className="text-slate-800 font-black tracking-tight flex items-center gap-2 text-[12.5px]">
-          <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
-          {lang === "tr" ? "Açık Altyapı Radarı (35,000+ Tesis)" : "Open Infrastructure Radar (35,000+ Assets)"}
-        </span>
+      {/* LEFT: Completely Empty (per user request: "sol üst menidek sistem çevrim içi butonu mtnein tammen kaldıra") */}
+      <div style={{ gridColumn: 1 }} />
+
+      {/* CENTER: Just Logo + DONA NOVA Name (No frames, exactly like the skill) */}
+      <div style={{ gridColumn: 2, justifySelf: "center", pointerEvents: "auto" }}>
+        <div
+          className="brand-group"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "0.75rem",
+            cursor: "pointer",
+            background: "transparent",
+            border: "none",
+            boxShadow: "none",
+          }}
+          title="DONA NOVA"
+        >
+          {/* Custom Dona Nova Supernova Crest */}
+          <div style={{ width: 30, height: 30, flexShrink: 0 }}>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="100%" height="100%">
+              <defs>
+                <linearGradient id="hdrStarGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#FFFFFF" />
+                  <stop offset="25%" stopColor="#FFE082" />
+                  <stop offset="60%" stopColor="#F5D77F" />
+                  <stop offset="85%" stopColor="#D4AF37" />
+                  <stop offset="100%" stopColor="#8C6D23" />
+                </linearGradient>
+              </defs>
+              <circle cx="16" cy="16" r="11" fill="none" stroke="#D4AF37" strokeWidth="1" opacity="0.55" />
+              <path d="M16 7.5 L17.8 14.2 L24.5 16 L17.8 17.8 L16 24.5 L14.2 17.8 L7.5 16 L14.2 14.2 Z" fill="#D4AF37" opacity="0.85" />
+              <path d="M16 2.5 Q16 16 29.5 16 Q16 16 16 29.5 Q16 16 2.5 16 Q16 16 16 2.5 Z" fill="url(#hdrStarGold)" />
+              <circle cx="16" cy="16" r="3.2" fill="#07080e" stroke="#FFF" strokeWidth="0.8" />
+              <circle cx="16" cy="16" r="1.8" fill="#FFFFFF" />
+            </svg>
+          </div>
+
+          {/* Clean "DONA NOVA" Text */}
+          <span
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: "1.22rem",
+              fontWeight: 900,
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              background: "linear-gradient(135deg, #ffffff 0%, #faeed9 30%, #f5d77f 60%, #d4af37 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+              filter: "drop-shadow(0 2px 10px rgba(212,175,55,0.4))",
+            }}
+          >
+            DONA NOVA
+          </span>
+        </div>
       </div>
 
-      {/* Right: Portfolio + Ecosystem + GitHub + Language */}
-      <div className="flex items-center gap-2.5 ml-auto">
-        {/* Creator Portfolio badge: Dobby */}
-        <a
-          href="https://dobby.donacodex.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hidden md:flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 px-3 py-1.5 text-[11.5px] font-bold text-slate-700 hover:text-slate-900 transition-all shadow-sm group"
-          title={lang === "tr" ? "Geliştirici Portföyü & Resmi Sitesi" : "Creator Official Portfolio"}
+      {/* RIGHT: Language Selector (Completely frame-free & borderless, matching skill) */}
+      <div style={{ gridColumn: 3, justifySelf: "end", pointerEvents: "auto" }}>
+        <div
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "0.35rem",
+            padding: "0.2rem 0.4rem",
+            background: "transparent",
+            border: "none",
+          }}
         >
-          <span className="h-2 w-2 rounded-full bg-blue-500" />
-          <span>dobby Portföy</span>
-          <ExternalLink className="h-3 w-3 text-slate-400 group-hover:text-blue-600 transition-colors" />
-        </a>
-
-        {/* Dona Codex Ecosystem badge */}
-        <a
-          href="https://donacodex.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hidden sm:flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 px-3 py-1.5 text-[11.5px] font-bold text-slate-700 hover:text-slate-900 transition-all shadow-sm group"
-          title={lang === "tr" ? "Dona Codex Resmi Platformu" : "Dona Codex Official Platform"}
-        >
-          <span className="text-slate-900 font-mono font-bold">DC</span>
-          <span>Dona Codex</span>
-          <ExternalLink className="h-3 w-3 text-slate-400 group-hover:text-slate-900 transition-colors" />
-        </a>
-
-        {/* GitHub Open Source Link */}
-        <a
-          href="https://github.com/dobby-aidev/dona-nova-showcase"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-800 transition-all shadow-sm"
-          title={lang === "tr" ? "GitHub'da Açık Kaynak İncele ve Yıldız Ver" : "Star on GitHub"}
-        >
-          <GithubIcon className="h-3.5 w-3.5 text-slate-600" />
-          <span className="font-mono text-[11px]">GitHub</span>
-          <div className="flex items-center gap-0.5 text-amber-500 ml-1">
-            <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
-          </div>
-        </a>
-
-        {/* TR / EN Switcher */}
-        <button
-          onClick={() => setLang(lang === "tr" ? "en" : "tr")}
-          className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 px-3 py-1.5 text-xs font-mono font-bold text-slate-700 transition-all shadow-sm"
-        >
-          <Languages className="h-3.5 w-3.5 text-slate-500" />
-          <span>{lang === "tr" ? "TR" : "EN"}</span>
-        </button>
+          <button
+            id="lang-btn-tr"
+            onClick={() => setLang("tr")}
+            aria-label="Türkçe"
+            style={{
+              background: "transparent",
+              border: "none",
+              padding: "0.2rem 0.4rem",
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.7rem",
+              fontWeight: 700,
+              letterSpacing: "0.12em",
+              color: lang === "tr" ? "var(--gold-primary)" : "rgba(210,205,195,0.45)",
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+              textShadow: lang === "tr" ? "0 0 10px rgba(212,175,55,0.7)" : "none",
+            }}
+          >
+            TR
+          </button>
+          <span style={{ color: "rgba(212,175,55,0.25)", fontFamily: "var(--font-mono)", fontSize: "0.6rem" }}>/</span>
+          <button
+            id="lang-btn-en"
+            onClick={() => setLang("en")}
+            aria-label="English"
+            style={{
+              background: "transparent",
+              border: "none",
+              padding: "0.2rem 0.4rem",
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.7rem",
+              fontWeight: 700,
+              letterSpacing: "0.12em",
+              color: lang === "en" ? "var(--gold-primary)" : "rgba(210,205,195,0.45)",
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+              textShadow: lang === "en" ? "0 0 10px rgba(212,175,55,0.7)" : "none",
+            }}
+          >
+            EN
+          </button>
+        </div>
       </div>
     </header>
   );

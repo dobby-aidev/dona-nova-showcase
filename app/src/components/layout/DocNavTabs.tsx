@@ -3,31 +3,40 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowLeft, Scale, ShieldCheck, Database, Terminal } from "lucide-react";
+import { Scale, ShieldCheck, Database, Terminal } from "lucide-react";
 
 const DOC_TABS = [
-  { href: "/terms", label: "Kullanım Koşulları", icon: Scale },
-  { href: "/privacy", label: "Gizlilik Politikası", icon: ShieldCheck },
-  { href: "/data-sources", label: "Açık Veri Kaynakları", icon: Database },
-  { href: "/pricing", label: "Açık Kaynak Manifestosu", icon: Terminal },
+  { href: "/data-sources", label: "Veri Kaynakları", icon: Database },
+  { href: "/pricing",      label: "Açık Kaynak",     icon: Terminal },
+  { href: "/terms",        label: "Kullanım Koşulları", icon: Scale },
+  { href: "/privacy",      label: "Gizlilik & Güvenlik", icon: ShieldCheck },
 ];
 
 export function DocNavTabs() {
   const pathname = usePathname();
 
   return (
-    <div className="w-full flex flex-col items-center gap-3.5 mb-10 select-none">
-      {/* Return to Globe Button */}
-      <Link
-        href="/"
-        className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white hover:bg-slate-50 px-4 py-1.5 text-xs font-mono font-bold text-slate-700 hover:text-slate-900 transition-all shadow-sm group"
-      >
-        <ArrowLeft className="h-3.5 w-3.5 group-hover:-translate-x-1 transition-transform" />
-        <span>NASA 3D Küresine Dön</span>
-      </Link>
-
-      {/* Centered Document Tab Strip */}
-      <nav className="flex flex-wrap items-center justify-center gap-1.5 p-1.5 rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <div style={{
+      width: "100%",
+      display: "flex",
+      justifyContent: "center",
+      marginBottom: "2rem",
+      userSelect: "none",
+    }}>
+      {/* Sleek Centered Document Tab Strip */}
+      <nav style={{
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 4,
+        padding: "4px",
+        borderRadius: 14,
+        border: "1px solid var(--gold-border)",
+        background: "rgba(6, 7, 12, 0.25)",
+        backdropFilter: "blur(14px)",
+        WebkitBackdropFilter: "blur(14px)",
+        boxShadow: "0 8px 32px rgba(0,0,0,0.4), 0 0 16px rgba(212,175,55,0.05)",
+      }}>
         {DOC_TABS.map((tab) => {
           const Icon = tab.icon;
           const isActive = pathname === tab.href;
@@ -36,13 +45,29 @@ export function DocNavTabs() {
             <Link
               key={tab.href}
               href={tab.href}
-              className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold transition-all duration-200 ${
-                isActive
-                  ? "bg-blue-50 text-blue-700 border border-blue-200 shadow-sm"
-                  : "text-slate-500 hover:text-slate-900 hover:bg-slate-50 border border-transparent"
-              }`}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                borderRadius: 10,
+                padding: "6px 14px",
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.68rem",
+                fontWeight: isActive ? 800 : 500,
+                letterSpacing: "0.06em",
+                textDecoration: "none",
+                transition: "all 0.18s cubic-bezier(0.16, 1, 0.3, 1)",
+                border: isActive ? "1px solid var(--gold-border)" : "1px solid transparent",
+                background: isActive ? "rgba(212, 175, 55, 0.14)" : "transparent",
+                color: isActive ? "var(--gold-bright)" : "var(--text-muted)",
+                boxShadow: isActive ? "0 0 14px rgba(212, 175, 55, 0.25)" : "none",
+              }}
             >
-              <Icon className={`h-3.5 w-3.5 ${isActive ? "text-blue-600" : "text-slate-400"}`} />
+              <Icon style={{
+                width: 13,
+                height: 13,
+                color: isActive ? "var(--gold-primary)" : "var(--text-muted)",
+              }} />
               <span>{tab.label}</span>
             </Link>
           );

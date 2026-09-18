@@ -1,14 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   X, MapPin, Zap, Building2, Calendar, ExternalLink,
-  TrendingUp, Globe2, ArrowUpRight, Share2, Bookmark,
-  ChevronRight, Activity, BarChart3, Network
+  Share2, Bookmark, Check, Activity, Network
 } from "lucide-react";
-
-import { DataBadge } from "@/components/ui/DataBadge";
 import type { DataSourceMeta } from "@/types/infrastructure";
 
 interface Asset {
@@ -33,19 +30,42 @@ interface AssetDetailPanelProps {
 }
 
 const STATUS_STYLE = {
-  operational:  { label: "Aktif Üretimde",  bg: "hsl(145 65% 42% / 0.15)", color: "hsl(145 65% 58%)",  dot: "hsl(145 65% 55%)" },
-  construction: { label: "İnşaat / Test Aşamasında", bg: "hsl(38 95% 55% / 0.15)",  color: "hsl(38 80% 65%)",   dot: "hsl(38 95% 60%)"  },
-  offline:      { label: "Bakımda / Pasif",      bg: "hsl(0 80% 58% / 0.15)",   color: "hsl(0 70% 65%)",    dot: "hsl(0 80% 60%)"  },
+  operational:  { label: "Aktif Üretimde",             bg: "rgba(16,185,129,0.12)",  color: "#34d399", dot: "#34d399" },
+  construction: { label: "İnşaat / Test Aşamasında",  bg: "rgba(212,175,55,0.12)",  color: "#f5d77f", dot: "#d4af37" },
+  offline:      { label: "Bakımda / Pasif",            bg: "rgba(239,68,68,0.12)",   color: "#f87171", dot: "#ef4444" },
 };
 
 function MetricRow({ label, value, icon: Icon }: { label: string; value: string; icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }> }) {
   return (
-    <div className="flex items-center justify-between gap-3 py-2.5" style={{ borderBottom: "1px solid hsl(220 15% 10%)" }}>
-      <div className="flex items-center gap-2 min-w-0 flex-shrink-0">
-        <Icon className="h-3.5 w-3.5 flex-shrink-0" style={{ color: "hsl(215 15% 40%)" }} />
-        <span className="text-[11.5px] truncate" style={{ color: "hsl(215 15% 50%)" }}>{label}</span>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 12,
+        padding: "8px 0",
+        borderBottom: "1px solid var(--gold-border)",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0, flexShrink: 0 }}>
+        <Icon style={{ width: 13, height: 13, color: "var(--gold-primary)", flexShrink: 0 }} />
+        <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", fontFamily: "var(--font-mono)", letterSpacing: "0.04em" }}>
+          {label}
+        </span>
       </div>
-      <span className="text-[12px] font-semibold truncate max-w-[200px] text-right" style={{ color: "hsl(210 35% 88%)" }} title={value}>
+      <span
+        style={{
+          fontSize: "0.75rem",
+          fontWeight: 600,
+          color: "var(--text-main)",
+          textAlign: "right",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
+          maxWidth: "220px",
+        }}
+        title={value}
+      >
         {value}
       </span>
     </div>
@@ -54,15 +74,78 @@ function MetricRow({ label, value, icon: Icon }: { label: string; value: string;
 
 export function AssetDetailPanel({ asset, onClose }: AssetDetailPanelProps) {
   const [saved, setSaved] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [focused, setFocused] = useState(false);
+
+  // Check saved state from localStorage
+  useEffect(() => {
+    if (!asset) return;
+    try {
+      const savedList = JSON.parse(localStorage.getItem("dona_saved_assets") || "[]");
+      setSaved(savedList.includes(asset.name));
+    } catch {}
+  }, [asset]);
+
+  const toggleSave = () => {
+    if (!asset) return;
+    try {
+      const savedList = JSON.parse(localStorage.getItem("dona_saved_assets") || "[]");
+      let nextList: string[];
+      if (saved) {
+        nextList = savedList.filter((n: string) => n !== asset.name);
+      } else {
+        nextList = [...savedList, asset.name];
+      }
+      localStorage.setItem("dona_saved_assets", JSON.stringify(nextList));
+      setSaved(!saved);
+    } catch {
+      setSaved(!saved);
+    }
+  };
+
+  const handleShare = () => {
+    if (!asset) return;
+    const url = typeof window !== "undefined" ? `${window.location.origin}/#asset=${encodeURIComponent(asset.name)}` : "";
+    if (navigator?.clipboard) {
+      navigator.clipboard.writeText(url).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2200);
+      }).catch(() => {});
+    }
+  };
+
+  const handleFocusOnGlobe = () => {
+    if (!asset) return;
+    setFocused(true);
+    setTimeout(() => setFocused(false), 2400);
+
+    // Dispatch global event for GlobeCanvas to focus/re-orient if coordinates exist
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("dona:focus-asset", { detail: asset }));
+    }
+  };
+
+  const handleOpenExternal = () => {
+    if (!asset) return;
+    let targetUrl = "https://github.com/wri/global-power-plant-database";
+    if (asset.coordinates) {
+      // Direct Satellite View via Google Maps Coordinates
+      const cleanCoords = asset.coordinates.replace(/[^0-9.,-]/g, "");
+      targetUrl = `https://www.google.com/maps?q=${encodeURIComponent(asset.coordinates)}&t=k`;
+    } else {
+      targetUrl = `https://www.google.com/search?q=${encodeURIComponent(asset.name + " " + asset.country + " infrastructure")}`;
+    }
+    window.open(targetUrl, "_blank", "noopener,noreferrer");
+  };
 
   if (!asset) return null;
-  const s = STATUS_STYLE[asset.status];
+  const s = STATUS_STYLE[asset.status] ?? STATUS_STYLE.operational;
 
   return (
     <AnimatePresence>
       {asset && (
         <>
-          {/* Backdrop */}
+          {/* Transparent Click-Catcher (NO blur, crystal clear background per user request) */}
           <motion.div
             key="backdrop"
             initial={{ opacity: 0 }}
@@ -70,221 +153,364 @@ export function AssetDetailPanel({ asset, onClose }: AssetDetailPanelProps) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={onClose}
-            className="fixed inset-0 z-40"
-            style={{ background: "hsl(222 20% 4% / 0.6)", backdropFilter: "blur(4px)" }}
+            style={{
+              position: "fixed",
+              inset: 0,
+              zIndex: 48,
+              background: "transparent",
+              backdropFilter: "none",
+              WebkitBackdropFilter: "none",
+            }}
           />
 
-          {/* Floating Glass Panel */}
+          {/* Floating Glass Panel — Perfectly Sized & Positioned */}
           <motion.aside
             key="panel"
             initial={{ x: "100%", opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: "100%", opacity: 0 }}
-            transition={{ type: "spring", stiffness: 340, damping: 32 }}
-            className="fixed right-4 top-4 bottom-4 z-50 flex h-[calc(100vh-2rem)] w-full max-w-[400px] flex-col overflow-hidden rounded-3xl border border-slate-800/90 bg-slate-950/92 backdrop-blur-3xl shadow-2xl"
+            transition={{ type: "spring", stiffness: 350, damping: 32 }}
+            style={{
+              position: "fixed",
+              right: 16,
+              top: 16,
+              bottom: 16,
+              zIndex: 55,
+              display: "flex",
+              height: "calc(100vh - 32px)",
+              width: "100%",
+              maxWidth: 390,
+              flexDirection: "column",
+              overflow: "hidden",
+              borderRadius: 18,
+              border: "1px solid var(--gold-border)",
+              background: "rgba(8, 9, 15, 0.65)",
+              backdropFilter: "blur(32px)",
+              WebkitBackdropFilter: "blur(32px)",
+              boxShadow: "0 20px 60px rgba(0,0,0,0.85), 0 0 28px rgba(212,175,55,0.1)",
+              userSelect: "none",
+            }}
           >
-            {/* Header */}
-            <div className="flex items-start justify-between gap-4 p-5 pb-4"
-              style={{ borderBottom: "1px solid hsl(220 15% 10%)" }}>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2 mb-2">
+            {/* Header: Clean 2-Row Layout Preventing Overlap */}
+            <div
+              style={{
+                padding: "14px 16px",
+                borderBottom: "1px solid var(--gold-border)",
+                background: "rgba(10, 11, 18, 0.35)",
+                flexShrink: 0,
+              }}
+            >
+              {/* Row 1: Status Pill + Action Buttons */}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: 8 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
                   <span
-                    className="flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-bold"
-                    style={{ background: s.bg, color: s.color }}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 5,
+                      borderRadius: 9999,
+                      padding: "2px 8px",
+                      fontSize: "0.62rem",
+                      fontWeight: 700,
+                      background: s.bg,
+                      color: s.color,
+                      border: `1px solid ${s.color}40`,
+                    }}
                   >
-                    <span className="h-1.5 w-1.5 rounded-full" style={{ background: s.dot, animation: asset.status === "operational" ? "dn-pulse-dot 2s ease-in-out infinite" : undefined }} />
+                    <span style={{ width: 5, height: 5, borderRadius: "50%", background: s.dot, animation: asset.status === "operational" ? "dn-pulse-glow 2s infinite" : undefined }} />
                     {s.label}
                   </span>
-                  <span className="rounded-full px-2 py-0.5 text-[10px] font-medium"
-                    style={{ background: "hsl(220 15% 10%)", color: "hsl(215 15% 45%)" }}>
-                    {asset.type}
-                  </span>
                 </div>
-                <h2 className="text-[16px] font-bold leading-snug" style={{ color: "hsl(210 40% 94%)" }}>
-                  {asset.name}
-                </h2>
-                <div className="mt-1.5 flex items-center gap-1.5">
-                  <span>{asset.flagEmoji}</span>
-                  <span className="text-[12px]" style={{ color: "hsl(215 15% 48%)" }}>{asset.country}</span>
+
+                {/* Right Action Icons: Bookmark, Share, Close */}
+                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                  <button
+                    onClick={toggleSave}
+                    style={{
+                      display: "flex",
+                      width: 28,
+                      height: 28,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: 8,
+                      border: "1px solid var(--gold-border)",
+                      background: saved ? "rgba(212,175,55,0.2)" : "rgba(212,175,55,0.04)",
+                      color: saved ? "var(--gold-bright)" : "var(--text-muted)",
+                      cursor: "pointer",
+                      transition: "all 0.18s ease",
+                    }}
+                    title={saved ? "Kayıtlardan Çıkar" : "Tesis Kaydet"}
+                    aria-label="Kaydet"
+                  >
+                    <Bookmark style={{ width: 13, height: 13, fill: saved ? "currentColor" : "none" }} />
+                  </button>
+
+                  <button
+                    onClick={handleShare}
+                    style={{
+                      display: "flex",
+                      width: 28,
+                      height: 28,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: 8,
+                      border: "1px solid var(--gold-border)",
+                      background: copied ? "rgba(16,185,129,0.2)" : "rgba(212,175,55,0.04)",
+                      color: copied ? "#34d399" : "var(--text-muted)",
+                      cursor: "pointer",
+                      transition: "all 0.18s ease",
+                    }}
+                    title={copied ? "Kopyalandı!" : "Bağlantıyı Paylaş"}
+                    aria-label="Paylaş"
+                  >
+                    {copied ? <Check style={{ width: 13, height: 13 }} /> : <Share2 style={{ width: 13, height: 13 }} />}
+                  </button>
+
+                  <button
+                    onClick={onClose}
+                    style={{
+                      display: "flex",
+                      width: 28,
+                      height: 28,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: 8,
+                      border: "1px solid var(--gold-border)",
+                      background: "rgba(212,175,55,0.04)",
+                      color: "var(--text-muted)",
+                      cursor: "pointer",
+                      transition: "all 0.18s ease",
+                      marginLeft: 2,
+                    }}
+                    title="Kapat"
+                    aria-label="Kapat"
+                  >
+                    <X style={{ width: 13, height: 13 }} />
+                  </button>
                 </div>
               </div>
-              <div className="flex items-center gap-1.5 shrink-0 mt-1">
-                <button
-                  onClick={() => setSaved(s => !s)}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-white/[0.05]"
-                  aria-label="Save asset"
+
+              {/* Row 2: Asset Title & Type */}
+              <h2
+                style={{
+                  fontFamily: "var(--font-sans)",
+                  fontSize: "0.98rem",
+                  fontWeight: 800,
+                  color: "var(--text-main)",
+                  margin: 0,
+                  lineHeight: 1.3,
+                  wordBreak: "break-word",
+                }}
+              >
+                {asset.name}
+              </h2>
+
+              {/* Row 3: Meta tags: Type + Country */}
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 6, flexWrap: "wrap" }}>
+                <span
+                  style={{
+                    borderRadius: 6,
+                    padding: "1px 6px",
+                    fontSize: "0.58rem",
+                    fontWeight: 600,
+                    background: "rgba(212,175,55,0.08)",
+                    border: "1px solid var(--gold-border)",
+                    color: "var(--gold-bright)",
+                    fontFamily: "var(--font-mono)",
+                    letterSpacing: "0.04em",
+                  }}
                 >
-                  <Bookmark
-                    className="h-4 w-4"
-                    style={{ color: saved ? "hsl(220 85% 65%)" : "hsl(215 15% 40%)" }}
-                    fill={saved ? "hsl(220 85% 65%)" : "none"}
-                  />
-                </button>
-                <button
-                  className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-white/[0.05]"
-                  aria-label="Share"
-                >
-                  <Share2 className="h-4 w-4" style={{ color: "hsl(215 15% 40%)" }} />
-                </button>
-                <button
-                  onClick={onClose}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-white/[0.05]"
-                  aria-label="Close"
-                >
-                  <X className="h-4 w-4" style={{ color: "hsl(215 15% 40%)" }} />
-                </button>
+                  {asset.type}
+                </span>
+
+                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                  <span style={{ fontSize: "0.85rem" }}>{asset.flagEmoji}</span>
+                  <span style={{ color: "var(--text-muted)", fontSize: "0.68rem", fontFamily: "var(--font-mono)" }}>
+                    {asset.country}
+                  </span>
+                </div>
               </div>
             </div>
 
-            {/* Scrollable content */}
-            <div className="flex-1 overflow-y-auto">
-
-              {/* Data Source Badge */}
-              {asset.dataMeta && (
-                <div className="px-5 pt-4">
-                  <DataBadge meta={asset.dataMeta} full />
+            {/* Scrollable Content Body */}
+            <div style={{ flex: 1, overflowY: "auto", padding: "14px 16px", display: "flex", flexDirection: "column", gap: 14 }}>
+              {/* Telemetry Registry Warning / Source */}
+              <div
+                style={{
+                  borderRadius: 10,
+                  border: "1px solid rgba(212,175,55,0.25)",
+                  background: "rgba(212,175,55,0.04)",
+                  padding: "10px 12px",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 4,
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <span style={{ color: "var(--gold-bright)", fontSize: "0.75rem" }}>⚠️</span>
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.58rem", fontWeight: 700, color: "var(--gold-bright)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                    VERİ KAYNAĞI • WRI & OPEN REGISTRY
+                  </span>
                 </div>
-              )}
-
-              {/* Description */}
-              {asset.description && (
-                <div className="px-5 pt-4 pb-3">
-                  <p className="text-[13px] leading-relaxed" style={{ color: "hsl(215 15% 52%)" }}>
-                    {asset.description}
-                  </p>
-                </div>
-              )}
-
-              {/* Key Metrics */}
-              <div className="px-5 pb-2">
-                <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-blue-400">
-                  Temel Tesis Verileri
+                <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "rgba(210,205,195,0.85)", margin: 0, lineHeight: 1.5 }}>
+                  {asset.country} bölgesinde yer alan {asset.capacity} kapasiteli doğrulanmış altyapı tesisi.
                 </p>
-                <MetricRow label="Kurulu Kapasite" value={asset.capacity} icon={Zap} />
-                <MetricRow label="Sahibi / İşletmeci" value={asset.owner} icon={Building2} />
-                {asset.coordinates && (
-                  <MetricRow label="Coğrafi Konum (GPS)" value={asset.coordinates} icon={MapPin} />
-                )}
-                {asset.completionYear && (
-                  <MetricRow label="Hizmete Giriş Yılı" value={asset.completionYear} icon={Calendar} />
-                )}
-                {asset.investment && (
-                  <MetricRow label="Toplam Yatırım Tutarı" value={asset.investment} icon={TrendingUp} />
-                )}
-                <MetricRow label="Bağlı Olduğu Ülke" value={asset.country} icon={Globe2} />
               </div>
 
-              {/* Performance chart placeholder */}
-              <div className="mx-5 my-4 rounded-xl overflow-hidden"
-                style={{ border: "1px solid hsl(220 15% 11%)" }}>
-                <div className="flex items-center justify-between px-4 py-3"
-                  style={{ borderBottom: "1px solid hsl(220 15% 10%)" }}>
-                  <div className="flex items-center gap-2">
-                    <BarChart3 className="h-3.5 w-3.5" style={{ color: "hsl(220 85% 65%)" }} />
-                    <span className="text-[12px] font-semibold" style={{ color: "hsl(210 35% 78%)" }}>
-                      Output Performance
-                    </span>
-                  </div>
-                  <span className="text-[10px]" style={{ color: "hsl(215 12% 38%)" }}>Last 12 months</span>
-                </div>
-                {/* SVG sparkline */}
-                <div className="px-4 py-4" style={{ background: "hsl(222 20% 6%)" }}>
-                  <svg viewBox="0 0 320 80" className="w-full" style={{ height: 80 }}>
-                    <defs>
-                      <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="hsl(220 95% 60%)" stopOpacity="0.3" />
-                        <stop offset="100%" stopColor="hsl(220 95% 60%)" stopOpacity="0" />
-                      </linearGradient>
-                    </defs>
-                    {/* Area fill */}
-                    <path
-                      d="M0 60 C30 50, 50 30, 80 35 C110 40, 130 20, 160 25 C190 30, 210 15, 240 20 C270 25, 295 10, 320 8 L320 80 L0 80 Z"
-                      fill="url(#chartGrad)"
-                    />
-                    {/* Line */}
-                    <path
-                      d="M0 60 C30 50, 50 30, 80 35 C110 40, 130 20, 160 25 C190 30, 210 15, 240 20 C270 25, 295 10, 320 8"
-                      fill="none"
-                      stroke="hsl(220 95% 65%)"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                    />
-                    {/* Dot at end */}
-                    <circle cx="320" cy="8" r="3.5" fill="hsl(220 95% 65%)" />
-                    <circle cx="320" cy="8" r="6" fill="hsl(220 95% 65%)" fillOpacity="0.2" />
-                  </svg>
-                  <div className="flex justify-between mt-1">
-                    {["Jan", "Mar", "May", "Jul", "Sep", "Nov"].map(m => (
-                      <span key={m} className="text-[9px]" style={{ color: "hsl(215 12% 30%)" }}>{m}</span>
-                    ))}
-                  </div>
+              {/* Core Metrics Table */}
+              <div>
+                <p style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.58rem",
+                  fontWeight: 700,
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  color: "var(--gold-bright)",
+                  marginBottom: 6,
+                }}>
+                  TEMEL TESİS VERİLERİ
+                </p>
+
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  <MetricRow label="Kurulu Kapasite" value={asset.capacity} icon={Zap} />
+                  <MetricRow label="Sahibi / İşletmeci" value={asset.owner || "Kamu / Konsorsiyum"} icon={Building2} />
+                  {asset.coordinates && <MetricRow label="Coğrafi Konum (GPS)" value={asset.coordinates} icon={MapPin} />}
+                  {asset.completionYear && <MetricRow label="Hizmete Giriş Yılı" value={asset.completionYear} icon={Calendar} />}
+                  <MetricRow label="Bağlı Olduğu Ülke" value={asset.country} icon={MapPin} />
                 </div>
               </div>
 
-              {/* Tags */}
-              {asset.tags && asset.tags.length > 0 && (
-                <div className="px-5 pb-4">
-                  <p className="mb-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "hsl(215 12% 32%)" }}>Tags</p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {asset.tags.map(tag => (
-                      <span key={tag} className="rounded-full px-2.5 py-1 text-[11px] font-medium"
-                        style={{ background: "hsl(220 15% 10%)", color: "hsl(215 15% 52%)" }}>
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
+              {/* Mini Sparkline Telemetry */}
+              <div style={{
+                borderRadius: 10,
+                border: "1px solid var(--gold-border)",
+                background: "rgba(0,0,0,0.3)",
+                padding: "10px 12px",
+              }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.58rem", fontWeight: 700, color: "var(--text-main)", letterSpacing: "0.06em" }}>
+                    Üretim Kararlılık Eğrisi
+                  </span>
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.54rem", color: "#34d399", fontWeight: 700 }}>
+                    Son 12 Ay (Sabit)
+                  </span>
                 </div>
-              )}
 
-              {/* Related assets */}
-              <div className="px-5 pb-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <Network className="h-3 w-3" style={{ color: "hsl(215 12% 35%)" }} />
-                  <p className="text-[10px] font-bold uppercase tracking-wider" style={{ color: "hsl(215 12% 32%)" }}>
-                    Knowledge Graph Links
-                  </p>
-                </div>
-                <div className="space-y-1.5">
-                  {["Investor network", "Supply chain partners", "Grid connections", "Regulatory bodies"].map(rel => (
-                    <button key={rel}
-                      className="flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-[12px] font-medium transition-colors hover:bg-white/[0.03]"
+                <svg viewBox="0 0 300 45" style={{ width: "100%", height: 36, overflow: "visible" }}>
+                  <defs>
+                    <linearGradient id="panelSparkGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#d4af37" stopOpacity="0.4" />
+                      <stop offset="100%" stopColor="#d4af37" stopOpacity="0" />
+                    </linearGradient>
+                  </defs>
+                  <path d="M 0 32 Q 50 25 100 20 T 200 15 T 300 8 L 300 45 L 0 45 Z" fill="url(#panelSparkGrad)" />
+                  <path d="M 0 32 Q 50 25 100 20 T 200 15 T 300 8" fill="none" stroke="#d4af37" strokeWidth="2" />
+                  <circle cx="300" cy="8" r="3.5" fill="#f5d77f" />
+                </svg>
+              </div>
+
+              {/* Tags & Graph Links */}
+              <div>
+                <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.56rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 6 }}>
+                  KNOWLEDGE GRAPH BAĞLANTILARI
+                </p>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
+                  {["İletim Hatları", "Yatırımcı Ağı", "Şebeke Düğümü", "Regülasyon"].map(rel => (
+                    <button
+                      key={rel}
+                      onClick={handleFocusOnGlobe}
                       style={{
-                        background: "hsl(222 20% 7%)",
-                        border: "1px solid hsl(220 15% 11%)",
-                        color: "hsl(215 15% 50%)",
-                      }}>
-                      {rel}
-                      <ChevronRight className="h-3.5 w-3.5" />
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        padding: "6px 8px",
+                        borderRadius: 8,
+                        border: "1px solid var(--gold-border)",
+                        background: "rgba(212,175,55,0.03)",
+                        fontFamily: "var(--font-mono)",
+                        fontSize: "0.6rem",
+                        color: "var(--text-muted)",
+                        cursor: "pointer",
+                        transition: "all 0.18s ease",
+                      }}
+                    >
+                      <span>{rel}</span>
+                      <Network style={{ width: 10, height: 10, color: "var(--gold-primary)" }} />
                     </button>
                   ))}
                 </div>
               </div>
             </div>
 
-            {/* Footer actions */}
-            <div className="shrink-0 p-4 space-y-2"
-              style={{ borderTop: "1px solid hsl(220 15% 10%)" }}>
+            {/* Footer Actions: Fully Functional Buttons */}
+            <div
+              style={{
+                flexShrink: 0,
+                padding: "12px 16px",
+                borderTop: "1px solid var(--gold-border)",
+                background: "rgba(10, 11, 18, 0.45)",
+                display: "flex",
+                flexDirection: "column",
+                gap: 8,
+              }}
+            >
               <button
                 id="view-on-globe"
-                className="flex w-full items-center justify-center gap-2 rounded-xl py-2.5 text-[13px] font-semibold transition-all hover:brightness-110 active:scale-[0.97]"
+                onClick={handleFocusOnGlobe}
                 style={{
-                  background: "linear-gradient(135deg, hsl(220 95% 58%), hsl(258 85% 62%))",
-                  color: "white",
+                  display: "flex",
+                  width: "100%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 8,
+                  borderRadius: 10,
+                  border: "none",
+                  background: focused
+                    ? "linear-gradient(135deg, #10b981 0%, #34d399 100%)"
+                    : "linear-gradient(135deg, #d4af37 0%, #f5d77f 60%, #d4af37 100%)",
+                  padding: "9px 14px",
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.72rem",
+                  fontWeight: 800,
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  color: "#060608",
+                  cursor: "pointer",
+                  boxShadow: focused
+                    ? "0 0 20px rgba(16,185,129,0.5)"
+                    : "0 0 18px rgba(212,175,55,0.45)",
+                  transition: "all 0.2s ease",
                 }}
               >
-                <Activity className="h-4 w-4" />
-                View on Globe
+                <Activity style={{ width: 14, height: 14 }} />
+                <span>{focused ? "KÜREDE ODAKLANDI ✓" : "KÜRE'DE GÖSTER"}</span>
               </button>
+
               <button
                 id="full-profile"
-                className="flex w-full items-center justify-center gap-2 rounded-xl py-2.5 text-[12px] font-medium transition-colors hover:bg-white/[0.04]"
+                onClick={handleOpenExternal}
                 style={{
-                  background: "hsl(220 15% 9%)",
-                  border: "1px solid hsl(220 15% 13%)",
-                  color: "hsl(215 15% 55%)",
+                  display: "flex",
+                  width: "100%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 6,
+                  borderRadius: 10,
+                  border: "1px solid var(--gold-border)",
+                  background: "rgba(212,175,55,0.05)",
+                  padding: "7px 12px",
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.64rem",
+                  fontWeight: 700,
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                  color: "var(--text-main)",
+                  cursor: "pointer",
+                  transition: "all 0.18s ease",
                 }}
               >
-                Full Profile <ExternalLink className="h-3.5 w-3.5" />
+                <span>RESMİ UYDU / KAYIT BİLGİSİ</span>
+                <ExternalLink style={{ width: 11, height: 11, color: "var(--gold-primary)" }} />
               </button>
             </div>
           </motion.aside>

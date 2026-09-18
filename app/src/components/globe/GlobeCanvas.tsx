@@ -407,23 +407,63 @@ function HotspotMarker({
 }
 
 function StarField() {
-  const [pos] = useMemo(() => {
-    const count = 1000;
+  const starsRef = useRef<THREE.Points>(null!);
+
+  const [pos, cols] = useMemo(() => {
+    const count = 5000;
     const p = new Float32Array(count * 3);
+    const c = new Float32Array(count * 3);
+
     for (let i = 0; i < count; i++) {
-      p[i * 3]     = (Math.random() - 0.5) * 40;
-      p[i * 3 + 1] = (Math.random() - 0.5) * 40;
-      p[i * 3 + 2] = (Math.random() - 0.5) * 40;
+      if (i < 3000) {
+        // Wide celestial background plane covering the entire camera frustum including far-left sidebar
+        p[i * 3]     = (Math.random() - 0.5) * 36; // -18 to +18 covers full wide screen
+        p[i * 3 + 1] = (Math.random() - 0.5) * 24; // -12 to +12
+        p[i * 3 + 2] = -3 - Math.random() * 25;    // behind earth
+      } else {
+        // Spherical surrounding cosmos
+        const r = 8 + Math.random() * 32;
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.acos(Math.random() * 2 - 1);
+        p[i * 3]     = r * Math.sin(phi) * Math.cos(theta);
+        p[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+        p[i * 3 + 2] = r * Math.cos(phi);
+      }
+
+      // Star Color Palette: Pure Diamond White (75%), Golden Supernova (18%), Celestial Cyan (7%)
+      const rand = Math.random();
+      if (rand < 0.75) {
+        c[i * 3] = 1.0; c[i * 3 + 1] = 1.0; c[i * 3 + 2] = 1.0; // Pure brilliant white
+      } else if (rand < 0.93) {
+        c[i * 3] = 1.0; c[i * 3 + 1] = 0.88; c[i * 3 + 2] = 0.45; // Golden Supernova
+      } else {
+        c[i * 3] = 0.65; c[i * 3 + 1] = 0.92; c[i * 3 + 2] = 1.0; // Celestial Cyan
+      }
     }
-    return [p];
+    return [p, c];
   }, []);
 
+  useFrame((state) => {
+    if (starsRef.current) {
+      starsRef.current.rotation.y = state.clock.getElapsedTime() * 0.0016;
+    }
+  });
+
   return (
-    <points>
+    <points ref={starsRef}>
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" args={[pos, 3]} />
+        <bufferAttribute attach="attributes-color" args={[cols, 3]} />
       </bufferGeometry>
-      <pointsMaterial color="#dad3c1" size={0.014} transparent opacity={0.35} depthWrite={false} />
+      <pointsMaterial
+        vertexColors
+        size={0.046}
+        sizeAttenuation
+        transparent
+        opacity={0.96}
+        blending={THREE.AdditiveBlending}
+        depthWrite={false}
+      />
     </points>
   );
 }
