@@ -1,12 +1,27 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { ShieldCheck, Mail } from "lucide-react";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { DocNavTabs } from "@/components/layout/DocNavTabs";
 import { CosmicBackground } from "@/components/layout/CosmicBackground";
 
 export default function PrivacyPage() {
+  const [lang, setLang] = useState<"tr" | "en">("tr");
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("dona_lang");
+      if (stored === "tr" || stored === "en") setLang(stored);
+    } catch {}
+
+    const handleLangChange = (e: any) => {
+      if (e.detail === "tr" || e.detail === "en") setLang(e.detail);
+    };
+    window.addEventListener("dona:lang-change", handleLangChange);
+    return () => window.removeEventListener("dona:lang-change", handleLangChange);
+  }, []);
+
   return (
     <div style={{
       minHeight: "100vh",
@@ -21,7 +36,7 @@ export default function PrivacyPage() {
       <CosmicBackground />
 
       <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-        <PublicHeader />
+        <PublicHeader lang={lang} setLang={setLang} />
 
         <main style={{
           flex: 1,
@@ -36,7 +51,7 @@ export default function PrivacyPage() {
           textAlign: "center",
         }}>
           {/* Centered Document Navigation */}
-          <DocNavTabs />
+          <DocNavTabs lang={lang} />
 
           {/* Hero Section */}
           <div style={{ width: "100%", textAlign: "center", marginBottom: "2.5rem", display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem" }}>
@@ -55,7 +70,7 @@ export default function PrivacyPage() {
               boxShadow: "0 0 16px rgba(212,175,55,0.15)",
             }}>
               <ShieldCheck style={{ width: 14, height: 14 }} />
-              <span>SIFIR TAKİP & SIFIR VERİ TOPLAMA PRENSİBİ</span>
+              <span>{lang === "tr" ? "SIFIR TAKİP & SIFIR VERİ TOPLAMA PRENSİBİ" : "ZERO TRACKING & ZERO TELEMETRY COLLECTION"}</span>
             </div>
 
             <h1 style={{
@@ -71,7 +86,7 @@ export default function PrivacyPage() {
               margin: 0,
               lineHeight: 1.2,
             }}>
-              Gizlilik Politikası
+              {lang === "tr" ? "Gizlilik Politikası" : "Privacy Policy"}
             </h1>
 
             <p style={{
@@ -83,7 +98,9 @@ export default function PrivacyPage() {
               margin: "0 auto",
               textAlign: "center",
             }}>
-              DONA NOVA'da gizlilik sonradan eklenen bir seçenek değil, mimarinin özüdür. Kişisel veri depolanmaz, reklam veya takip çerezi kullanılmaz.
+              {lang === "tr"
+                ? "DONA NOVA'da gizlilik sonradan eklenen bir seçenek değil, mimarinin özüdür. Kişisel veri depolanmaz, reklam veya takip çerezi kullanılmaz."
+                : "At DONA NOVA, privacy is not an afterthought; it is built into the architecture. No personal data is stored, and zero tracking cookies are used."}
             </p>
 
             <div style={{
@@ -97,15 +114,15 @@ export default function PrivacyPage() {
               color: "var(--text-muted)",
             }}>
               <span style={{ borderRadius: "6px", border: "1px solid var(--gold-border)", background: "rgba(0,0,0,0.4)", padding: "3px 8px", color: "var(--text-main)" }}>
-                STANDART: ZERO-KNOWLEDGE
+                {lang === "tr" ? "STANDART: ZERO-KNOWLEDGE" : "STANDARD: ZERO-KNOWLEDGE"}
               </span>
               <span>•</span>
               <span style={{ borderRadius: "6px", border: "1px solid var(--gold-border)", background: "rgba(0,0,0,0.4)", padding: "3px 8px", color: "var(--text-main)" }}>
-                ÇEREZSİZ: %100
+                {lang === "tr" ? "ÇEREZSİZ: %100" : "COOKIELESS: 100%"}
               </span>
               <span>•</span>
               <span style={{ borderRadius: "6px", border: "1px solid rgba(16,185,129,0.35)", background: "rgba(16,185,129,0.1)", padding: "3px 8px", color: "#34d399", fontWeight: 700 }}>
-                KAYITSIZ DOĞRUDAN ERİŞİM
+                {lang === "tr" ? "KAYITSIZ DOĞRUDAN ERİŞİM" : "DIRECT ACCESS WITHOUT SIGNUP"}
               </span>
             </div>
           </div>
@@ -153,7 +170,7 @@ export default function PrivacyPage() {
                 margin: 0,
                 textAlign: "center",
               }}>
-                Kişisel Verilerin Toplanmaması
+                {lang === "tr" ? "Kişisel Verilerin Toplanmaması" : "Zero Collection of Personal Data"}
               </h2>
 
               <p style={{
@@ -165,7 +182,9 @@ export default function PrivacyPage() {
                 margin: 0,
                 textAlign: "center",
               }}>
-                Platformu ziyaret ettiğinizde adınız, e-postanız veya coğrafi GPS konumunuz hiçbir sunucuda veya veritabanında saklanmaz.
+                {lang === "tr"
+                  ? "Platformu ziyaret ettiğinizde adınız, e-postanız veya coğrafi GPS konumunuz hiçbir sunucuda veya veritabanında saklanmaz."
+                  : "When visiting DONA NOVA, your personal name, email, IP address profiling, or precise GPS location are never logged or stored in any database."}
               </p>
 
               {/* 3 Metric Pills Centered */}
@@ -177,11 +196,18 @@ export default function PrivacyPage() {
                 maxWidth: "580px",
                 paddingTop: "0.5rem",
               }}>
-                {[
-                  { title: "0 Kayıt Formu", sub: "Üyelik veya giriş yok" },
-                  { title: "0 İzleme Çerezi", sub: "Pazarlama pikseli yok" },
-                  { title: "0 Profilleme", sub: "Kullanıcı verisi tutulmaz" },
-                ].map((item, i) => (
+                {(lang === "tr"
+                  ? [
+                      { title: "0 Kayıt Formu", sub: "Üyelik veya giriş yok" },
+                      { title: "0 İzleme Çerezi", sub: "Pazarlama pikseli yok" },
+                      { title: "0 Profilleme", sub: "Kullanıcı verisi tutulmaz" },
+                    ]
+                  : [
+                      { title: "0 Sign-up Forms", sub: "No accounts or passwords" },
+                      { title: "0 Tracking Pixels", sub: "No marketing beacons" },
+                      { title: "0 User Profiles", sub: "Zero behavioral logging" },
+                    ]
+                ).map((item, i) => (
                   <div key={i} style={{
                     borderRadius: "10px",
                     border: "1px solid var(--gold-border)",
@@ -241,7 +267,7 @@ export default function PrivacyPage() {
                 margin: 0,
                 textAlign: "center",
               }}>
-                Yalnızca Yerel Tarayıcı Belleği
+                {lang === "tr" ? "Yalnızca Yerel Tarayıcı Belleği" : "Local Browser Storage Only"}
               </h2>
 
               <p style={{
@@ -253,7 +279,9 @@ export default function PrivacyPage() {
                 margin: 0,
                 textAlign: "center",
               }}>
-                DONA NOVA yalnızca arayüz dil seçiminiz (TR / EN) veya grafik kalitesi tercihlerinizi cihazınızın yerel depolama alanında (localStorage) tutar. Bu veriler hiçbir merkezi sunucuya aktarılmaz.
+                {lang === "tr"
+                  ? "DONA NOVA yalnızca arayüz dil seçiminiz (TR / EN) veya grafik kalitesi tercihlerinizi cihazınızın yerel depolama alanında (localStorage) tutar. Bu veriler hiçbir merkezi sunucuya aktarılmaz."
+                  : "DONA NOVA solely stores your UI language selection (TR / EN) and 3D rendering preferences in your local browser storage (localStorage). This data never leaves your device."}
               </p>
             </div>
 
@@ -298,7 +326,7 @@ export default function PrivacyPage() {
                 margin: 0,
                 textAlign: "center",
               }}>
-                Resmi İletişim & Güvenlik
+                {lang === "tr" ? "Resmi İletişim & Güvenlik" : "Official Contact & Security"}
               </h2>
 
               <p style={{
@@ -310,7 +338,9 @@ export default function PrivacyPage() {
                 margin: 0,
                 textAlign: "center",
               }}>
-                Gizlilik politikamız veya telemetri altyapısı hakkında her türlü soru için doğrudan kurucu ekibe ulaşabilirsiniz:
+                {lang === "tr"
+                  ? "Gizlilik politikamız veya telemetri altyapısı hakkında her türlü soru için doğrudan kurucu ekibe ulaşabilirsiniz:"
+                  : "For security questions or details regarding the telemetry pipeline, contact the core team directly:"}
               </p>
 
               <a

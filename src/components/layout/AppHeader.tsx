@@ -87,21 +87,64 @@ export function AppHeader({ lang, setLang }: AppHeaderProps) {
         </div>
       </div>
 
-      {/* RIGHT: Language Selector (Completely frame-free & borderless, matching skill) */}
+      {/* RIGHT: Star on GitHub + Language Selector */}
       <div style={{ gridColumn: 3, justifySelf: "end", pointerEvents: "auto" }}>
         <div
           style={{
             display: "inline-flex",
             alignItems: "center",
-            gap: "0.35rem",
-            padding: "0.2rem 0.4rem",
-            background: "transparent",
-            border: "none",
+            gap: "0.75rem",
           }}
         >
+          {/* Aesthetic Star on GitHub Pill */}
+          <a
+            id="star-github-btn"
+            href="https://github.com/dobby-aidev/dona-nova-showcase"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Star Dona Nova on GitHub ⭐"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.35rem",
+              padding: "0.22rem 0.65rem",
+              borderRadius: "9999px",
+              border: "1px solid rgba(212, 175, 55, 0.4)",
+              background: "rgba(6, 7, 12, 0.45)",
+              backdropFilter: "blur(10px)",
+              color: "var(--gold-bright)",
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.62rem",
+              fontWeight: 700,
+              letterSpacing: "0.06em",
+              textDecoration: "none",
+              transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
+              boxShadow: "0 0 12px rgba(212,175,55,0.15)",
+            }}
+          >
+            <span style={{ fontSize: "0.72rem", color: "#FFE082" }}>⭐</span>
+            <span className="desktop-only">{lang === "tr" ? "Yıldız Ver" : "Star on GitHub"}</span>
+          </a>
+
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.35rem",
+              padding: "0.2rem 0.4rem",
+              background: "transparent",
+              border: "none",
+            }}
+          >
           <button
             id="lang-btn-tr"
-            onClick={() => setLang("tr")}
+            onClick={() => {
+              setLang("tr");
+              try { localStorage.setItem("dona_lang", "tr"); } catch {}
+              if (typeof window !== "undefined") {
+                window.dispatchEvent(new CustomEvent("dona:lang-change", { detail: "tr" }));
+              }
+            }}
             aria-label="Türkçe"
             style={{
               background: "transparent",
@@ -122,7 +165,13 @@ export function AppHeader({ lang, setLang }: AppHeaderProps) {
           <span style={{ color: "rgba(212,175,55,0.25)", fontFamily: "var(--font-mono)", fontSize: "0.6rem" }}>/</span>
           <button
             id="lang-btn-en"
-            onClick={() => setLang("en")}
+            onClick={() => {
+              setLang("en");
+              try { localStorage.setItem("dona_lang", "en"); } catch {}
+              if (typeof window !== "undefined") {
+                window.dispatchEvent(new CustomEvent("dona:lang-change", { detail: "en" }));
+              }
+            }}
             aria-label="English"
             style={{
               background: "transparent",
@@ -142,6 +191,7 @@ export function AppHeader({ lang, setLang }: AppHeaderProps) {
           </button>
         </div>
       </div>
-    </header>
-  );
+    </div>
+  </header>
+);
 }

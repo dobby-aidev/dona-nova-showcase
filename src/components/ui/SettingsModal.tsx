@@ -168,9 +168,9 @@ export function SettingsModal({ isOpen, onClose, lang }: SettingsModalProps) {
 
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 {[
-                  { name: "US EIA Open API", desc: "Amerika Saatlik Üretim & Tüketim", status: "CANLI" },
-                  { name: "ENTSO-E Transparency", desc: "Avrupa İletim Şebekesi Yükü", status: "CANLI" },
-                  { name: "WRI GPPD Database", desc: "34.936 Santral Konum Matrisi", status: "AKTİF" },
+                  { name: "US EIA Open API", desc: lang === "tr" ? "Amerika Saatlik Üretim & Tüketim" : "Hourly US Generation & Demand", status: lang === "tr" ? "CANLI" : "LIVE" },
+                  { name: "ENTSO-E Transparency", desc: lang === "tr" ? "Avrupa İletim Şebekesi Yükü" : "European Grid Transmission Load", status: lang === "tr" ? "CANLI" : "LIVE" },
+                  { name: "WRI GPPD Database", desc: lang === "tr" ? "34.936 Santral Konum Matrisi" : "34,936 Power Plant Location Matrix", status: lang === "tr" ? "AKTİF" : "ACTIVE" },
                 ].map((stream) => (
                   <div
                     key={stream.name}
@@ -233,8 +233,8 @@ export function SettingsModal({ isOpen, onClose, lang }: SettingsModalProps) {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
                 {[
                   { id: "ultra", label: "Ultra" },
-                  { id: "high", label: "Yüksek" },
-                  { id: "performance", label: "Performans" },
+                  { id: "high", label: lang === "tr" ? "Yüksek" : "High" },
+                  { id: "performance", label: lang === "tr" ? "Performans" : "Performance" },
                 ].map((item) => (
                   <button
                     key={item.id}
@@ -317,10 +317,10 @@ export function SettingsModal({ isOpen, onClose, lang }: SettingsModalProps) {
               <ShieldCheck style={{ width: 18, height: 18, color: "#34d399", flexShrink: 0 }} />
               <div>
                 <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.66rem", fontWeight: 700, color: "var(--text-main)", margin: 0 }}>
-                  TLS 1.3 & Sıfır Takip Standardı
+                  {lang === "tr" ? "TLS 1.3 & Sıfır Takip Standardı" : "TLS 1.3 & Zero-Tracking Standard"}
                 </p>
                 <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.58rem", color: "var(--text-muted)", margin: "2px 0 0 0" }}>
-                  Tüm telemetri bağlantıları uçtan uca şifreli ve çerezsizdir.
+                  {lang === "tr" ? "Tüm telemetri bağlantıları uçtan uca şifreli ve çerezsizdir." : "All telemetry links are end-to-end encrypted with zero cookies."}
                 </p>
               </div>
             </div>
