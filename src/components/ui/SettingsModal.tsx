@@ -2,13 +2,18 @@
 
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Settings, ShieldCheck, Database, Sliders, Cpu, CheckCircle2, Globe2 } from "lucide-react";
+import { X, Sliders, ShieldCheck, Database, Cpu, CheckCircle2 } from "lucide-react";
 
 interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
   lang: "tr" | "en";
 }
+
+const GOLD = "var(--gold-primary)";
+const GOLD_BRIGHT = "var(--gold-bright)";
+const GOLD_BORDER = "var(--gold-border)";
+const GOLD_DIM = "var(--gold-dim)";
 
 export function SettingsModal({ isOpen, onClose, lang }: SettingsModalProps) {
   const [quality, setQuality] = React.useState("high");
@@ -18,136 +23,338 @@ export function SettingsModal({ isOpen, onClose, lang }: SettingsModalProps) {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 pointer-events-none">
-        {/* Soft Blue Translucent Backdrop (3D Globe stays 100% visible behind blur) */}
+      <div style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 60,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "flex-end",
+        userSelect: "none",
+      }}>
+        {/* Click Outside (NO blur, crystal clear background per user request) */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="absolute inset-0 bg-blue-950/20 backdrop-blur-md pointer-events-auto"
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: "transparent",
+            backdropFilter: "none",
+            WebkitBackdropFilter: "none",
+          }}
         />
 
-        {/* Sleek Floating Right Glass Panel (NOT a big center square) */}
+        {/* Floating Right Glass Rail Panel — Fully Transparent Glass */}
         <motion.aside
-          initial={{ opacity: 0, x: 50, scale: 0.98 }}
+          initial={{ opacity: 0, x: 60, scale: 0.98 }}
           animate={{ opacity: 1, x: 0, scale: 1 }}
-          exit={{ opacity: 0, x: 50, scale: 0.98 }}
-          transition={{ type: "spring", stiffness: 340, damping: 32 }}
-          className="fixed right-6 top-6 bottom-6 w-full max-w-[420px] h-[calc(100vh-3rem)] overflow-hidden rounded-3xl border border-blue-500/30 bg-slate-950/85 backdrop-blur-3xl shadow-2xl p-6 text-slate-100 flex flex-col pointer-events-auto z-10"
+          exit={{ opacity: 0, x: 60, scale: 0.98 }}
+          transition={{ type: "spring", stiffness: 360, damping: 32 }}
+          style={{
+            position: "relative",
+            marginRight: 20,
+            width: "100%",
+            maxWidth: 420,
+            height: "calc(100vh - 40px)",
+            borderRadius: 20,
+            border: `1px solid ${GOLD_BORDER}`,
+            background: "rgba(6, 7, 12, 0.32)",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            boxShadow: "0 24px 70px rgba(0,0,0,0.6), 0 0 32px rgba(212,175,55,0.08)",
+            padding: "20px 22px",
+            display: "flex",
+            flexDirection: "column",
+            zIndex: 10,
+            boxSizing: "border-box",
+          }}
         >
           {/* Header */}
-          <div className="flex items-center justify-between pb-4 border-b border-slate-800/80 shrink-0">
-            <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600/20 text-blue-400 border border-blue-500/30">
-                <Settings className="h-4.5 w-4.5" />
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            paddingBottom: 14,
+            borderBottom: `1px solid ${GOLD_BORDER}`,
+            flexShrink: 0,
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <div style={{
+                display: "flex",
+                width: 32,
+                height: 32,
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 8,
+                background: GOLD_DIM,
+                border: `1px solid ${GOLD_BORDER}`,
+              }}>
+                <Sliders style={{ width: 16, height: 16, color: GOLD }} />
               </div>
               <div>
-                <h3 className="text-sm font-extrabold tracking-tight text-white uppercase">
-                  {lang === "tr" ? "Sistem & Platform Ayarları" : "Platform Settings"}
+                <h3 style={{
+                  fontFamily: "var(--font-display)",
+                  fontSize: "0.85rem",
+                  fontWeight: 800,
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  color: "var(--text-main)",
+                  margin: 0,
+                }}>
+                  {lang === "tr" ? "Radar Tercihleri" : "Radar Preferences"}
                 </h3>
-                <p className="text-[10.5px] text-slate-400">
-                  {lang === "tr" ? "NASA 3D Uydu ve Canlı Veri Akış Modları" : "NASA 3D Satellite & Live Stream Configurations"}
+                <p style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.58rem",
+                  color: "var(--text-muted)",
+                  margin: "2px 0 0 0",
+                  letterSpacing: "0.06em",
+                }}>
+                  {lang === "tr" ? "3D Motor & Canlı Şebeke Parametreleri" : "3D Engine & Telemetry Parameters"}
                 </p>
               </div>
             </div>
+
             <button
               onClick={onClose}
-              className="rounded-xl p-1.5 text-slate-400 hover:bg-slate-900 hover:text-white transition-colors"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: 28,
+                height: 28,
+                borderRadius: 8,
+                border: `1px solid ${GOLD_BORDER}`,
+                background: "rgba(212,175,55,0.04)",
+                color: "var(--text-muted)",
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+              }}
+              aria-label="Close"
             >
-              <X className="h-4 w-4" />
+              <X style={{ width: 14, height: 14 }} />
             </button>
           </div>
 
-          {/* Scrollable Content Body */}
-          <div className="flex-1 overflow-y-auto py-4 space-y-5 pr-1">
-            {/* Connected APIs */}
-            <div className="space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-wider text-blue-400 flex items-center gap-1.5">
-                <Database className="h-3.5 w-3.5 text-blue-400" />
-                {lang === "tr" ? "Bağlı Canlı API Akışları" : "Connected Data Streams"}
+          {/* Body Content */}
+          <div style={{
+            flex: 1,
+            overflowY: "auto",
+            paddingTop: 16,
+            paddingBottom: 16,
+            display: "flex",
+            flexDirection: "column",
+            gap: 16,
+          }}>
+            {/* 1: Connected Live Streams */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <label style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.62rem",
+                fontWeight: 700,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: GOLD_BRIGHT,
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+              }}>
+                <Database style={{ width: 12, height: 12, color: GOLD }} />
+                {lang === "tr" ? "Bağlı Canlı Veri Akışları" : "Connected Telemetry Streams"}
               </label>
-              
-              <div className="space-y-2">
-                <div className="rounded-2xl border border-emerald-500/30 bg-emerald-950/30 p-3 flex items-center justify-between">
-                  <div className="min-w-0 flex-1">
-                    <p className="text-xs font-bold text-emerald-400 truncate">US EIA Grid API</p>
-                    <p className="text-[10px] text-slate-300">Hourly US Generation & Fuel Mix</p>
-                  </div>
-                  <span className="flex items-center gap-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 text-[9px] font-mono font-bold shrink-0 ml-2">
-                    <CheckCircle2 className="h-3 w-3" /> Active
-                  </span>
-                </div>
 
-                <div className="rounded-2xl border border-blue-500/30 bg-blue-950/30 p-3 flex items-center justify-between">
-                  <div className="min-w-0 flex-1">
-                    <p className="text-xs font-bold text-blue-400 truncate">ENTSO-E Transmission</p>
-                    <p className="text-[10px] text-slate-300">Pan-European Electricity Load</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                {[
+                  { name: "US EIA Open API", desc: "Amerika Saatlik Üretim & Tüketim", status: "CANLI" },
+                  { name: "ENTSO-E Transparency", desc: "Avrupa İletim Şebekesi Yükü", status: "CANLI" },
+                  { name: "WRI GPPD Database", desc: "34.936 Santral Konum Matrisi", status: "AKTİF" },
+                ].map((stream) => (
+                  <div
+                    key={stream.name}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      borderRadius: 10,
+                      border: `1px solid ${GOLD_BORDER}`,
+                      background: "rgba(212,175,55,0.03)",
+                      padding: "8px 12px",
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.74rem", fontWeight: 700, color: "var(--text-main)" }}>
+                        {stream.name}
+                      </div>
+                      <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.58rem", color: "var(--text-muted)" }}>
+                        {stream.desc}
+                      </div>
+                    </div>
+                    <span style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 4,
+                      borderRadius: 9999,
+                      background: "rgba(16,185,129,0.1)",
+                      border: "1px solid rgba(16,185,129,0.35)",
+                      padding: "2px 7px",
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "0.54rem",
+                      fontWeight: 700,
+                      color: "#34d399",
+                    }}>
+                      <CheckCircle2 style={{ width: 10, height: 10 }} />
+                      {stream.status}
+                    </span>
                   </div>
-                  <span className="flex items-center gap-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 px-2 py-0.5 text-[9px] font-mono font-bold shrink-0 ml-2">
-                    <CheckCircle2 className="h-3 w-3" /> Active
-                  </span>
-                </div>
+                ))}
               </div>
             </div>
 
-            {/* Graphic Quality */}
-            <div className="space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-wider text-purple-400 flex items-center gap-1.5">
-                <Cpu className="h-3.5 w-3.5 text-purple-400" />
-                {lang === "tr" ? "3D Grafik & İşleme Kalitesi" : "3D Render Quality"}
+            {/* 2: 3D Render Quality */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <label style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.62rem",
+                fontWeight: 700,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: GOLD_BRIGHT,
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+              }}>
+                <Cpu style={{ width: 12, height: 12, color: GOLD }} />
+                {lang === "tr" ? "3D Grafik & Küre Çözünürlüğü" : "3D Globe Quality"}
               </label>
-              <div className="grid grid-cols-3 gap-2">
-                {["ultra", "high", "performance"].map((q) => (
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+                {[
+                  { id: "ultra", label: "Ultra" },
+                  { id: "high", label: "Yüksek" },
+                  { id: "performance", label: "Performans" },
+                ].map((item) => (
                   <button
-                    key={q}
-                    onClick={() => setQuality(q)}
-                    className={`rounded-xl px-2.5 py-2 text-xs font-bold capitalize transition-all border ${
-                      quality === q
-                        ? "border-blue-500 bg-blue-600/25 text-white shadow-lg shadow-blue-500/20"
-                        : "border-slate-800 bg-slate-900/60 text-slate-400 hover:text-white"
-                    }`}
+                    key={item.id}
+                    onClick={() => setQuality(item.id)}
+                    style={{
+                      borderRadius: 8,
+                      border: `1px solid ${quality === item.id ? GOLD : GOLD_BORDER}`,
+                      background: quality === item.id ? GOLD_DIM : "rgba(0,0,0,0.4)",
+                      padding: "8px 6px",
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "0.68rem",
+                      fontWeight: 700,
+                      color: quality === item.id ? GOLD_BRIGHT : "var(--text-muted)",
+                      cursor: "pointer",
+                      transition: "all 0.18s ease",
+                      boxShadow: quality === item.id ? "0 0 12px rgba(212,175,55,0.2)" : "none",
+                    }}
                   >
-                    {q}
+                    {item.label}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Refresh Interval */}
-            <div className="space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
-                <Sliders className="h-3.5 w-3.5 text-amber-400" />
-                {lang === "tr" ? "Yenileme Sıklığı" : "Refresh Rate"}
+            {/* 3: Refresh Rate */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <label style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.62rem",
+                fontWeight: 700,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: GOLD_BRIGHT,
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+              }}>
+                <Sliders style={{ width: 12, height: 12, color: GOLD }} />
+                {lang === "tr" ? "Telemetri Yenileme Sıklığı" : "Telemetry Refresh Rate"}
               </label>
+
               <select
                 value={refreshInterval}
                 onChange={(e) => setRefreshInterval(e.target.value)}
-                className="w-full rounded-xl border border-slate-800 bg-slate-900/80 px-3 py-2 text-xs font-medium text-slate-200 focus:border-blue-500 focus:outline-none"
+                style={{
+                  width: "100%",
+                  borderRadius: 8,
+                  border: `1px solid ${GOLD_BORDER}`,
+                  background: "rgba(10,11,18,0.9)",
+                  padding: "8px 12px",
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.68rem",
+                  color: "var(--text-main)",
+                  outline: "none",
+                  cursor: "pointer",
+                }}
               >
-                <option value="5">5 {lang === "tr" ? "Saniye (Ultra Canlı)" : "Seconds (Ultra Live)"}</option>
-                <option value="10">10 {lang === "tr" ? "Saniye (Varsayılan)" : "Seconds (Default)"}</option>
-                <option value="30">30 {lang === "tr" ? "Saniye (Tasarruf)" : "Seconds (Economic)"}</option>
+                <option value="5" style={{ background: "#0a0b12" }}>
+                  5 {lang === "tr" ? "Saniye (Ultra Canlı)" : "Seconds (Ultra Live)"}
+                </option>
+                <option value="10" style={{ background: "#0a0b12" }}>
+                  10 {lang === "tr" ? "Saniye (Varsayılan)" : "Seconds (Default)"}
+                </option>
+                <option value="30" style={{ background: "#0a0b12" }}>
+                  30 {lang === "tr" ? "Saniye (Tasarruf Modu)" : "Seconds (Eco Mode)"}
+                </option>
               </select>
             </div>
 
-            {/* Security Compliance */}
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/40 p-3.5 flex items-center gap-3">
-              <ShieldCheck className="h-5 w-5 text-blue-400 shrink-0" />
-              <div className="min-w-0">
-                <p className="text-xs font-bold text-slate-200 truncate">SOC2 Type II & GDPR Compliant</p>
-                <p className="text-[10px] text-slate-400">All grid telemetry encrypted in transit via TLS 1.3.</p>
+            {/* 4: Security Compliance */}
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              borderRadius: 10,
+              border: `1px solid ${GOLD_BORDER}`,
+              background: "rgba(0,0,0,0.3)",
+              padding: "10px 12px",
+            }}>
+              <ShieldCheck style={{ width: 18, height: 18, color: "#34d399", flexShrink: 0 }} />
+              <div>
+                <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.66rem", fontWeight: 700, color: "var(--text-main)", margin: 0 }}>
+                  TLS 1.3 & Sıfır Takip Standardı
+                </p>
+                <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.58rem", color: "var(--text-muted)", margin: "2px 0 0 0" }}>
+                  Tüm telemetri bağlantıları uçtan uca şifreli ve çerezsizdir.
+                </p>
               </div>
             </div>
           </div>
 
-          {/* Footer Action Button */}
-          <div className="pt-3 border-t border-slate-800/80 shrink-0">
+          {/* Footer Save Action */}
+          <div style={{
+            paddingTop: 14,
+            borderTop: `1px solid ${GOLD_BORDER}`,
+            flexShrink: 0,
+          }}>
             <button
               onClick={onClose}
-              className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 py-2.5 text-xs font-extrabold uppercase tracking-wider text-white shadow-xl transition-all active:scale-[0.98]"
+              style={{
+                display: "flex",
+                width: "100%",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 10,
+                border: "none",
+                background: "linear-gradient(135deg, #d4af37 0%, #f3dfa2 50%, #d4af37 100%)",
+                padding: "10px 16px",
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.72rem",
+                fontWeight: 800,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: "#07080e",
+                cursor: "pointer",
+                boxShadow: "0 4px 20px rgba(212,175,55,0.4)",
+                transition: "all 0.2s ease",
+              }}
             >
-              {lang === "tr" ? "Ayarları Kaydet" : "Save Settings"}
+              {lang === "tr" ? "Tercihleri Uygula" : "Apply Preferences"}
             </button>
           </div>
         </motion.aside>

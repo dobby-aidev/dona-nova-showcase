@@ -5,115 +5,131 @@ import { motion, AnimatePresence } from "framer-motion";
 import { GlobeCanvas, REAL_LOCATIONS, HotspotLocation } from "@/components/globe/GlobeCanvas";
 import { AssetDetailPanel } from "@/components/ui/AssetDetailPanel";
 import {
-  Activity, MapPin, TrendingUp, Sparkles, ChevronUp, ChevronDown,
-  Layers, Search, Filter, ArrowUpRight, Zap, Droplets, Server, Plane,
-  Database, RefreshCw, BarChart2
+  Activity, MapPin, ChevronUp, ChevronDown,
+  Layers, Search, Zap, Droplets, Server,
 } from "lucide-react";
+
+/* ── Gold palette constants ─────────────────────────────────────────── */
+const GOLD = "var(--gold-primary)";
+const GOLD_BRIGHT = "var(--gold-bright)";
+const GOLD_BORDER = "var(--gold-border)";
+const GOLD_DIM = "var(--gold-dim)";
 
 interface ExplorePageProps {
   lang?: "tr" | "en";
   activeNav?: string;
 }
 
+const ACTIVE_LABELS: Record<string, { tr: string; en: string }> = {
+  explore:     { tr: "NASA 3D Küresel Radar",       en: "NASA 3D Global Radar" },
+  dashboard:   { tr: "Altyapı Telemetri Paneli",    en: "Infrastructure Telemetry" },
+  energy:      { tr: "Küresel Elektrik Santralleri", en: "Global Power Plants" },
+  water:       { tr: "Tatlı Su & Baraj Sistemleri", en: "Water & Reservoir Networks" },
+  transport:   { tr: "Ulaşım & Lojistik Ağları",   en: "Transport & Logistics" },
+  datacenters: { tr: "Yapay Zeka Veri Merkezleri",  en: "AI Data Centers" },
+};
+
+const CATEGORY_TABS = [
+  { id: "all",        tr: "Tümü",          en: "All" },
+  { id: "elektrik",   tr: "Santraller",    en: "Power Plants" },
+  { id: "datacenter", tr: "AI DC",         en: "AI DCs" },
+  { id: "su",         tr: "Su & Baraj",    en: "Water" },
+  { id: "ulasim",     tr: "Ulaşım Hub",    en: "Transit Hub" },
+];
+
 export default function ExplorePage({ lang = "tr", activeNav = "explore" }: ExplorePageProps) {
   const [selectedAsset, setSelectedAsset] = useState<HotspotLocation | null>(null);
   const [dockExpanded, setDockExpanded] = useState(false);
   const [locations, setLocations] = useState<HotspotLocation[]>(REAL_LOCATIONS);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedTab, setSelectedTab] = useState<"all" | "elektrik" | "datacenter" | "su" | "ulasim">("all");
+  const [selectedTab, setSelectedTab] = useState<string>("all");
   const [sortBy, setSortBy] = useState<"capacity" | "name" | "country">("capacity");
 
-  // Fetch 3,160+ real facilities on mount directly from local verified dataset
   useEffect(() => {
     let isMounted = true;
-    async function loadData() {
+    (async () => {
       try {
         const res = await fetch("/data/facilities.json");
         if (!res.ok || !isMounted) return;
         const data: HotspotLocation[] = await res.json();
-        if (data.length > 0 && isMounted) {
-          setLocations(data);
-        }
-      } catch (err) {
-        console.error("Facilities load error:", err);
-      }
-    }
-    loadData();
+        if (data.length > 0 && isMounted) setLocations(data);
+      } catch {}
+    })();
     return () => { isMounted = false; };
   }, []);
 
-  // Category filter from sidebar or dock tab
   const activeCategory = useMemo(() => {
-    if (activeNav === "energy") return "elektrik";
-    if (activeNav === "water") return "su";
-    if (activeNav === "transport") return "ulasim";
+    if (activeNav === "energy")      return "elektrik";
+    if (activeNav === "water")       return "su";
+    if (activeNav === "transport")   return "ulasim";
     if (activeNav === "datacenters") return "datacenter";
     return selectedTab;
   }, [activeNav, selectedTab]);
 
-  // Filtered assets on globe
-  const globeAssets = useMemo(() => {
-    if (activeCategory === "all") return locations;
-    return locations.filter((a) => a.category === activeCategory);
-  }, [locations, activeCategory]);
+  const globeAssets = useMemo(() =>
+    activeCategory === "all" ? locations : locations.filter(a => a.category === activeCategory),
+    [locations, activeCategory]
+  );
 
-  // Filtered & searched assets for the bottom deck list
   const deckAssets = useMemo(() => {
     let list = globeAssets;
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
-      list = list.filter(
-        (a) =>
-          a.name.toLowerCase().includes(q) ||
-          a.country.toLowerCase().includes(q) ||
-          a.type.toLowerCase().includes(q)
+      list = list.filter(a =>
+        a.name.toLowerCase().includes(q) ||
+        a.country.toLowerCase().includes(q) ||
+        a.type.toLowerCase().includes(q)
       );
     }
-
     if (sortBy === "capacity") {
-      list = [...list].sort((a, b) => {
-        const numA = parseInt(a.capacity.replace(/[^0-9]/g, "")) || 0;
-        const numB = parseInt(b.capacity.replace(/[^0-9]/g, "")) || 0;
-        return numB - numA;
-      });
+      list = [...list].sort((a, b) =>
+        (parseInt(b.capacity.replace(/[^0-9]/g, "")) || 0) -
+        (parseInt(a.capacity.replace(/[^0-9]/g, "")) || 0)
+      );
     } else if (sortBy === "name") {
       list = [...list].sort((a, b) => a.name.localeCompare(b.name));
-    } else if (sortBy === "country") {
+    } else {
       list = [...list].sort((a, b) => a.country.localeCompare(b.country));
     }
-
     return list;
   }, [globeAssets, searchQuery, sortBy]);
 
-  // Aggregate stats
-  const totalMW = useMemo(() => {
-    return locations
-      .filter((a) => a.category === "elektrik")
-      .reduce((sum, a) => sum + (parseInt(a.capacity.replace(/[^0-9]/g, "")) || 0), 0);
-  }, [locations]);
+  const totalMW = useMemo(() =>
+    locations.filter(a => a.category === "elektrik")
+      .reduce((s, a) => s + (parseInt(a.capacity.replace(/[^0-9]/g, "")) || 0), 0),
+    [locations]
+  );
+  const totalDC    = useMemo(() => locations.filter(a => a.category === "datacenter").length, [locations]);
+  const totalWater = useMemo(() => locations.filter(a => a.category === "su").length, [locations]);
 
-  const totalDC = useMemo(() => {
-    return locations.filter((a) => a.category === "datacenter").length;
-  }, [locations]);
-
-  const totalWater = useMemo(() => {
-    return locations.filter((a) => a.category === "su").length;
-  }, [locations]);
+  const activeLabel = ACTIVE_LABELS[activeNav] ?? ACTIVE_LABELS["explore"];
 
   return (
-    <div className="relative h-full w-full overflow-hidden bg-[#06080e] select-none">
+    <div style={{ position: "relative", height: "100%", width: "100%", overflow: "hidden", background: "var(--obsidian-dark)", userSelect: "none" }}>
 
-      {/* 100% Full-Screen Photorealistic NASA 3D Earth Globe */}
-      <Suspense
-        fallback={
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#06080e] z-10">
-            <div className="h-12 w-12 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin mb-3 shadow-[0_0_15px_#22d3ee]" />
-            <span className="font-mono text-xs text-cyan-300 tracking-wider uppercase">
-              NASA 3D Küre Yükleniyor...
-            </span>
-          </div>
-        }
-      >
+      {/* ── Full-Screen 3D Globe ─────────────────────────────────────────── */}
+      <Suspense fallback={
+        <div style={{
+          position: "absolute", inset: 0,
+          display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+          background: "var(--obsidian-dark)", zIndex: 10,
+          gap: "1rem",
+        }}>
+          <div style={{
+            width: 48, height: 48, borderRadius: "50%",
+            border: `2px solid ${GOLD}`,
+            borderTopColor: "transparent",
+            animation: "spin 1s linear infinite",
+            boxShadow: `0 0 18px ${GOLD}`,
+          }} />
+          <span style={{
+            fontFamily: "var(--font-mono)", fontSize: "0.68rem", fontWeight: 700,
+            letterSpacing: "0.15em", textTransform: "uppercase", color: GOLD_BRIGHT,
+          }}>
+            {lang === "tr" ? "NASA 3D Küre Yükleniyor..." : "Loading NASA 3D Globe..."}
+          </span>
+        </div>
+      }>
         <GlobeCanvas
           locations={globeAssets}
           activeFilter={activeCategory}
@@ -123,97 +139,302 @@ export default function ExplorePage({ lang = "tr", activeNav = "explore" }: Expl
         />
       </Suspense>
 
-      {/* Radial Vignette Overlay */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(6,8,14,0.5)_100%)]" />
+      {/* ── Vignette Overlay ─────────────────────────────────────────────── */}
+      <div className="dn-vignette" style={{ pointerEvents: "none", position: "absolute", inset: 0 }} />
 
-      {/* Top Floating Telemetry & Category Badge */}
-      <div className="absolute top-4 left-5 right-5 z-10 pointer-events-auto flex items-center justify-between gap-4">
-        {/* Active Layer Capsule */}
+      {/* ── Scanline Grid (desktop) ──────────────────────────────────────── */}
+      <div className="dn-grid-bg desktop-only" style={{
+        pointerEvents: "none", position: "absolute", inset: 0, opacity: 0.3, zIndex: 1,
+      }} />
+
+      {/* ── Top Floating Info Bar (Centered below header, clear of sidebar) ─ */}
+      <div style={{
+        position: "absolute",
+        top: 52,
+        left: "50%",
+        transform: "translateX(-50%)",
+        zIndex: 25,
+        pointerEvents: "auto",
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+      }}>
+        {/* Active Layer Micro-Capsule (Shrunk as requested in Screenshot 1) */}
         <motion.div
           key={activeNav}
-          initial={{ opacity: 0, y: -6 }}
+          initial={{ opacity: 0, y: -4 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center gap-3 rounded-2xl border border-white/10 bg-[#0a0f1a]/85 px-4 py-2.5 backdrop-blur-2xl shadow-2xl shadow-black/80"
+          style={{
+            display: "inline-flex", alignItems: "center", gap: 8,
+            borderRadius: 9999, border: `1px solid ${GOLD_BORDER}`,
+            background: "rgba(6, 7, 12, 0.2)",
+            padding: "4px 12px",
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
+            boxShadow: "0 6px 24px rgba(0,0,0,0.4), 0 0 12px rgba(212,175,55,0.06)",
+          }}
         >
-          <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-cyan-950/80 text-cyan-300 border border-cyan-500/30 shadow-[0_0_8px_rgba(6,182,212,0.2)]">
-            <Layers className="h-3.5 w-3.5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-xs font-black tracking-tight text-white uppercase font-mono">
-                {activeNav === "explore" && "NASA 3D Küresel Radar"}
-                {activeNav === "dashboard" && "Altyapı Telemetri Paneli"}
-                {activeNav === "energy" && "Küresel Elektrik Santralleri"}
-                {activeNav === "water" && "Tatlı Su & Baraj Sistemleri"}
-                {activeNav === "transport" && "Ulaşım & Lojistik Ağları"}
-                {activeNav === "datacenters" && "Yapay Zeka Veri Merkezleri"}
-              </h1>
-              <span className="rounded-full bg-cyan-950/80 text-cyan-300 border border-cyan-500/30 px-2 py-0.5 font-mono text-[9.5px] font-bold shadow-sm">
-                {globeAssets.length.toLocaleString()} Tesis Canlı
-              </span>
-            </div>
-            <p className="text-[9.5px] text-zinc-400 mt-0.5">
-              Dünyayı 3D döndürün • Tesis noktalarını seçerek telemetriyi inceleyin
-            </p>
-          </div>
+          <Layers style={{ width: 12, height: 12, color: GOLD, flexShrink: 0 }} />
+          <span style={{
+            fontFamily: "var(--font-mono)", fontSize: "0.64rem", fontWeight: 700,
+            letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--text-main)",
+          }}>
+            {lang === "tr" ? activeLabel.tr : activeLabel.en}
+          </span>
+          <span style={{
+            borderRadius: 9999, background: "rgba(212,175,55,0.12)", border: `1px solid ${GOLD_BORDER}`,
+            padding: "1px 6px", fontFamily: "var(--font-mono)", fontSize: "0.54rem",
+            fontWeight: 700, letterSpacing: "0.06em", color: GOLD_BRIGHT,
+          }}>
+            {globeAssets.length.toLocaleString()} {lang === "tr" ? "Tesis" : "Assets"}
+          </span>
         </motion.div>
-
-        {/* Live Quick Counters */}
-        <div className="hidden lg:flex items-center gap-3 rounded-2xl border border-white/10 bg-[#0a0f1a]/85 px-4 py-2.5 backdrop-blur-2xl shadow-2xl shadow-black/80 text-xs font-mono">
-          <div className="flex items-center gap-1.5">
-            <Zap className="h-3.5 w-3.5 text-amber-400" />
-            <span className="text-zinc-400">GÜÇ:</span>
-            <span className="text-amber-300 font-bold">{(totalMW / 1000).toFixed(0)}k MW</span>
-          </div>
-          <div className="h-3 w-px bg-white/10" />
-          <div className="flex items-center gap-1.5">
-            <Server className="h-3.5 w-3.5 text-cyan-400" />
-            <span className="text-zinc-400">AI DC:</span>
-            <span className="text-cyan-300 font-bold">{totalDC} Kampüs</span>
-          </div>
-          <div className="h-3 w-px bg-white/10" />
-          <div className="flex items-center gap-1.5">
-            <Droplets className="h-3.5 w-3.5 text-blue-400" />
-            <span className="text-zinc-400">SU:</span>
-            <span className="text-blue-300 font-bold">{totalWater} Havza</span>
-          </div>
-        </div>
       </div>
 
-      {/* ── HIGH-UTILITY INTERACTIVE BOTTOM TELEMETRY DOCK ──────────────── */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 pointer-events-auto w-full max-w-4xl px-4">
-        <div className="rounded-2xl border border-white/10 bg-[#0a0f1a]/90 backdrop-blur-2xl shadow-[0_16px_50px_rgba(0,0,0,0.85)] overflow-hidden transition-all duration-300">
-          
-          {/* Header Bar of the Dock */}
+      {/* ── Vertical Telemetry Rail (Shrunk & Translucent as requested) ────── */}
+      <aside
+        className="desktop-only"
+        style={{
+          position: "absolute",
+          right: 14,
+          top: "46%",
+          transform: "translateY(-50%)",
+          zIndex: 25,
+          pointerEvents: "auto",
+          display: "flex",
+          flexDirection: "column",
+          gap: 8,
+          borderRadius: 14,
+          border: `1px solid ${GOLD_BORDER}`,
+          background: "rgba(6, 7, 12, 0.18)",
+          padding: "10px 10px",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+          boxShadow: "0 10px 36px rgba(0,0,0,0.5), 0 0 18px rgba(212,175,55,0.05)",
+          width: 118,
+          userSelect: "none",
+        }}
+      >
+        {/* Rail Header */}
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          paddingBottom: 5,
+          borderBottom: `1px solid ${GOLD_BORDER}`,
+        }}>
+          <span style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.52rem",
+            fontWeight: 700,
+            letterSpacing: "0.14em",
+            textTransform: "uppercase",
+            color: "rgba(163,155,141,0.65)",
+          }}>
+            {lang === "tr" ? "TELEMETRİ" : "TELEMETRY"}
+          </span>
+          <span style={{
+            width: 5,
+            height: 5,
+            borderRadius: "50%",
+            background: "#34d399",
+            boxShadow: "0 0 6px #34d399",
+            animation: "dn-pulse-glow 2s infinite",
+          }} />
+        </div>
+
+        {/* 1: GÜÇ / POWER */}
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+          padding: "5px 6px",
+          borderRadius: 8,
+          background: "rgba(212,175,55,0.03)",
+          border: `1px solid ${GOLD_BORDER}`,
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <Zap style={{ width: 10, height: 10, color: GOLD }} />
+            <span style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.5rem",
+              fontWeight: 700,
+              letterSpacing: "0.06em",
+              color: "var(--text-muted)",
+              textTransform: "uppercase",
+            }}>
+              GÜÇ
+            </span>
+          </div>
+          <span style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.78rem",
+            fontWeight: 800,
+            color: GOLD_BRIGHT,
+            lineHeight: 1.1,
+          }}>
+            {(totalMW / 1000).toFixed(0)}k <span style={{ fontSize: "0.54rem", fontWeight: 600, color: "var(--text-muted)" }}>MW</span>
+          </span>
+        </div>
+
+        {/* 2: AI DC */}
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+          padding: "5px 6px",
+          borderRadius: 8,
+          background: "rgba(212,175,55,0.03)",
+          border: `1px solid ${GOLD_BORDER}`,
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <Server style={{ width: 10, height: 10, color: GOLD }} />
+            <span style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.5rem",
+              fontWeight: 700,
+              letterSpacing: "0.06em",
+              color: "var(--text-muted)",
+              textTransform: "uppercase",
+            }}>
+              AI DC
+            </span>
+          </div>
+          <span style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.78rem",
+            fontWeight: 800,
+            color: GOLD_BRIGHT,
+            lineHeight: 1.1,
+          }}>
+            {totalDC} <span style={{ fontSize: "0.54rem", fontWeight: 600, color: "var(--text-muted)" }}>{lang === "tr" ? "Düğüm" : "Nodes"}</span>
+          </span>
+        </div>
+
+        {/* 3: SU / WATER */}
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+          padding: "5px 6px",
+          borderRadius: 8,
+          background: "rgba(212,175,55,0.03)",
+          border: `1px solid ${GOLD_BORDER}`,
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <Droplets style={{ width: 10, height: 10, color: GOLD }} />
+            <span style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.5rem",
+              fontWeight: 700,
+              letterSpacing: "0.06em",
+              color: "var(--text-muted)",
+              textTransform: "uppercase",
+            }}>
+              SU
+            </span>
+          </div>
+          <span style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.78rem",
+            fontWeight: 800,
+            color: GOLD_BRIGHT,
+            lineHeight: 1.1,
+          }}>
+            {totalWater} <span style={{ fontSize: "0.54rem", fontWeight: 600, color: "var(--text-muted)" }}>{lang === "tr" ? "Havza" : "Basins"}</span>
+          </span>
+        </div>
+
+        {/* Rail Footer Status */}
+        <div style={{
+          paddingTop: 5,
+          borderTop: `1px solid ${GOLD_BORDER}`,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}>
+          <span style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.48rem",
+            color: "var(--text-muted)",
+            letterSpacing: "0.06em",
+            textAlign: "center",
+          }}>
+            %99.8 DOĞRULUK
+          </span>
+        </div>
+      </aside>
+
+      {/* ── Bottom Telemetry Dock ────────────────────────────────────────── */}
+      <div style={{
+        position: "absolute", bottom: 20,
+        left: "50%", transform: "translateX(-50%)",
+        zIndex: 20, pointerEvents: "auto",
+        width: "100%", maxWidth: 900, padding: "0 16px",
+      }}>
+        <div style={{
+          borderRadius: 16, border: `1px solid ${GOLD_BORDER}`,
+          background: "rgba(6, 7, 12, 0.22)",
+          backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)",
+          boxShadow: "0 16px 50px rgba(0,0,0,0.6), 0 0 24px rgba(212,175,55,0.05)",
+          overflow: "hidden",
+          transition: "all 0.3s ease",
+        }}>
+          {/* Dock Header */}
           <div
-            onClick={() => setDockExpanded(!dockExpanded)}
-            className="flex items-center justify-between px-5 py-3 cursor-pointer hover:bg-white/[0.04] transition-colors border-b border-white/[0.08]"
+            onClick={() => setDockExpanded(d => !d)}
+            style={{
+              display: "flex", alignItems: "center", justifyContent: "space-between",
+              padding: "10px 18px", cursor: "pointer",
+              borderBottom: dockExpanded ? `1px solid ${GOLD_BORDER}` : "none",
+              transition: "background 0.2s ease",
+            }}
           >
-            <div className="flex items-center gap-3">
-              <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-cyan-950/80 text-cyan-400 border border-cyan-500/30">
-                <Activity className="h-3.5 w-3.5 dn-live-pulse" />
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <div style={{
+                display: "flex", width: 24, height: 24, alignItems: "center", justifyContent: "center",
+                borderRadius: 6, background: GOLD_DIM, border: `1px solid ${GOLD_BORDER}`,
+              }}>
+                <Activity style={{ width: 13, height: 13, color: GOLD, animation: "dn-pulse-glow 2s infinite" }} />
               </div>
-              <div>
-                <h3 className="text-xs font-black text-white uppercase tracking-wider font-mono flex items-center gap-2">
-                  <span>KÜRESEL TELEMETRİ GÜVERTESİ</span>
-                  <span className="rounded-full bg-emerald-950/60 border border-emerald-500/30 px-2 py-0.5 text-[9px] text-emerald-400 font-bold">
-                    {locations.length.toLocaleString()} Tesis
-                  </span>
-                </h3>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{
+                  fontFamily: "var(--font-mono)", fontSize: "0.68rem", fontWeight: 700,
+                  letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--text-main)",
+                }}>
+                  {lang === "tr" ? "KÜRESEL TELEMETRİ GÜVERTESİ" : "GLOBAL TELEMETRY DECK"}
+                </span>
+                <span style={{
+                  borderRadius: 9999, background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.3)",
+                  padding: "2px 8px", fontFamily: "var(--font-mono)", fontSize: "0.58rem",
+                  fontWeight: 700, color: "#34d399",
+                }}>
+                  {locations.length.toLocaleString()} {lang === "tr" ? "Tesis" : "Facilities"}
+                </span>
               </div>
             </div>
-
-            <div className="flex items-center gap-3">
-              <span className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-wider">
-                {dockExpanded ? "Güverteyi Kapat" : "Detaylı Telemetriyi Aç"}
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{
+                fontFamily: "var(--font-mono)", fontSize: "0.6rem", fontWeight: 700,
+                letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-muted)",
+              }}>
+                {dockExpanded
+                  ? (lang === "tr" ? "Kapat" : "Close")
+                  : (lang === "tr" ? "Telemetriyi Aç" : "Open Telemetry")}
               </span>
-              <div className="flex h-5 w-5 items-center justify-center rounded-lg bg-white/[0.06] border border-white/10 text-zinc-300">
-                {dockExpanded ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronUp className="h-3.5 w-3.5" />}
+              <div style={{
+                display: "flex", width: 20, height: 20, alignItems: "center", justifyContent: "center",
+                borderRadius: 6, background: GOLD_DIM, border: `1px solid ${GOLD_BORDER}`,
+                color: GOLD,
+              }}>
+                {dockExpanded
+                  ? <ChevronDown style={{ width: 12, height: 12 }} />
+                  : <ChevronUp style={{ width: 12, height: 12 }} />}
               </div>
             </div>
           </div>
 
-          {/* Expanded Rich Telemetry Center */}
+          {/* Expanded Content */}
           <AnimatePresence>
             {dockExpanded && (
               <motion.div
@@ -221,107 +442,219 @@ export default function ExplorePage({ lang = "tr", activeNav = "explore" }: Expl
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ duration: 0.28 }}
-                className="p-5 space-y-4 max-h-[360px] overflow-y-auto scrollbar-thin"
+                style={{ padding: "14px 18px", display: "flex", flexDirection: "column", gap: 12, maxHeight: 360, overflowY: "auto" }}
               >
-                {/* Controls Bar: Category Tabs + Search + Sort */}
-                <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-white/[0.08]">
+                {/* Controls: Tabs + Search + Sort */}
+                <div style={{
+                  display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between",
+                  gap: 10, paddingBottom: 12, borderBottom: `1px solid ${GOLD_BORDER}`,
+                }}>
                   {/* Category Pills */}
-                  <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-1">
-                    {[
-                      { id: "all", label: "Tümü (3,160)" },
-                      { id: "elektrik", label: "Santraller" },
-                      { id: "datacenter", label: "AI Veri Merkezleri" },
-                      { id: "su", label: "Su & Baraj" },
-                      { id: "ulasim", label: "Ulaşım Hub" },
-                    ].map((tab) => (
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, overflowX: "auto", flexWrap: "nowrap" }}>
+                    {CATEGORY_TABS.map(tab => (
                       <button
-                         key={tab.id}
-                         onClick={() => setSelectedTab(tab.id as any)}
-                         className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                           selectedTab === tab.id
-                             ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-[0_0_12px_rgba(6,182,212,0.25)] font-black"
-                             : "bg-white/[0.04] text-zinc-400 hover:bg-white/[0.08] hover:text-white border border-white/[0.08]"
-                         }`}
-                       >
-                         {tab.label}
-                       </button>
+                        key={tab.id}
+                        onClick={() => setSelectedTab(tab.id)}
+                        style={{
+                          padding: "5px 12px",
+                          borderRadius: 9999,
+                          border: `1px solid ${selectedTab === tab.id ? GOLD : GOLD_BORDER}`,
+                          background: selectedTab === tab.id ? GOLD_DIM : "transparent",
+                          fontFamily: "var(--font-mono)", fontSize: "0.62rem", fontWeight: 700,
+                          letterSpacing: "0.06em", textTransform: "uppercase",
+                          color: selectedTab === tab.id ? GOLD_BRIGHT : "var(--text-muted)",
+                          cursor: "pointer", transition: "all 0.18s ease",
+                          whiteSpace: "nowrap",
+                          boxShadow: selectedTab === tab.id ? `0 0 10px rgba(212,175,55,0.25)` : "none",
+                        }}
+                      >
+                        {lang === "tr" ? tab.tr : tab.en}
+                      </button>
                     ))}
                   </div>
 
-                  {/* Search Input & Sort Selector */}
-                  <div className="flex items-center gap-2 ml-auto">
-                    <div className="relative">
-                      <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-zinc-500" />
+                  {/* Search + Sort */}
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginLeft: "auto" }}>
+                    <div style={{ position: "relative" }}>
+                      <Search style={{ position: "absolute", left: 9, top: "50%", transform: "translateY(-50%)", width: 12, height: 12, color: "var(--text-muted)" }} />
                       <input
                         type="text"
                         value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="Tesis veya ülke ara..."
-                        className="rounded-xl border border-white/10 bg-black/40 pl-8 pr-3 py-1.5 text-xs text-white placeholder:text-zinc-500 focus:border-cyan-500/60 focus:outline-none w-48 transition-all"
+                        onChange={e => setSearchQuery(e.target.value)}
+                        placeholder={lang === "tr" ? "Tesis veya ülke ara..." : "Search facility or country..."}
+                        style={{
+                          borderRadius: 9999, border: `1px solid ${GOLD_BORDER}`,
+                          background: "rgba(0,0,0,0.4)", paddingLeft: 28, paddingRight: 10,
+                          paddingTop: 5, paddingBottom: 5,
+                          fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "var(--text-main)",
+                          width: 180, outline: "none",
+                        }}
                       />
                     </div>
 
                     <select
                       value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value as any)}
-                      className="rounded-xl border border-white/10 bg-black/60 px-2.5 py-1.5 text-xs text-zinc-300 focus:outline-none focus:border-cyan-500/60"
+                      onChange={e => setSortBy(e.target.value as any)}
+                      style={{
+                        borderRadius: 9999, border: `1px solid ${GOLD_BORDER}`,
+                        background: "rgba(0,0,0,0.5)", padding: "5px 10px",
+                        fontFamily: "var(--font-mono)", fontSize: "0.65rem",
+                        color: "var(--text-muted)", outline: "none", cursor: "pointer",
+                      }}
                     >
-                      <option value="capacity" className="bg-zinc-900 text-white">En Yüksek Kapasite</option>
-                      <option value="name" className="bg-zinc-900 text-white">Ada Göre (A-Z)</option>
-                      <option value="country" className="bg-zinc-900 text-white">Ülkeye Göre</option>
+                      <option value="capacity" style={{ background: "#0a0b12" }}>
+                        {lang === "tr" ? "En Yüksek Kapasite" : "Highest Capacity"}
+                      </option>
+                      <option value="name" style={{ background: "#0a0b12" }}>
+                        {lang === "tr" ? "Ada Göre (A-Z)" : "Name (A–Z)"}
+                      </option>
+                      <option value="country" style={{ background: "#0a0b12" }}>
+                        {lang === "tr" ? "Ülkeye Göre" : "By Country"}
+                      </option>
                     </select>
                   </div>
                 </div>
 
-                {/* Facility Cards Grid (Responsive, Highly Informative) */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {deckAssets.slice(0, 30).map((asset) => (
+                {/* Facility Cards Grid */}
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(230px, 1fr))", gap: 10 }}>
+                  {deckAssets.slice(0, displayCount).map(asset => (
                     <div
                       key={asset.id}
                       onClick={() => setSelectedAsset(asset)}
-                      className="group cursor-pointer rounded-xl border border-white/[0.08] bg-white/[0.02] p-3 hover:border-cyan-500/40 hover:bg-white/[0.06] transition-all shadow-md relative overflow-hidden"
+                      style={{
+                        cursor: "pointer",
+                        borderRadius: 10,
+                        border: `1px solid ${GOLD_BORDER}`,
+                        background: "rgba(6, 7, 12, 0.28)",
+                        padding: "10px 12px",
+                        transition: "all 0.18s cubic-bezier(0.16,1,0.3,1)",
+                        position: "relative",
+                        overflow: "hidden",
+                      }}
                     >
-                      <div className="flex items-start justify-between gap-2 mb-1.5">
-                        <div className="flex items-center gap-1.5 min-w-0">
-                          <span className="text-base">{asset.flagEmoji}</span>
-                          <h4 className="text-xs font-bold text-white truncate font-sans group-hover:text-cyan-300 transition-colors">
+                      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8, marginBottom: 5 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 6, minWidth: 0 }}>
+                          <span style={{ fontSize: "1rem" }}>{asset.flagEmoji}</span>
+                          <h4 style={{
+                            fontFamily: "var(--font-sans)", fontSize: "0.75rem", fontWeight: 700,
+                            color: "var(--text-main)", overflow: "hidden", whiteSpace: "nowrap",
+                            textOverflow: "ellipsis", margin: 0,
+                          }}>
                             {asset.name}
                           </h4>
                         </div>
-                        <ArrowUpRight className="h-3.5 w-3.5 text-zinc-500 group-hover:text-cyan-400 transition-colors shrink-0" />
+                        <MapPin style={{ width: 12, height: 12, color: GOLD, flexShrink: 0 }} />
                       </div>
 
-                      <div className="flex items-center justify-between text-[10.5px] text-zinc-400 mb-2 font-mono">
-                        <span className="text-zinc-400 truncate">{asset.type}</span>
-                        <span className="font-bold text-amber-400 shrink-0 ml-1 bg-amber-950/50 border border-amber-500/30 px-1.5 rounded">{asset.capacity}</span>
+                      <div style={{
+                        display: "flex", alignItems: "center", justifyContent: "space-between",
+                        fontFamily: "var(--font-mono)", fontSize: "0.62rem", marginBottom: 8,
+                      }}>
+                        <span style={{ color: "var(--text-muted)", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>
+                          {asset.type}
+                        </span>
+                        <span style={{
+                          fontWeight: 700, color: GOLD_BRIGHT, flexShrink: 0, marginLeft: 4,
+                          background: "rgba(212,175,55,0.1)", border: `1px solid ${GOLD_BORDER}`,
+                          borderRadius: 4, padding: "1px 5px",
+                        }}>
+                          {asset.capacity}
+                        </span>
                       </div>
 
-                      <div className="flex items-center justify-between text-[9.5px] pt-2 border-t border-white/[0.06] text-zinc-500">
-                        <span className="truncate">{asset.country}</span>
-                        <span className="text-cyan-400 font-mono font-semibold group-hover:underline">Telemetriyi İncele →</span>
+                      <div style={{
+                        display: "flex", alignItems: "center", justifyContent: "space-between",
+                        paddingTop: 6, borderTop: `1px solid ${GOLD_BORDER}`,
+                        fontFamily: "var(--font-mono)", fontSize: "0.6rem",
+                      }}>
+                        <span style={{ color: "var(--text-muted)", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>
+                          {asset.country}
+                        </span>
+                        <span style={{ color: GOLD_BRIGHT, fontWeight: 700, flexShrink: 0 }}>
+                          {lang === "tr" ? "Telemetriyi İncele →" : "View Telemetry →"}
+                        </span>
                       </div>
                     </div>
                   ))}
                 </div>
 
+                {/* Load More & Pagination Indicator */}
+                {deckAssets.length > displayCount && (
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginTop: 14 }}>
+                    <button
+                      onClick={() => setDisplayCount(prev => Math.min(prev + 60, deckAssets.length))}
+                      style={{
+                        padding: "8px 18px",
+                        borderRadius: 8,
+                        background: "rgba(212, 175, 55, 0.12)",
+                        border: `1px solid ${GOLD_BORDER}`,
+                        color: GOLD_BRIGHT,
+                        fontFamily: "var(--font-mono)",
+                        fontSize: "0.68rem",
+                        fontWeight: 700,
+                        cursor: "pointer",
+                        letterSpacing: "0.06em",
+                        transition: "all 0.2s ease",
+                      }}
+                    >
+                      {lang === "tr"
+                        ? `Daha Fazla Göster (+60) — [${Math.min(displayCount, deckAssets.length)} / ${deckAssets.length.toLocaleString()}]`
+                        : `Load More (+60) — [${Math.min(displayCount, deckAssets.length)} / ${deckAssets.length.toLocaleString()}]`}
+                    </button>
+                    <button
+                      onClick={() => setDisplayCount(deckAssets.length)}
+                      style={{
+                        padding: "8px 16px",
+                        borderRadius: 8,
+                        background: "rgba(255, 255, 255, 0.04)",
+                        border: "1px solid rgba(255, 255, 255, 0.12)",
+                        color: "var(--text-muted)",
+                        fontFamily: "var(--font-mono)",
+                        fontSize: "0.66rem",
+                        cursor: "pointer",
+                        transition: "all 0.2s ease",
+                      }}
+                    >
+                      {lang === "tr" ? "Tümünü Yükle" : "Load All"}
+                    </button>
+                  </div>
+                )}
+
                 {deckAssets.length === 0 && (
-                  <div className="py-8 text-center text-xs text-zinc-500">
-                    Aramanızla eşleşen altyapı tesisi bulunamadı.
+                  <div style={{
+                    padding: "2rem", textAlign: "center",
+                    fontFamily: "var(--font-mono)", fontSize: "0.68rem", color: "var(--text-muted)",
+                  }}>
+                    {lang === "tr" ? "Aramanızla eşleşen tesis bulunamadı." : "No facilities match your search."}
                   </div>
                 )}
               </motion.div>
             )}
           </AnimatePresence>
+        </div>
 
+        {/* Official Copyright Line */}
+        <div style={{
+          textAlign: "center",
+          paddingTop: 8,
+          paddingBottom: 2,
+          fontFamily: "var(--font-mono)",
+          fontSize: "0.58rem",
+          letterSpacing: "0.08em",
+          color: "rgba(163, 155, 141, 0.65)",
+        }}>
+          © 2026 Dona Codex. All rights reserved.
         </div>
       </div>
 
-      {/* Asset Detail Inspector Panel */}
+      {/* ── Asset Detail Panel ───────────────────────────────────────────── */}
       <AssetDetailPanel
         asset={selectedAsset}
         onClose={() => setSelectedAsset(null)}
       />
 
+      {/* Spin animation for loader */}
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }

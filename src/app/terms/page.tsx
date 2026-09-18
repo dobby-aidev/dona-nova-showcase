@@ -4,117 +4,366 @@ import React from "react";
 import { Scale, CheckCircle2, ShieldCheck, Mail } from "lucide-react";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { DocNavTabs } from "@/components/layout/DocNavTabs";
+import { CosmicBackground } from "@/components/layout/CosmicBackground";
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-[#06080e] text-slate-100 flex flex-col select-none">
-      <PublicHeader />
+    <div style={{
+      minHeight: "100vh",
+      background: "transparent",
+      color: "var(--text-main)",
+      display: "flex",
+      flexDirection: "column",
+      userSelect: "none",
+      position: "relative",
+    }}>
+      {/* 3D Photorealistic Earth & Starfield in Background */}
+      <CosmicBackground />
 
-      <main className="flex-1 flex flex-col items-center justify-start px-4 sm:px-6 py-10 sm:py-14 w-full max-w-3xl mx-auto text-center">
-        {/* Centered Document Navigation Tabs */}
-        <DocNavTabs />
+      <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+        <PublicHeader />
 
-        {/* Hero Title Section */}
-        <div className="w-full text-center mb-10 space-y-4">
-          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-950/40 px-4 py-1.5 text-xs font-mono font-bold text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.2)]">
-            <Scale className="h-4 w-4" />
-            <span>Resmi Açık Kaynak Lisansı & Koşulları</span>
-          </div>
+        <main style={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "flex-start",
+          padding: "2.5rem 1.5rem 4rem 1.5rem",
+          width: "100%",
+          maxWidth: "760px",
+          margin: "0 auto",
+          textAlign: "center",
+        }}>
+          {/* Centered Document Navigation */}
+          <DocNavTabs />
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight font-sans">
-            Kullanım Koşulları
-          </h1>
+          {/* Hero Section */}
+          <div style={{ width: "100%", textAlign: "center", marginBottom: "2.5rem", display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem" }}>
+            <div style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              borderRadius: "9999px",
+              border: "1px solid var(--gold-border)",
+              background: "rgba(212, 175, 55, 0.08)",
+              padding: "0.35rem 1rem",
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.68rem",
+              fontWeight: 700,
+              color: "var(--gold-bright)",
+              boxShadow: "0 0 16px rgba(212,175,55,0.15)",
+            }}>
+              <Scale style={{ width: 14, height: 14 }} />
+              <span>RESMİ AÇIK KAYNAK LİSANSI & KOŞULLARI</span>
+            </div>
 
-          <p className="text-xs sm:text-sm text-zinc-400 max-w-lg mx-auto leading-relaxed text-center">
-            DONA NOVA, küresel enerji ve kritik altyapı verilerini tüm insanlığın şeffaf erişimine sunmak amacıyla MIT Lisansı altında geliştirilen bir açık istihbarat platformudur.
-          </p>
+            <h1 style={{
+              fontFamily: "var(--font-display)",
+              fontSize: "2.4rem",
+              fontWeight: 900,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              background: "linear-gradient(135deg, #ffffff 0%, #faeed9 30%, #f5d77f 60%, #d4af37 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+              margin: 0,
+              lineHeight: 1.2,
+            }}>
+              Kullanım Koşulları
+            </h1>
 
-          <div className="flex flex-wrap items-center justify-center gap-2.5 text-[11px] font-mono text-zinc-500 pt-1">
-            <span className="rounded-md border border-white/10 bg-white/[0.04] px-2.5 py-1 text-zinc-300">Yürürlük: 2026</span>
-            <span className="text-zinc-600">•</span>
-            <span className="rounded-md border border-white/10 bg-white/[0.04] px-2.5 py-1 text-zinc-300">Sürüm: v1.0 Production</span>
-            <span className="text-zinc-600">•</span>
-            <span className="rounded-md border border-emerald-500/30 bg-emerald-950/40 text-emerald-300 font-bold px-2.5 py-1">%100 Açık Veri</span>
-          </div>
-        </div>
+            <p style={{
+              fontFamily: "var(--font-sans)",
+              fontSize: "0.85rem",
+              lineHeight: 1.7,
+              color: "var(--text-muted)",
+              maxWidth: "560px",
+              margin: "0 auto",
+              textAlign: "center",
+            }}>
+              DONA NOVA, küresel enerji santralleri ve kritik altyapı verilerini insanlığın şeffaf erişimine sunmak amacıyla MIT Lisansı altında geliştirilen bir açık istihbarat platformudur.
+            </p>
 
-        {/* Content Cards - Centered Text */}
-        <div className="w-full space-y-4 text-center">
-          {/* Section 1 */}
-          <div className="rounded-2xl border border-white/10 bg-zinc-950/70 p-6 shadow-2xl backdrop-blur-2xl space-y-3 transition-all hover:border-cyan-500/40 flex flex-col items-center">
-            <div className="flex items-center justify-center gap-2.5 pb-2 border-b border-white/[0.08] w-full">
-              <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-cyan-950/80 border border-cyan-500/40 text-cyan-300 font-mono text-xs font-black">
-                01
+            <div style={{
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "0.6rem",
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.62rem",
+              color: "var(--text-muted)",
+            }}>
+              <span style={{ borderRadius: "6px", border: "1px solid var(--gold-border)", background: "rgba(0,0,0,0.4)", padding: "3px 8px", color: "var(--text-main)" }}>
+                YÜRÜRLÜK: 2026
               </span>
-              <h2 className="text-base font-bold text-white font-sans">
+              <span>•</span>
+              <span style={{ borderRadius: "6px", border: "1px solid var(--gold-border)", background: "rgba(0,0,0,0.4)", padding: "3px 8px", color: "var(--text-main)" }}>
+                SÜRÜM: v1.0 PRODUCTION
+              </span>
+              <span>•</span>
+              <span style={{ borderRadius: "6px", border: "1px solid rgba(16,185,129,0.35)", background: "rgba(16,185,129,0.1)", padding: "3px 8px", color: "#34d399", fontWeight: 700 }}>
+                %100 AÇIK VERİ
+              </span>
+            </div>
+          </div>
+
+          {/* Section Cards - Centered Column */}
+          <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: "1.2rem" }}>
+            {/* Section 01 */}
+            <div style={{
+              borderRadius: "16px",
+              border: "1px solid var(--gold-border)",
+              background: "rgba(6, 7, 12, 0.2)",
+              padding: "1.8rem 1.6rem",
+              boxShadow: "0 12px 40px rgba(0,0,0,0.4), 0 0 20px rgba(212,175,55,0.03)",
+              backdropFilter: "blur(14px)",
+              WebkitBackdropFilter: "blur(14px)",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              textAlign: "center",
+              gap: "0.8rem",
+            }}>
+              <div style={{
+                display: "inline-flex",
+                width: 32,
+                height: 32,
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "8px",
+                background: "rgba(212, 175, 55, 0.12)",
+                border: "1px solid var(--gold-border)",
+                color: "var(--gold-bright)",
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.75rem",
+                fontWeight: 800,
+              }}>
+                01
+              </div>
+
+              <h2 style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "1.05rem",
+                fontWeight: 800,
+                letterSpacing: "0.08em",
+                color: "var(--text-main)",
+                margin: 0,
+                textAlign: "center",
+              }}>
                 Hizmetin Niteliği ve Kapsamı
               </h2>
-            </div>
-            <p className="leading-relaxed text-xs sm:text-sm text-zinc-300 max-w-xl text-center">
-              DONA NOVA ("Platform"), dünya üzerindeki 35.000+ elektrik santrali, baraj ve veri merkezini 3D küre üzerinde interaktif görselleştiren açık kaynak bir sistemdir.
-            </p>
-            <p className="leading-relaxed text-xs text-zinc-400 max-w-xl text-center">
-              Veriler U.S. EIA, ENTSO-E, WRI Global Power Plant Database ve Electricity Maps kamu API'larından doğrudan derlenmektedir.
-            </p>
-          </div>
 
-          {/* Section 2 */}
-          <div className="rounded-2xl border border-white/10 bg-zinc-950/70 p-6 shadow-2xl backdrop-blur-2xl space-y-3 transition-all hover:border-amber-500/40 flex flex-col items-center">
-            <div className="flex items-center justify-center gap-2.5 pb-2 border-b border-white/[0.08] w-full">
-              <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-amber-950/80 border border-amber-500/40 text-amber-300 font-mono text-xs font-black">
+              <p style={{
+                fontFamily: "var(--font-sans)",
+                fontSize: "0.82rem",
+                lineHeight: 1.7,
+                color: "rgba(210, 205, 195, 0.85)",
+                maxWidth: "600px",
+                margin: 0,
+                textAlign: "center",
+              }}>
+                DONA NOVA ("Platform"), dünya üzerindeki 3.160+ kritik elektrik santrali, baraj, su iletim hattı ve AI veri merkezini 3D küre üzerinde interaktif görselleştiren açık kaynak bir sistemdir.
+              </p>
+
+              <p style={{
+                fontFamily: "var(--font-sans)",
+                fontSize: "0.76rem",
+                lineHeight: 1.6,
+                color: "var(--text-muted)",
+                maxWidth: "600px",
+                margin: 0,
+                textAlign: "center",
+              }}>
+                Veriler U.S. EIA, ENTSO-E, WRI Global Power Plant Database ve Electricity Maps kamu API'larından doğrudan derlenmektedir.
+              </p>
+            </div>
+
+            {/* Section 02 */}
+            <div style={{
+              borderRadius: "16px",
+              border: "1px solid var(--gold-border)",
+              background: "rgba(6, 7, 12, 0.2)",
+              padding: "1.8rem 1.6rem",
+              boxShadow: "0 12px 40px rgba(0,0,0,0.4), 0 0 20px rgba(212,175,55,0.03)",
+              backdropFilter: "blur(14px)",
+              WebkitBackdropFilter: "blur(14px)",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              textAlign: "center",
+              gap: "0.8rem",
+            }}>
+              <div style={{
+                display: "inline-flex",
+                width: 32,
+                height: 32,
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "8px",
+                background: "rgba(212, 175, 55, 0.12)",
+                border: "1px solid var(--gold-border)",
+                color: "var(--gold-bright)",
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.75rem",
+                fontWeight: 800,
+              }}>
                 02
-              </span>
-              <h2 className="text-base font-bold text-white font-sans">
+              </div>
+
+              <h2 style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "1.05rem",
+                fontWeight: 800,
+                letterSpacing: "0.08em",
+                color: "var(--text-main)",
+                margin: 0,
+                textAlign: "center",
+              }}>
                 Açık Kaynak Lisansı (MIT License)
               </h2>
-            </div>
-            <p className="leading-relaxed text-xs sm:text-sm text-zinc-300 max-w-xl text-center">
-              DONA NOVA'nın kaynak kodları ve arayüz bileşenleri GitHub üzerinde MIT lisansı ile kamuya açıktır:
-            </p>
-            <ul className="space-y-2 pt-1 text-xs text-zinc-300 text-center max-w-md">
-              <li className="flex items-center justify-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
-                <span>Akademik araştırmalarda ve ticari analizlerde serbestçe kullanılabilir.</span>
-              </li>
-              <li className="flex items-center justify-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
-                <span>Kullanıcı hesabı veya ücret zorunluluğu kesinlikle yoktur.</span>
-              </li>
-              <li className="flex items-center justify-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
-                <span>Kodu dilediğiniz gibi fork edebilir ve yerelinizde çalıştırabilirsiniz.</span>
-              </li>
-            </ul>
-          </div>
 
-          {/* Section 3 */}
-          <div className="rounded-2xl border border-white/10 bg-zinc-950/70 p-6 shadow-2xl backdrop-blur-2xl space-y-3 transition-all hover:border-indigo-500/40 flex flex-col items-center">
-            <div className="flex items-center justify-center gap-2.5 pb-2 border-b border-white/[0.08] w-full">
-              <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-indigo-950/80 border border-indigo-500/40 text-indigo-300 font-mono text-xs font-black">
+              <p style={{
+                fontFamily: "var(--font-sans)",
+                fontSize: "0.82rem",
+                lineHeight: 1.7,
+                color: "rgba(210, 205, 195, 0.85)",
+                maxWidth: "600px",
+                margin: 0,
+                textAlign: "center",
+              }}>
+                DONA NOVA'nın kaynak kodları ve arayüz bileşenleri GitHub üzerinde MIT lisansı ile tüm geliştiricilere ve araştırmacılara açıktır:
+              </p>
+
+              <div style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "0.6rem",
+                maxWidth: "520px",
+                width: "100%",
+                paddingTop: "0.4rem",
+              }}>
+                {[
+                  "Akademik araştırmalarda ve ticari analizlerde serbestçe kullanılabilir.",
+                  "Kullanıcı hesabı, kayıt formu veya kredi kartı zorunluluğu kesinlikle yoktur.",
+                  "Kaynak kodunu dilediğiniz gibi fork edebilir ve yerelinizde çalıştırabilirsiniz.",
+                ].map((text, i) => (
+                  <div key={i} style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "0.6rem",
+                    fontFamily: "var(--font-sans)",
+                    fontSize: "0.78rem",
+                    color: "var(--text-main)",
+                    textAlign: "center",
+                  }}>
+                    <CheckCircle2 style={{ width: 14, height: 14, color: "#34d399", flexShrink: 0 }} />
+                    <span>{text}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Section 03 */}
+            <div style={{
+              borderRadius: "16px",
+              border: "1px solid var(--gold-border)",
+              background: "rgba(6, 7, 12, 0.2)",
+              padding: "1.8rem 1.6rem",
+              boxShadow: "0 12px 40px rgba(0,0,0,0.4), 0 0 20px rgba(212,175,55,0.03)",
+              backdropFilter: "blur(14px)",
+              WebkitBackdropFilter: "blur(14px)",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              textAlign: "center",
+              gap: "0.8rem",
+            }}>
+              <div style={{
+                display: "inline-flex",
+                width: 32,
+                height: 32,
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "8px",
+                background: "rgba(212, 175, 55, 0.12)",
+                border: "1px solid var(--gold-border)",
+                color: "var(--gold-bright)",
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.75rem",
+                fontWeight: 800,
+              }}>
                 03
-              </span>
-              <h2 className="text-base font-bold text-white font-sans">
+              </div>
+
+              <h2 style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "1.05rem",
+                fontWeight: 800,
+                letterSpacing: "0.08em",
+                color: "var(--text-main)",
+                margin: 0,
+                textAlign: "center",
+              }}>
                 Veri Doğruluğu & İletişim
               </h2>
-            </div>
-            <p className="leading-relaxed text-xs sm:text-sm text-zinc-300 max-w-xl text-center">
-              Veriler kamu kurumlarından sağlanmaktadır. Güvenlik bildirimleri ve sorularınız için:
-            </p>
-            <a
-              href="mailto:info@donacodex.com"
-              className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-mono font-semibold text-zinc-200 hover:bg-white/[0.08] hover:text-white transition-all shadow-md mt-1"
-            >
-              <Mail className="h-3.5 w-3.5 text-cyan-400" />
-              <span>info@donacodex.com</span>
-            </a>
-          </div>
-        </div>
 
-        {/* Minimal Clean Footer */}
-        <div className="text-center pt-16 pb-8 text-xs font-mono text-zinc-500">
-          <p>DONA NOVA • Terms of Service • Dona Codex</p>
-        </div>
-      </main>
+              <p style={{
+                fontFamily: "var(--font-sans)",
+                fontSize: "0.82rem",
+                lineHeight: 1.7,
+                color: "rgba(210, 205, 195, 0.85)",
+                maxWidth: "600px",
+                margin: 0,
+                textAlign: "center",
+              }}>
+                Veriler kamu kurumlarından sağlanmaktadır. Güvenlik bildirimleri ve sorularınız için resmi iletişim adresi:
+              </p>
+
+              <a
+                href="mailto:info@donacodex.com"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                  borderRadius: "10px",
+                  border: "1px solid var(--gold-border)",
+                  background: "rgba(212, 175, 55, 0.08)",
+                  padding: "0.5rem 1.2rem",
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.75rem",
+                  fontWeight: 700,
+                  color: "var(--gold-bright)",
+                  textDecoration: "none",
+                  transition: "all 0.2s ease",
+                  marginTop: "0.3rem",
+                }}
+              >
+                <Mail style={{ width: 14, height: 14 }} />
+                <span>info@donacodex.com</span>
+              </a>
+            </div>
+          </div>
+
+          {/* Minimal Centered Footer */}
+          <div style={{
+            textAlign: "center",
+            paddingTop: "3.5rem",
+            paddingBottom: "2rem",
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.62rem",
+            letterSpacing: "0.1em",
+            color: "var(--text-muted)",
+            textTransform: "uppercase",
+          }}>
+            <p style={{ letterSpacing: "0.08em" }}>© 2026 Dona Codex. All rights reserved.</p>
+          </div>
+        </main>
+      </div>
     </div>
   );
 }
