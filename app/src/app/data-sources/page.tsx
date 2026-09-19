@@ -5,6 +5,8 @@ import { Database, ExternalLink } from "lucide-react";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { DocNavTabs } from "@/components/layout/DocNavTabs";
 import { CosmicBackground } from "@/components/layout/CosmicBackground";
+import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 const SOURCES = [
   {
@@ -81,6 +83,7 @@ const SOURCES = [
 
 export default function DataSourcesPage() {
   const [lang, setLang] = useState<"tr" | "en">("tr");
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     try {
@@ -98,17 +101,32 @@ export default function DataSourcesPage() {
   return (
     <div style={{
       minHeight: "100vh",
+      width: "100%",
+      maxWidth: "100vw",
+      overflowX: "hidden",
       background: "transparent",
       color: "var(--text-main)",
       display: "flex",
       flexDirection: "column",
       userSelect: "none",
       position: "relative",
+      boxSizing: "border-box",
     }}>
       {/* 3D Photorealistic Earth & Starfield in Background */}
       <CosmicBackground />
+      <div className="dn-grid-bg" style={{ position: "fixed", inset: 0, opacity: 0.25, pointerEvents: "none", zIndex: 1 }} />
 
-      <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+      <div style={{
+        position: "relative",
+        zIndex: 10,
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+        width: "100%",
+        maxWidth: "100vw",
+        overflowX: "hidden",
+        boxSizing: "border-box",
+      }}>
         <PublicHeader lang={lang} setLang={setLang} />
 
         <main style={{
@@ -117,59 +135,83 @@ export default function DataSourcesPage() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "flex-start",
-          padding: "2.5rem 1.5rem 4rem 1.5rem",
+          padding: isMobile ? "1.25rem 0.85rem calc(88px + env(safe-area-inset-bottom, 0px)) 0.85rem" : "2.5rem 1.5rem 4rem 1.5rem",
           width: "100%",
           maxWidth: "760px",
           margin: "0 auto",
           textAlign: "center",
+          boxSizing: "border-box",
+          overflowX: "hidden",
         }}>
           {/* Centered Document Navigation */}
-          <DocNavTabs />
+          <DocNavTabs lang={lang} />
 
           {/* Hero Section */}
-          <div style={{ width: "100%", textAlign: "center", marginBottom: "2.5rem", display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem" }}>
+          <div style={{
+            width: "100%",
+            textAlign: "center",
+            marginBottom: isMobile ? "1.5rem" : "2.5rem",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: isMobile ? "0.75rem" : "1rem",
+            boxSizing: "border-box",
+          }}>
             <div style={{
               display: "inline-flex",
               alignItems: "center",
-              gap: "0.5rem",
+              gap: "0.45rem",
               borderRadius: "9999px",
               border: "1px solid var(--gold-border)",
               background: "rgba(212, 175, 55, 0.08)",
-              padding: "0.35rem 1rem",
+              padding: isMobile ? "0.3rem 0.75rem" : "0.35rem 1rem",
               fontFamily: "var(--font-mono)",
-              fontSize: "0.68rem",
+              fontSize: isMobile ? "0.58rem" : "0.68rem",
               fontWeight: 700,
               color: "var(--gold-bright)",
               boxShadow: "0 0 16px rgba(212,175,55,0.15)",
+              maxWidth: "100%",
+              boxSizing: "border-box",
             }}>
-              <Database style={{ width: 14, height: 14 }} />
-              <span>{lang === "tr" ? "%100 DOĞRULANMIŞ KAMU VERİ ŞEFFAFLIĞI" : "100% VERIFIED PUBLIC DATA MATRIX"}</span>
+              <Database style={{ width: 13, height: 13, flexShrink: 0 }} />
+              <span style={{
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "normal",
+                wordBreak: "break-word",
+                lineHeight: 1.3,
+              }}>
+                {lang === "tr" ? "%100 DOĞRULANMIŞ KAMU VERİ ŞEFFAFLIĞI" : "100% VERIFIED PUBLIC DATA MATRIX"}
+              </span>
             </div>
 
             <h1 style={{
               fontFamily: "var(--font-display)",
-              fontSize: "2.4rem",
+              fontSize: isMobile ? "1.45rem" : "2.4rem",
               fontWeight: 900,
-              letterSpacing: "0.08em",
+              letterSpacing: isMobile ? "0.04em" : "0.08em",
               textTransform: "uppercase",
               background: "linear-gradient(135deg, #ffffff 0%, #faeed9 30%, #f5d77f 60%, #d4af37 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",
               margin: 0,
-              lineHeight: 1.2,
+              lineHeight: 1.25,
+              wordBreak: "break-word",
+              maxWidth: "100%",
             }}>
               {lang === "tr" ? "Veri Kaynakları & Metodoloji" : "Data Sources & Methodology"}
             </h1>
 
             <p style={{
               fontFamily: "var(--font-sans)",
-              fontSize: "0.85rem",
-              lineHeight: 1.7,
+              fontSize: isMobile ? "0.78rem" : "0.85rem",
+              lineHeight: 1.65,
               color: "var(--text-muted)",
               maxWidth: "560px",
               margin: "0 auto",
               textAlign: "center",
+              boxSizing: "border-box",
             }}>
               {lang === "tr"
                 ? "DONA NOVA üzerindeki hiçbir veri tahmini veya kurgusal değildir. Her tesis ve şebeke düğümü kamuya açık resmi otoritelerden doğrulanır."
@@ -181,32 +223,35 @@ export default function DataSourcesPage() {
               flexWrap: "wrap",
               alignItems: "center",
               justifyContent: "center",
-              gap: "0.6rem",
+              gap: isMobile ? "0.4rem" : "0.6rem",
               fontFamily: "var(--font-mono)",
-              fontSize: "0.62rem",
+              fontSize: isMobile ? "0.55rem" : "0.62rem",
               color: "var(--text-muted)",
+              boxSizing: "border-box",
+              width: "100%",
             }}>
               <span style={{ borderRadius: "6px", border: "1px solid var(--gold-border)", background: "rgba(0,0,0,0.3)", padding: "3px 8px", color: "var(--text-main)" }}>
                 {lang === "tr" ? "3.160+ HARİTALANMIŞ TESİS" : "3,160+ MAPPED ASSETS"}
               </span>
-              <span>•</span>
+              {!isMobile && <span>•</span>}
               <span style={{ borderRadius: "6px", border: "1px solid var(--gold-border)", background: "rgba(0,0,0,0.3)", padding: "3px 8px", color: "var(--text-main)" }}>
                 {lang === "tr" ? "SIFIR UYDURMA VERİ" : "ZERO SYNTHETIC DATA"}
               </span>
-              <span>•</span>
+              {!isMobile && <span>•</span>}
               <span style={{ borderRadius: "6px", border: "1px solid rgba(16,185,129,0.35)", background: "rgba(16,185,129,0.1)", padding: "3px 8px", color: "#34d399", fontWeight: 700 }}>
                 {lang === "tr" ? "RESMİ AÇIK API" : "OFFICIAL OPEN API"}
               </span>
             </div>
           </div>
 
-          {/* 3 Principles - Centered Grid */}
+          {/* 3 Principles - Responsive Grid (Single column on mobile, 3 cols on desktop) */}
           <div style={{
             display: "grid",
-            gridTemplateColumns: "1fr 1fr 1fr",
-            gap: "1rem",
+            gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)",
+            gap: isMobile ? "0.75rem" : "1rem",
             width: "100%",
-            marginBottom: "2rem",
+            boxSizing: "border-box",
+            marginBottom: isMobile ? "1.5rem" : "2rem",
           }}>
             {[
               {
@@ -226,38 +271,41 @@ export default function DataSourcesPage() {
               },
             ].map((p) => (
               <div key={p.num} style={{
-                borderRadius: "16px",
+                borderRadius: "14px",
                 border: "1px solid var(--gold-border)",
-                background: "rgba(6, 7, 12, 0.2)",
+                background: "rgba(6, 7, 12, 0.4)",
                 backdropFilter: "blur(14px)",
-                padding: "1.4rem 1rem",
-                boxShadow: "0 12px 35px rgba(0,0,0,0.4)",
+                padding: isMobile ? "1.1rem 0.9rem" : "1.4rem 1rem",
+                boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
                 textAlign: "center",
-                gap: "0.5rem",
+                gap: "0.45rem",
+                boxSizing: "border-box",
+                width: "100%",
               }}>
                 <div style={{
                   display: "flex",
-                  width: 28,
-                  height: 28,
+                  width: 26,
+                  height: 26,
                   alignItems: "center",
                   justifyContent: "center",
                   borderRadius: "8px",
-                  background: "transparent",
+                  background: "rgba(212,175,55,0.08)",
                   border: "1px solid var(--gold-border)",
                   color: "var(--gold-bright)",
                   fontFamily: "var(--font-mono)",
-                  fontSize: "0.72rem",
+                  fontSize: "0.70rem",
                   fontWeight: 800,
+                  flexShrink: 0,
                 }}>
                   {p.num}
                 </div>
-                <h3 style={{ fontFamily: "var(--font-display)", fontSize: "0.82rem", fontWeight: 800, color: "var(--text-main)", margin: 0 }}>
+                <h3 style={{ fontFamily: "var(--font-display)", fontSize: isMobile ? "0.80rem" : "0.82rem", fontWeight: 800, color: "var(--text-main)", margin: 0 }}>
                   {p.title}
                 </h3>
-                <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.7rem", color: "var(--text-muted)", margin: 0, lineHeight: 1.5 }}>
+                <p style={{ fontFamily: "var(--font-sans)", fontSize: isMobile ? "0.68rem" : "0.70rem", color: "var(--text-muted)", margin: 0, lineHeight: 1.5 }}>
                   {p.desc}
                 </p>
               </div>
@@ -265,99 +313,120 @@ export default function DataSourcesPage() {
           </div>
 
           {/* Sources List - Translucent Centered Column */}
-          <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: "1.2rem" }}>
+          <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: isMobile ? "1rem" : "1.2rem", boxSizing: "border-box" }}>
             {SOURCES.map((source) => (
               <div
                 key={source.id}
                 style={{
                   borderRadius: "16px",
                   border: "1px solid var(--gold-border)",
-                  background: "rgba(6, 7, 12, 0.2)",
+                  background: "rgba(6, 7, 12, 0.45)",
                   backdropFilter: "blur(16px)",
                   WebkitBackdropFilter: "blur(16px)",
-                  padding: "1.8rem 1.6rem",
+                  padding: isMobile ? "1.2rem 1rem" : "1.8rem 1.6rem",
                   boxShadow: "0 12px 40px rgba(0,0,0,0.4), 0 0 20px rgba(212,175,55,0.03)",
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
                   textAlign: "center",
-                  gap: "0.8rem",
+                  gap: isMobile ? "0.65rem" : "0.8rem",
+                  width: "100%",
+                  boxSizing: "border-box",
                 }}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "center", gap: "0.4rem" }}>
                   <span style={{
                     borderRadius: "6px",
                     background: "rgba(212, 175, 55, 0.12)",
                     border: "1px solid var(--gold-border)",
                     padding: "2px 8px",
                     fontFamily: "var(--font-mono)",
-                    fontSize: "0.62rem",
+                    fontSize: isMobile ? "0.56rem" : "0.62rem",
                     fontWeight: 700,
                     color: "var(--gold-bright)",
                   }}>
                     {source.category[lang]}
                   </span>
-                  <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.62rem", color: "var(--text-muted)" }}>
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: isMobile ? "0.56rem" : "0.62rem", color: "var(--text-muted)" }}>
                     • {source.coverage[lang]}
                   </span>
                 </div>
 
                 <h2 style={{
                   fontFamily: "var(--font-display)",
-                  fontSize: "1.05rem",
+                  fontSize: isMobile ? "0.96rem" : "1.05rem",
                   fontWeight: 800,
-                  letterSpacing: "0.06em",
+                  letterSpacing: "0.04em",
                   color: "var(--text-main)",
                   margin: 0,
                   textAlign: "center",
+                  wordBreak: "break-word",
+                  lineHeight: 1.3,
                 }}>
                   {source.name}
                 </h2>
 
                 <p style={{
                   fontFamily: "var(--font-sans)",
-                  fontSize: "0.82rem",
-                  lineHeight: 1.7,
+                  fontSize: isMobile ? "0.76rem" : "0.82rem",
+                  lineHeight: 1.6,
                   color: "rgba(210, 205, 195, 0.85)",
                   maxWidth: "600px",
                   margin: 0,
                   textAlign: "center",
+                  boxSizing: "border-box",
                 }}>
                   {source.desc[lang]}
                 </p>
 
-                {/* 3 Key Spec Rows Centered */}
+                {/* Key Spec Rows (Adaptive 2 cols top + full width license on mobile, 3 cols on desktop) */}
                 <div style={{
                   display: "grid",
-                  gridTemplateColumns: "1fr 1fr 1fr",
-                  gap: "0.6rem",
+                  gridTemplateColumns: isMobile ? "1fr 1fr" : "1fr 1fr 1fr",
+                  gap: isMobile ? "0.5rem" : "0.6rem",
                   borderRadius: "10px",
                   background: "rgba(0,0,0,0.35)",
                   border: "1px solid var(--gold-border)",
-                  padding: "0.6rem 1rem",
+                  padding: isMobile ? "0.55rem 0.75rem" : "0.6rem 1rem",
                   width: "100%",
                   maxWidth: "580px",
+                  boxSizing: "border-box",
                   fontFamily: "var(--font-mono)",
                   fontSize: "0.68rem",
                   textAlign: "center",
                 }}>
                   <div>
-                    <span style={{ color: "var(--text-muted)", display: "block", fontSize: "0.56rem", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                    <span style={{ color: "var(--text-muted)", display: "block", fontSize: "0.52rem", textTransform: "uppercase", letterSpacing: "0.08em" }}>
                       {lang === "tr" ? "GÜNCELLEME" : "FREQUENCY"}
                     </span>
-                    <span style={{ fontWeight: 700, color: "#34d399" }}>{source.frequency[lang]}</span>
+                    <span style={{ fontWeight: 700, color: "#34d399", fontSize: isMobile ? "0.62rem" : "0.68rem" }}>
+                      {source.frequency[lang]}
+                    </span>
                   </div>
+
                   <div>
-                    <span style={{ color: "var(--text-muted)", display: "block", fontSize: "0.56rem", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                    <span style={{ color: "var(--text-muted)", display: "block", fontSize: "0.52rem", textTransform: "uppercase", letterSpacing: "0.08em" }}>
                       {lang === "tr" ? "GÜVENİLİRLİK" : "RELIABILITY"}
                     </span>
-                    <span style={{ fontWeight: 700, color: "var(--gold-bright)" }}>{source.reliability[lang]}</span>
+                    <span style={{ fontWeight: 700, color: "var(--gold-bright)", fontSize: isMobile ? "0.62rem" : "0.68rem" }}>
+                      {source.reliability[lang]}
+                    </span>
                   </div>
-                  <div>
-                    <span style={{ color: "var(--text-muted)", display: "block", fontSize: "0.56rem", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+
+                  <div style={{ gridColumn: isMobile ? "span 2" : "auto", minWidth: 0, paddingTop: isMobile ? 3 : 0, borderTop: isMobile ? "1px solid rgba(212,175,55,0.12)" : "none" }}>
+                    <span style={{ color: "var(--text-muted)", display: "block", fontSize: "0.52rem", textTransform: "uppercase", letterSpacing: "0.08em" }}>
                       {lang === "tr" ? "LİSANS" : "LICENSE"}
                     </span>
-                    <span style={{ fontWeight: 600, color: "var(--text-main)", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap", display: "block" }}>{source.license}</span>
+                    <span style={{
+                      fontWeight: 600,
+                      color: "var(--text-main)",
+                      fontSize: isMobile ? "0.58rem" : "0.66rem",
+                      wordBreak: "break-word",
+                      lineHeight: 1.3,
+                      display: "block",
+                    }}>
+                      {source.license}
+                    </span>
                   </div>
                 </div>
 
@@ -370,15 +439,21 @@ export default function DataSourcesPage() {
                     alignItems: "center",
                     gap: "0.4rem",
                     fontFamily: "var(--font-mono)",
-                    fontSize: "0.68rem",
+                    fontSize: isMobile ? "0.64rem" : "0.68rem",
                     fontWeight: 700,
                     color: "var(--gold-bright)",
                     textDecoration: "none",
-                    paddingTop: "0.3rem",
+                    padding: "0.3rem 0.6rem",
+                    borderRadius: "6px",
+                    border: "1px solid rgba(212,175,55,0.2)",
+                    background: "rgba(212,175,55,0.04)",
+                    touchAction: "manipulation",
+                    WebkitTapHighlightColor: "transparent",
+                    transition: "all 0.18s ease",
                   }}
                 >
                   <span>{lang === "tr" ? "Resmi Açık Kaynağı İncele" : "Inspect Official Source Registry"}</span>
-                  <ExternalLink style={{ width: 12, height: 12 }} />
+                  <ExternalLink style={{ width: 12, height: 12, flexShrink: 0 }} />
                 </a>
               </div>
             ))}
@@ -387,10 +462,10 @@ export default function DataSourcesPage() {
           {/* Requested Official Copyright Footer */}
           <div style={{
             textAlign: "center",
-            paddingTop: "3.5rem",
-            paddingBottom: "2rem",
+            paddingTop: isMobile ? "1.75rem" : "3.5rem",
+            paddingBottom: "1.5rem",
             fontFamily: "var(--font-mono)",
-            fontSize: "0.65rem",
+            fontSize: "0.62rem",
             letterSpacing: "0.1em",
             color: "var(--text-muted)",
           }}>
@@ -398,6 +473,9 @@ export default function DataSourcesPage() {
           </div>
         </main>
       </div>
+
+      {/* Mobile Bottom Navigation Bar */}
+      {isMobile && <MobileBottomNav lang={lang} />}
     </div>
   );
 }

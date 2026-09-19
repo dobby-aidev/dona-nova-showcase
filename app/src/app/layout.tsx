@@ -72,7 +72,17 @@ export default function RootLayout({
         <link rel="icon" href={NOVA_FAVICON_DATA_URI} type="image/svg+xml" sizes="any" />
         <link rel="shortcut icon" href={NOVA_FAVICON_DATA_URI} type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=nova5" />
+        {/* PWA Manifest */}
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#07080e" />
+        {/* iOS PWA */}
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="DONA NOVA" />
+        {/* Viewport — prevents iOS double-tap zoom on hotspots */}
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
       </head>
+
       <body className="antialiased bg-[#07080e] text-[#f5f2eb]">{children}</body>
     </html>
   );

@@ -3,11 +3,15 @@
 import React, { useState } from "react";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { AppHeader } from "@/components/layout/AppHeader";
+import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
 import ExplorePage from "@/features/explore/ExplorePage";
+import { SettingsModal } from "@/components/ui/SettingsModal";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 export default function Home() {
   const [lang, setLang] = useState<"tr" | "en">("tr");
   const [activeNav, setActiveNav] = useState("explore");
+  const isMobile = useIsMobile();
 
   React.useEffect(() => {
     try {
@@ -16,6 +20,14 @@ export default function Home() {
         setLang(stored);
       }
     } catch {}
+
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const navParam = params.get("nav");
+      if (navParam) {
+        setActiveNav(navParam);
+      }
+    }
 
     const handleLangChange = (e: any) => {
       if (e.detail === "tr" || e.detail === "en") {
@@ -38,10 +50,9 @@ export default function Home() {
 
   return (
     <>
-
-
       {/* Fixed top HUD header — z:40 above everything */}
-      <AppHeader lang={lang} setLang={handleSetLang} />
+      <AppHeader lang={lang} setLang={handleSetLang} activeNav={activeNav} setActiveNav={setActiveNav} />
+
 
       {/* App shell — Fullscreen 3D Stage with Floating Glass Sidebar & HUD */}
       <div
@@ -60,8 +71,8 @@ export default function Home() {
           </main>
         </div>
 
-        {/* Layer 2: Floating Translucent Sidebar over 3D Canvas */}
-        <div style={{ position: "relative", zIndex: 30, height: "100%", pointerEvents: "none", display: "inline-block" }}>
+        {/* Layer 2a: Desktop — Floating Translucent Sidebar over 3D Canvas (zIndex: 45 sits above AppHeader z:40 so star button is BEHIND the open sidebar) */}
+        <div className="app-sidebar-desktop" style={{ position: "relative", zIndex: 45, height: "100%", pointerEvents: "none", display: "inline-block" }}>
           <div style={{ pointerEvents: "auto", height: "100%" }}>
             <AppSidebar
               activeNav={activeNav}
@@ -71,6 +82,37 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* Layer 2b: Mobile — Fixed Bottom Tab Bar (replaces sidebar) */}
+      {isMobile && (
+        <MobileBottomNav
+          activeNav={activeNav}
+          setActiveNav={setActiveNav}
+          lang={lang}
+        />
+      )}
+
+      {/* Global Settings Modal — Active everywhere on Desktop & Mobile */}
+      <GlobalSettingsHost lang={lang} />
     </>
   );
 }
+
+function GlobalSettingsHost({ lang }: { lang: "tr" | "en" }) {
+  const [isOpen, setIsOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    const handleOpen = () => setIsOpen(true);
+    window.addEventListener("dona:open-settings", handleOpen);
+    return () => window.removeEventListener("dona:open-settings", handleOpen);
+  }, []);
+
+  return (
+    <SettingsModal
+      isOpen={isOpen}
+      onClose={() => setIsOpen(false)}
+      lang={lang}
+    />
+  );
+}
+

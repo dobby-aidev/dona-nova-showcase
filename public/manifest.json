@@ -1,0 +1,28 @@
+{
+  "name": "DONA NOVA — Global Infrastructure Radar",
+  "short_name": "DONA NOVA",
+  "description": "Open-source global infrastructure intelligence radar. Explore 3,160+ verified power grids, water networks, and AI data centers in photorealistic 3D.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#07080e",
+  "theme_color": "#07080e",
+  "lang": "tr",
+  "categories": ["utilities", "productivity", "education"],
+  "icons": [
+    {
+      "src": "/apple-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [],
+  "prefer_related_applications": false
+}

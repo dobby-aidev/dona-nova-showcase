@@ -5,6 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Scale, ShieldCheck, Database, Terminal } from "lucide-react";
 
+import { useIsMobile } from "@/hooks/useIsMobile";
+
 interface DocNavTabsProps {
   lang?: "tr" | "en";
 }
@@ -18,6 +20,7 @@ const DOC_TABS = [
 
 export function DocNavTabs({ lang: propLang }: DocNavTabsProps) {
   const pathname = usePathname();
+  const isMobile = useIsMobile();
   const [lang, setLang] = React.useState<"tr" | "en">(propLang || "tr");
 
   React.useEffect(() => {
@@ -42,22 +45,29 @@ export function DocNavTabs({ lang: propLang }: DocNavTabsProps) {
       width: "100%",
       display: "flex",
       justifyContent: "center",
-      marginBottom: "2rem",
+      marginBottom: isMobile ? "1.25rem" : "2rem",
       userSelect: "none",
+      padding: isMobile ? "0 4px" : "0",
+      boxSizing: "border-box",
     }}>
       {/* Sleek Centered Document Tab Strip */}
       <nav style={{
         display: "inline-flex",
         alignItems: "center",
-        justifyContent: "center",
-        gap: 4,
-        padding: "4px",
-        borderRadius: 14,
+        justifyContent: "flex-start",
+        gap: isMobile ? 3 : 4,
+        padding: isMobile ? "3px" : "4px",
+        borderRadius: isMobile ? 12 : 14,
         border: "1px solid var(--gold-border)",
-        background: "rgba(6, 7, 12, 0.25)",
-        backdropFilter: "blur(14px)",
-        WebkitBackdropFilter: "blur(14px)",
-        boxShadow: "0 8px 32px rgba(0,0,0,0.4), 0 0 16px rgba(212,175,55,0.05)",
+        background: "rgba(6, 7, 12, 0.45)",
+        backdropFilter: "none",
+        WebkitBackdropFilter: "none",
+        boxShadow: "none",
+        maxWidth: "100%",
+        overflowX: "auto",
+        WebkitOverflowScrolling: "touch",
+        scrollbarWidth: "none",
+        msOverflowStyle: "none",
       }}>
         {DOC_TABS.map((tab) => {
           const Icon = tab.icon;
@@ -70,24 +80,27 @@ export function DocNavTabs({ lang: propLang }: DocNavTabsProps) {
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: 6,
-                borderRadius: 10,
-                padding: "6px 14px",
+                gap: isMobile ? 4 : 6,
+                borderRadius: isMobile ? 8 : 10,
+                padding: isMobile ? "5px 9px" : "8px 12px",
+                minHeight: isMobile ? 30 : 36,
                 fontFamily: "var(--font-mono)",
-                fontSize: "0.68rem",
-                fontWeight: isActive ? 800 : 500,
-                letterSpacing: "0.06em",
+                fontSize: isMobile ? "0.60rem" : "0.68rem",
+                fontWeight: isActive ? 800 : 600,
+                letterSpacing: "0.05em",
                 textDecoration: "none",
+                whiteSpace: "nowrap",
+                flexShrink: 0,
                 transition: "all 0.18s cubic-bezier(0.16, 1, 0.3, 1)",
                 border: isActive ? "1px solid var(--gold-border)" : "1px solid transparent",
-                background: isActive ? "rgba(212, 175, 55, 0.14)" : "transparent",
+                background: isActive ? "rgba(212, 175, 55, 0.16)" : "transparent",
                 color: isActive ? "var(--gold-bright)" : "var(--text-muted)",
                 boxShadow: isActive ? "0 0 14px rgba(212, 175, 55, 0.25)" : "none",
               }}
             >
               <Icon style={{
-                width: 13,
-                height: 13,
+                width: isMobile ? 12 : 14,
+                height: isMobile ? 12 : 14,
                 color: isActive ? "var(--gold-primary)" : "var(--text-muted)",
               }} />
               <span>{lang === "tr" ? tab.labelTr : tab.labelEn}</span>

@@ -6,9 +6,12 @@ import { Globe2, ShieldCheck, Heart, ArrowRight, Terminal } from "lucide-react";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { DocNavTabs } from "@/components/layout/DocNavTabs";
 import { CosmicBackground } from "@/components/layout/CosmicBackground";
+import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 export default function PricingPage() {
   const [lang, setLang] = useState<"tr" | "en">("tr");
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     try {
@@ -26,18 +29,32 @@ export default function PricingPage() {
   return (
     <div style={{
       minHeight: "100vh",
+      width: "100%",
+      maxWidth: "100vw",
+      overflowX: "hidden",
       background: "transparent",
       color: "var(--text-main)",
       display: "flex",
       flexDirection: "column",
       userSelect: "none",
       position: "relative",
+      boxSizing: "border-box",
     }}>
       {/* 3D Photorealistic Earth & Starfield in Background */}
       <CosmicBackground />
       <div className="dn-grid-bg" style={{ position: "fixed", inset: 0, opacity: 0.25, pointerEvents: "none", zIndex: 1 }} />
 
-      <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+      <div style={{
+        position: "relative",
+        zIndex: 10,
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+        width: "100%",
+        maxWidth: "100vw",
+        overflowX: "hidden",
+        boxSizing: "border-box",
+      }}>
         <PublicHeader lang={lang} setLang={setLang} />
 
         <main style={{
@@ -46,7 +63,7 @@ export default function PricingPage() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "flex-start",
-          padding: "2.5rem 1.5rem 4rem 1.5rem",
+          padding: isMobile ? "1.5rem 1rem calc(80px + env(safe-area-inset-bottom, 0px)) 1rem" : "2.5rem 1.5rem 4rem 1.5rem",
           width: "100%",
           maxWidth: "760px",
           margin: "0 auto",
@@ -56,7 +73,7 @@ export default function PricingPage() {
           <DocNavTabs lang={lang} />
 
           {/* Hero Section */}
-          <div style={{ width: "100%", textAlign: "center", marginBottom: "2.5rem", display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem" }}>
+          <div style={{ width: "100%", textAlign: "center", marginBottom: isMobile ? "1.75rem" : "2.5rem", display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem" }}>
             <div style={{
               display: "inline-flex",
               alignItems: "center",
@@ -277,7 +294,7 @@ export default function PricingPage() {
           {/* Minimal Centered Footer */}
           <div style={{
             textAlign: "center",
-            paddingTop: "3.5rem",
+            paddingTop: isMobile ? "2rem" : "3.5rem",
             paddingBottom: "2rem",
             fontFamily: "var(--font-mono)",
             fontSize: "0.62rem",
@@ -289,6 +306,9 @@ export default function PricingPage() {
           </div>
         </main>
       </div>
+
+      {/* Mobile Bottom Navigation Bar */}
+      {isMobile && <MobileBottomNav lang={lang} />}
     </div>
   );
 }

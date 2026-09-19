@@ -3,6 +3,7 @@
 **Global Physical Infrastructure & Energy Intelligence Platform — 3D WebGL Engine & MCP Telemetry Server**
 
 [![Live Production](https://img.shields.io/badge/🌐_Live_Radar-nova.donacodex.com-D4AF37?style=for-the-badge&logo=cloudflare)](https://nova.donacodex.com)
+[![GitHub Stars](https://img.shields.io/github/stars/dobby-aidev/dona-nova-showcase?style=for-the-badge&logo=github&color=D4AF37)](https://github.com/dobby-aidev/dona-nova-showcase/stargazers)
 [![License: MIT](https://img.shields.io/badge/License-MIT-D4AF37.svg?style=for-the-badge)](LICENSE)
 [![Design: Obsidian Gold](https://img.shields.io/badge/Design-Obsidian--Gold_HUD-07080e.svg?style=for-the-badge)](https://nova.donacodex.com)
 [![Next.js 16](https://img.shields.io/badge/Framework-Next.js_16_(Turbopack)-000000.svg?style=for-the-badge&logo=nextdotjs)](https://nextjs.org)
@@ -43,12 +44,15 @@ If a power authority cannot supply 250 Megawatts of uninterrupted baseload elect
 
 ## 🌟 Key Capabilities
 
-* 🌍 **Interactive 3D WebGL Digital Twin**: Real-time rotating Earth rendered with Three.js, NASA Blue Marble satellite textures, atmosphere shaders, and 5,000 coordinate-aligned celestial stars.
-* 📍 **3,160+ Verified Physical Infrastructure Nodes**: Every asset verified with real coordinates, capacity ratings, fuel/operational types, and regional flags across 12 sectors.
+* 🌍 **Interactive 3D WebGL Digital Twin**: Real-time rotating Earth rendered with Three.js / React Three Fiber, NASA Blue Marble satellite textures, night light radiance, atmosphere shaders, and 5,000 coordinate-aligned celestial stars.
+* ⚙️ **Real-time 3D Radar Settings Panel**: Direct user control over WebGL rendering parameters — Device Pixel Ratio (DPR 1x / 1.5x / 2x Retina mode), auto-rotation toggles with adjustable angular speed, and configurable telemetry polling rates.
+* 📍 **3,160+ Verified Physical Infrastructure Nodes**: Every asset verified with real coordinates, capacity ratings, fuel/operational types, and regional flags across 12 strategic sectors.
 * ⚡ **35,000+ Global Power Plant Registry Access**: Direct indexing of the World Resources Institute (WRI) and Global Energy Monitor (GEM) assets.
 * 🤖 **Native Model Context Protocol (MCP v1.2.0)**: AI agents (Claude, Cursor, Windsurf, Gemini) can query power capacity, locate AI data centers, and inspect regional grids via standardized tool calls.
-* 🛡️ **Obsidian-Gold HUD Design System**: High-contrast, aerospace-grade visual telemetry built with Cinzel headers, JetBrains Mono data readouts, ultra-clean frosted glass, and zero-distorting clear backdrops.
-* 🔒 **Privacy-First & Zero-Knowledge**: No sign-ups, zero trackers, no behavioral cookies, and no paywalls. Completely free and open for research.
+* 🛡️ **Obsidian-Gold HUD Design System**: High-contrast, aerospace-grade visual telemetry built with Cinzel headers, JetBrains Mono data readouts, crystal obsidian glassmorphism (`rgba(7, 8, 14, 0.72 - 0.78)`), zero backdrop-blur lag, and maximum visibility of the 3D globe behind panels.
+* 📱 **Mobile-First Ergonomics**: Symmetrical header bar, responsive drawer navigation, dual-language switch (TR / EN), native touch targets (44px+), and zero horizontal overflow bounce across all documentation and telemetry pages.
+* 🔍 **Open Data & Methodology Transparency**: Dedicated `/data-sources`, `/terms`, `/privacy`, and `/pricing` documentation routes with full upstream licensing and methodology disclosures.
+* 🔒 **Privacy-First & Zero-Knowledge**: No sign-ups, zero trackers, no behavioral cookies, and no paywalls. Completely free and open for global research.
 
 ---
 
@@ -119,7 +123,7 @@ npm run mcp
 | **ENTSO-E Transparency Platform** | Europe (28 Nations) | Hourly Cross-Border Electricity Flows | Open Data License |
 | **Electricity Maps Open Engine** | Global (160+ Balancing Zones) | Carbon Intensity & Renewable % | Open Data Tier |
 | **NASA Blue Marble & Goddard Flight Center** | Global Satellite Mapping | True-Color 8K Orthorectified Surface Textures | Public Domain |
-| **OpenStreetMap & Overpass API** | Global Infrastructure | Water ways, high-voltage transmission lines | ODbL License |
+| **OpenStreetMap & Overpass API** | Global Infrastructure | Waterways, high-voltage transmission lines | ODbL License |
 
 ---
 
@@ -132,7 +136,8 @@ npm run mcp
    │      Presentation Layer    │     3D WebGL Engine       │
    │  • Obsidian-Gold HUD       │  • Three.js R3F Shaders   │
    │  • Cinzel & JetBrains Mono │  • NASA Earth Spheres     │
-   │  • Lucide Telemetry Icons  │  • 5,000 Cosmic Stars     │
+   │  • Settings Modal (DPR)    │  • 5,000 Cosmic Stars     │
+   │  • Responsive Drawer       │  • Dynamic LOD Clustering │
    ├────────────────────────────┴───────────────────────────┤
    │                  Open Telemetry Engine                 │
    │  • /api/eia — Live U.S. Grid Balancing Feeds           │
@@ -143,6 +148,40 @@ npm run mcp
    │  • @modelcontextprotocol/sdk                           │
    │  • 5 Specialized Telemetry Tools                       │
    └────────────────────────────────────────────────────────┘
+```
+
+### Directory Structure
+
+```
+dona-nova-showcase/
+├── .github/workflows/deploy.yml   # Cloudflare Pages CI/CD workflow
+├── docs/                          # Architecture & design specifications
+├── app/                           # Next.js 16 Full-Stack Application
+│   ├── public/
+│   │   ├── data/facilities.json   # 3,160 Verified infrastructure nodes
+│   │   └── textures/              # NASA 8K Blue Marble & night lights
+│   ├── src/
+│   │   ├── app/                   # App router pages & API routes
+│   │   │   ├── api/               # Server-side proxy endpoints (EIA, Electricity Maps)
+│   │   │   ├── data-sources/      # Methodology & data transparency page
+│   │   │   ├── terms/             # Terms of service
+│   │   │   ├── privacy/           # Privacy policy (GDPR / KVKK)
+│   │   │   ├── pricing/           # Pricing transparency
+│   │   │   └── globals.css        # Obsidian-gold design system & tokens
+│   │   ├── components/
+│   │   │   ├── globe/             # Three.js WebGL globe & LOD marker rendering
+│   │   │   ├── layout/            # Symmetrical header, sidebar, drawer, tabs
+│   │   │   └── ui/                # Settings modal (DPR, rotation, telemetry)
+│   │   ├── features/explore/      # Telemetry rails, category docks, and HUD
+│   │   ├── lib/                   # Data fetchers, normalizers, formatters
+│   │   ├── mcp/server.ts          # Model Context Protocol v1.2.0 server
+│   │   └── types/                 # Infrastructure & telemetry TypeScript interfaces
+│   ├── package.json
+│   ├── tsconfig.json
+│   └── next.config.ts
+├── CONTRIBUTING.md                # Git security checklist & contribution guide
+├── LICENSE                        # MIT License
+└── README.md                      # Primary project documentation
 ```
 
 ---
@@ -178,7 +217,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to explore the 3D globe.
+Open [http://localhost:3000](http://localhost:3000) with your browser to explore the 3D globe.
 
 ### 5. Production Build
 
@@ -223,7 +262,7 @@ In your Cloudflare Pages Dashboard, configure:
 
 DONA NOVA is released under the **[MIT License](LICENSE)**. You are 100% free to inspect, fork, modify, self-host, and build commercial, scientific, or personal products upon this foundation.
 
-> ⭐ **Support Independent Open-Source**: If you find Dona Nova valuable or inspiring, please consider giving this repository a star (**⭐ Star on GitHub**) and keeping attribution to **Dona Codex** & **[Dobby B](https://dobby.donacodex.com/)**. It helps more researchers, energy engineers, and AI developers discover this open telemetry engine!
+> ⭐ **Support Independent Open-Source**: If you find Dona Nova valuable or inspiring, please consider giving this repository a star (**[⭐ Star on GitHub](https://github.com/dobby-aidev/dona-nova-showcase)**) and keeping attribution to **Dona Codex** & **[Dobby B](https://dobby.donacodex.com/)**. It helps more researchers, energy engineers, and AI developers discover this open telemetry engine!
 
 * **GitHub Repository**: [github.com/dobby-aidev/dona-nova-showcase](https://github.com/dobby-aidev/dona-nova-showcase)
 * **Live Radar**: [nova.donacodex.com](https://nova.donacodex.com)

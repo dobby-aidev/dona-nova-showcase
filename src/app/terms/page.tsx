@@ -5,9 +5,12 @@ import { Scale, CheckCircle2, Mail } from "lucide-react";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { DocNavTabs } from "@/components/layout/DocNavTabs";
 import { CosmicBackground } from "@/components/layout/CosmicBackground";
+import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 export default function TermsPage() {
   const [lang, setLang] = useState<"tr" | "en">("tr");
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     try {
@@ -25,17 +28,31 @@ export default function TermsPage() {
   return (
     <div style={{
       minHeight: "100vh",
+      width: "100%",
+      maxWidth: "100vw",
+      overflowX: "hidden",
       background: "transparent",
       color: "var(--text-main)",
       display: "flex",
       flexDirection: "column",
       userSelect: "none",
       position: "relative",
+      boxSizing: "border-box",
     }}>
       {/* 3D Photorealistic Earth & Starfield in Background */}
       <CosmicBackground />
 
-      <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+      <div style={{
+        position: "relative",
+        zIndex: 10,
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+        width: "100%",
+        maxWidth: "100vw",
+        overflowX: "hidden",
+        boxSizing: "border-box",
+      }}>
         <PublicHeader lang={lang} setLang={setLang} />
 
         <main style={{
@@ -44,7 +61,7 @@ export default function TermsPage() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "flex-start",
-          padding: "2.5rem 1.5rem 4rem 1.5rem",
+          padding: isMobile ? "1.5rem 1rem calc(80px + env(safe-area-inset-bottom, 0px)) 1rem" : "2.5rem 1.5rem 4rem 1.5rem",
           width: "100%",
           maxWidth: "760px",
           margin: "0 auto",
@@ -54,7 +71,7 @@ export default function TermsPage() {
           <DocNavTabs lang={lang} />
 
           {/* Hero Section */}
-          <div style={{ width: "100%", textAlign: "center", marginBottom: "2.5rem", display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem" }}>
+          <div style={{ width: "100%", textAlign: "center", marginBottom: isMobile ? "1.75rem" : "2.5rem", display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem" }}>
             <div style={{
               display: "inline-flex",
               alignItems: "center",
@@ -62,41 +79,44 @@ export default function TermsPage() {
               borderRadius: "9999px",
               border: "1px solid var(--gold-border)",
               background: "rgba(212, 175, 55, 0.08)",
-              padding: "0.35rem 1rem",
+              padding: isMobile ? "0.3rem 0.8rem" : "0.35rem 1rem",
               fontFamily: "var(--font-mono)",
-              fontSize: "0.68rem",
+              fontSize: isMobile ? "0.62rem" : "0.68rem",
               fontWeight: 700,
               color: "var(--gold-bright)",
               boxShadow: "0 0 16px rgba(212,175,55,0.15)",
+              maxWidth: "100%",
+              boxSizing: "border-box",
             }}>
-              <Scale style={{ width: 14, height: 14 }} />
-              <span>{lang === "tr" ? "RESMİ AÇIK KAYNAK LİSANSI & KOŞULLARI" : "OFFICIAL OPEN-SOURCE LICENSE & TERMS"}</span>
+              <Scale style={{ width: 14, height: 14, flexShrink: 0 }} />
+              <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{lang === "tr" ? "RESMİ AÇIK KAYNAK LİSANSI & KOŞULLARI" : "OFFICIAL OPEN-SOURCE LICENSE & TERMS"}</span>
             </div>
 
             <h1 style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "2.4rem",
-              fontWeight: 900,
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
+              fontFamily: isMobile ? "var(--font-sans)" : "var(--font-display)",
+              fontSize: isMobile ? "1.38rem" : "2.4rem",
+              fontWeight: 800,
+              letterSpacing: isMobile ? "0.02em" : "0.08em",
+              textTransform: isMobile ? "capitalize" : "uppercase",
               background: "linear-gradient(135deg, #ffffff 0%, #faeed9 30%, #f5d77f 60%, #d4af37 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",
               margin: 0,
-              lineHeight: 1.2,
+              lineHeight: 1.25,
             }}>
               {lang === "tr" ? "Kullanım Koşulları" : "Terms of Service"}
             </h1>
 
             <p style={{
               fontFamily: "var(--font-sans)",
-              fontSize: "0.85rem",
-              lineHeight: 1.7,
-              color: "var(--text-muted)",
+              fontSize: isMobile ? "0.78rem" : "0.85rem",
+              lineHeight: isMobile ? 1.6 : 1.7,
+              color: "rgba(210, 205, 195, 0.8)",
               maxWidth: "560px",
               margin: "0 auto",
               textAlign: "center",
+              padding: isMobile ? "0 6px" : "0",
             }}>
               {lang === "tr"
                 ? "DONA NOVA, küresel enerji santralleri ve kritik altyapı verilerini insanlığın şeffaf erişimine sunmak amacıyla MIT Lisansı altında geliştirilen bir açık istihbarat platformudur."
@@ -134,7 +154,7 @@ export default function TermsPage() {
               borderRadius: "16px",
               border: "1px solid var(--gold-border)",
               background: "rgba(6, 7, 12, 0.2)",
-              padding: "1.8rem 1.6rem",
+              padding: isMobile ? "1.2rem 1rem" : "1.8rem 1.6rem",
               boxShadow: "0 12px 40px rgba(0,0,0,0.4), 0 0 20px rgba(212,175,55,0.03)",
               backdropFilter: "blur(14px)",
               WebkitBackdropFilter: "blur(14px)",
@@ -207,7 +227,7 @@ export default function TermsPage() {
               borderRadius: "16px",
               border: "1px solid var(--gold-border)",
               background: "rgba(6, 7, 12, 0.2)",
-              padding: "1.8rem 1.6rem",
+              padding: isMobile ? "1.2rem 1rem" : "1.8rem 1.6rem",
               boxShadow: "0 12px 40px rgba(0,0,0,0.4), 0 0 20px rgba(212,175,55,0.03)",
               backdropFilter: "blur(14px)",
               WebkitBackdropFilter: "blur(14px)",
@@ -367,7 +387,7 @@ export default function TermsPage() {
               borderRadius: "16px",
               border: "1px solid var(--gold-border)",
               background: "rgba(6, 7, 12, 0.2)",
-              padding: "1.8rem 1.6rem",
+              padding: isMobile ? "1.2rem 1rem" : "1.8rem 1.6rem",
               boxShadow: "0 12px 40px rgba(0,0,0,0.4), 0 0 20px rgba(212,175,55,0.03)",
               backdropFilter: "blur(14px)",
               WebkitBackdropFilter: "blur(14px)",
@@ -448,7 +468,7 @@ export default function TermsPage() {
           {/* Minimal Centered Footer */}
           <div style={{
             textAlign: "center",
-            paddingTop: "3.5rem",
+            paddingTop: isMobile ? "2rem" : "3.5rem",
             paddingBottom: "2rem",
             fontFamily: "var(--font-mono)",
             fontSize: "0.62rem",
@@ -460,6 +480,9 @@ export default function TermsPage() {
           </div>
         </main>
       </div>
+
+      {/* Mobile Bottom Navigation Bar */}
+      {isMobile && <MobileBottomNav lang={lang} />}
     </div>
   );
 }

@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   X, MapPin, Zap, Building2, Calendar, ExternalLink,
   Share2, Bookmark, Check, Activity, Network
 } from "lucide-react";
 import type { DataSourceMeta } from "@/types/infrastructure";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface Asset {
   name: string;
@@ -77,6 +79,12 @@ export function AssetDetailPanel({ asset, onClose, lang = "tr" }: AssetDetailPan
   const [saved, setSaved] = useState(false);
   const [copied, setCopied] = useState(false);
   const [focused, setFocused] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const isMobile = useIsMobile();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Check saved state from localStorage
   useEffect(() => {
@@ -142,65 +150,117 @@ export function AssetDetailPanel({ asset, onClose, lang = "tr" }: AssetDetailPan
   if (!asset) return null;
   const s = STATUS_STYLE[asset.status] ?? STATUS_STYLE.operational;
 
-  return (
+  const panelContent = (
     <AnimatePresence>
       {asset && (
         <>
-          {/* Transparent Click-Catcher (NO blur, crystal clear background per user request) */}
-          <motion.div
-            key="backdrop"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            onClick={onClose}
-            style={{
-              position: "fixed",
-              inset: 0,
-              zIndex: 48,
-              background: "transparent",
-              backdropFilter: "none",
-              WebkitBackdropFilter: "none",
-            }}
-          />
+          {/* Transparent Click-Catcher (Mobile only so desktop allows freely interacting with globe, sidebar and deck) */}
+          {isMobile && (
+            <motion.div
+              key="backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={onClose}
+              style={{
+                position: "fixed",
+                inset: 0,
+                zIndex: 48,
+                background: "transparent",
+                backdropFilter: "none",
+                WebkitBackdropFilter: "none",
+              }}
+            />
+          )}
 
-          {/* Floating Glass Panel — Perfectly Sized & Positioned */}
+          {/* Floating Glass Panel — Desktop: right slide-in | Mobile: bottom sheet */}
           <motion.aside
             key="panel"
-            initial={{ x: "100%", opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: "100%", opacity: 0 }}
+            initial={isMobile ? { y: "100%", opacity: 0 } : { x: "100%", opacity: 0 }}
+            animate={isMobile ? { y: 0, opacity: 1 } : { x: 0, opacity: 1 }}
+            exit={isMobile ? { y: "100%", opacity: 0 } : { x: "100%", opacity: 0 }}
             transition={{ type: "spring", stiffness: 350, damping: 32 }}
-            style={{
+            drag={isMobile ? "y" : false}
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={{ top: 0, bottom: 0.4 }}
+            onDragEnd={(_e, info) => {
+              if (isMobile && info.offset.y > 80) onClose();
+            }}
+            style={isMobile ? {
+              // ── MOBILE: Bottom Sheet ──────────────────────────────────────
               position: "fixed",
-              right: 16,
-              top: 16,
-              bottom: 16,
-              zIndex: 55,
+              bottom: 0,
+              left: 0,
+              right: 0,
+              top: "auto",
+              zIndex: 70,
               display: "flex",
-              height: "calc(100vh - 32px)",
-              width: "100%",
-              maxWidth: 390,
               flexDirection: "column",
               overflow: "hidden",
-              borderRadius: 18,
+              maxHeight: "76vh",
+              width: "100%",
+              borderRadius: "20px 20px 0 0",
               border: "1px solid var(--gold-border)",
-              background: "rgba(8, 9, 15, 0.65)",
-              backdropFilter: "blur(32px)",
-              WebkitBackdropFilter: "blur(32px)",
-              boxShadow: "0 20px 60px rgba(0,0,0,0.85), 0 0 28px rgba(212,175,55,0.1)",
+              borderBottom: "none",
+              background: "rgba(8, 9, 15, 0.72)",
+              backdropFilter: "blur(28px) saturate(180%)",
+              WebkitBackdropFilter: "blur(28px) saturate(180%)",
+              boxShadow: "0 -10px 48px rgba(0,0,0,0.85), 0 0 32px rgba(212,175,55,0.12)",
               userSelect: "none",
+              touchAction: "none",
+            } : {
+              // ── DESKTOP: Side Panel (Docked flush to right edge) ─────────
+              position: "fixed",
+              right: 0,
+              top: 60,
+              bottom: 0,
+              zIndex: 55,
+              display: "flex",
+              height: "calc(100vh - 60px)",
+              width: "100%",
+              maxWidth: 320,
+              flexDirection: "column",
+              borderRadius: "14px 0 0 0",
+              border: "1px solid var(--gold-border)",
+              borderRight: "none",
+              borderBottom: "none",
+              background: "rgba(7, 8, 14, 0.88)",
+              backdropFilter: "blur(28px) saturate(180%)",
+              WebkitBackdropFilter: "blur(28px) saturate(180%)",
+              boxShadow: "-16px 0 48px rgba(0,0,0,0.85), 0 0 32px rgba(212,175,55,0.08)",
+              userSelect: "none",
+              overflow: "hidden",
             }}
           >
+            {/* Drag Handle — Mobile only */}
+            {isMobile && (
+              <div
+                aria-hidden="true"
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  paddingTop: 10,
+                  paddingBottom: 4,
+                  flexShrink: 0,
+                  background: "rgba(10, 11, 18, 0.35)",
+                  cursor: "grab",
+                }}
+              >
+                <div className="asset-detail-drag-handle" />
+              </div>
+            )}
+
             {/* Header: Clean 2-Row Layout Preventing Overlap */}
             <div
               style={{
-                padding: "14px 16px",
+                padding: isMobile ? "14px 16px" : "12px 12px",
                 borderBottom: "1px solid var(--gold-border)",
                 background: "rgba(10, 11, 18, 0.35)",
                 flexShrink: 0,
               }}
             >
+
               {/* Row 1: Status Pill + Action Buttons */}
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: 8 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
@@ -334,7 +394,7 @@ export function AssetDetailPanel({ asset, onClose, lang = "tr" }: AssetDetailPan
             </div>
 
             {/* Scrollable Content Body */}
-            <div style={{ flex: 1, overflowY: "auto", padding: "14px 16px", display: "flex", flexDirection: "column", gap: 14 }}>
+            <div style={{ flex: 1, overflowY: "auto", padding: isMobile ? "14px 16px" : "12px 12px", display: "flex", flexDirection: "column", gap: 12 }}>
               {/* Telemetry Registry Warning / Source */}
               <div
                 style={{
@@ -452,12 +512,12 @@ export function AssetDetailPanel({ asset, onClose, lang = "tr" }: AssetDetailPan
             <div
               style={{
                 flexShrink: 0,
-                padding: "12px 16px",
+                padding: isMobile ? "12px 16px calc(18px + env(safe-area-inset-bottom, 0px))" : "12px 16px",
                 borderTop: "1px solid var(--gold-border)",
-                background: "rgba(10, 11, 18, 0.45)",
+                background: "rgba(10, 11, 18, 0.55)",
                 display: "flex",
                 flexDirection: "column",
-                gap: 8,
+                gap: 9,
               }}
             >
               <button
@@ -474,9 +534,9 @@ export function AssetDetailPanel({ asset, onClose, lang = "tr" }: AssetDetailPan
                   background: focused
                     ? "linear-gradient(135deg, #10b981 0%, #34d399 100%)"
                     : "linear-gradient(135deg, #d4af37 0%, #f5d77f 60%, #d4af37 100%)",
-                  padding: "9px 14px",
+                  padding: isMobile ? "11px 14px" : "9px 14px",
                   fontFamily: "var(--font-mono)",
-                  fontSize: "0.72rem",
+                  fontSize: isMobile ? "0.76rem" : "0.72rem",
                   fontWeight: 800,
                   letterSpacing: "0.1em",
                   textTransform: "uppercase",
@@ -488,7 +548,7 @@ export function AssetDetailPanel({ asset, onClose, lang = "tr" }: AssetDetailPan
                   transition: "all 0.2s ease",
                 }}
               >
-                <Activity style={{ width: 14, height: 14 }} />
+                <Activity style={{ width: 15, height: 15 }} />
                 <span>{focused ? (lang === "tr" ? "KÜREDE ODAKLANDI ✓" : "FOCUSED ON GLOBE ✓") : (lang === "tr" ? "KÜRE'DE GÖSTER" : "SHOW ON GLOBE")}</span>
               </button>
 
@@ -504,9 +564,9 @@ export function AssetDetailPanel({ asset, onClose, lang = "tr" }: AssetDetailPan
                   borderRadius: 10,
                   border: "1px solid var(--gold-border)",
                   background: "rgba(212,175,55,0.05)",
-                  padding: "7px 12px",
+                  padding: isMobile ? "10px 12px" : "7px 12px",
                   fontFamily: "var(--font-mono)",
-                  fontSize: "0.64rem",
+                  fontSize: isMobile ? "0.7rem" : "0.64rem",
                   fontWeight: 700,
                   letterSpacing: "0.08em",
                   textTransform: "uppercase",
@@ -516,7 +576,7 @@ export function AssetDetailPanel({ asset, onClose, lang = "tr" }: AssetDetailPan
                 }}
               >
                 <span>{lang === "tr" ? "RESMİ UYDU / KAYIT BİLGİSİ" : "OFFICIAL REGISTRY / SATELLITE"}</span>
-                <ExternalLink style={{ width: 11, height: 11, color: "var(--gold-primary)" }} />
+                <ExternalLink style={{ width: 12, height: 12, color: "var(--gold-primary)" }} />
               </button>
             </div>
           </motion.aside>
@@ -524,4 +584,10 @@ export function AssetDetailPanel({ asset, onClose, lang = "tr" }: AssetDetailPan
       )}
     </AnimatePresence>
   );
+
+  if (mounted && typeof document !== "undefined") {
+    return createPortal(panelContent, document.body);
+  }
+
+  return panelContent;
 }

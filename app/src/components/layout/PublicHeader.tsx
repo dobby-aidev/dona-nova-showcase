@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft, ExternalLink } from "lucide-react";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 function GithubIcon({ className }: { className?: string }) {
   return (
@@ -30,6 +31,7 @@ interface PublicHeaderProps {
 
 export function PublicHeader({ lang = "tr", setLang }: PublicHeaderProps) {
   const [currentLang, setCurrentLang] = useState<"tr" | "en">(lang);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     try {
@@ -58,7 +60,22 @@ export function PublicHeader({ lang = "tr", setLang }: PublicHeaderProps) {
   return (
     <header
       id="public-header"
-      style={{
+      style={isMobile ? {
+        position: "sticky",
+        top: 0,
+        zIndex: 50,
+        width: "100%",
+        padding: "0.55rem 0.85rem",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        background: "rgba(6, 7, 12, 0.45)",
+        backdropFilter: "none",
+        WebkitBackdropFilter: "none",
+        borderBottom: "1px solid rgba(212, 175, 55, 0.18)",
+        userSelect: "none",
+        boxSizing: "border-box",
+      } : {
         position: "sticky",
         top: 0,
         zIndex: 50,
@@ -76,45 +93,48 @@ export function PublicHeader({ lang = "tr", setLang }: PublicHeaderProps) {
       }}
     >
       {/* LEFT: Clean Minimalist Back to 3D Radar Link */}
-      <div style={{ gridColumn: 1, justifySelf: "start" }}>
+      <div style={{ flex: isMobile ? "0 0 auto" : "initial", gridColumn: isMobile ? undefined : 1, justifySelf: "start" }}>
         <Link
           href="/"
           style={{
             display: "inline-flex",
             alignItems: "center",
-            gap: "0.4rem",
-            background: "transparent",
-            border: "none",
+            gap: "0.35rem",
+            background: isMobile ? "rgba(212,175,55,0.08)" : "transparent",
+            border: isMobile ? "1px solid rgba(212,175,55,0.25)" : "none",
+            borderRadius: isMobile ? 8 : 0,
             color: "var(--gold-bright)",
             fontFamily: "var(--font-mono)",
-            fontSize: "0.7rem",
+            fontSize: isMobile ? "0.65rem" : "0.7rem",
             fontWeight: 700,
             letterSpacing: "0.08em",
             textDecoration: "none",
             transition: "all 0.2s ease",
             textShadow: "0 0 10px rgba(212,175,55,0.4)",
+            padding: isMobile ? "4px 8px" : "0",
           }}
         >
-          <ArrowLeft style={{ width: 14, height: 14 }} />
-          <span>{activeLang === "tr" ? "3D RADARA DÖN" : "BACK TO RADAR"}</span>
+          <ArrowLeft style={{ width: 13, height: 13, color: "var(--gold-primary)" }} />
+          <span>{activeLang === "tr" ? (isMobile ? "RADAR" : "3D RADARA DÖN") : (isMobile ? "RADAR" : "BACK TO RADAR")}</span>
         </Link>
       </div>
 
       {/* CENTER: Exact Same Nova Logo + DONA NOVA Title as AppHeader */}
-      <div style={{ gridColumn: 2, justifySelf: "center" }}>
+      <div style={{ flex: isMobile ? "0 0 auto" : "initial", gridColumn: isMobile ? undefined : 2, justifySelf: "center" }}>
         <Link
           href="/"
           style={{
             display: "inline-flex",
             alignItems: "center",
-            gap: "0.75rem",
+            gap: isMobile ? "0.4rem" : "0.75rem",
             textDecoration: "none",
             cursor: "pointer",
+            whiteSpace: "nowrap",
           }}
           title="DONA NOVA"
         >
           {/* Custom Dona Nova Supernova Crest */}
-          <div style={{ width: 30, height: 30, flexShrink: 0 }}>
+          <div style={{ width: isMobile ? 22 : 30, height: isMobile ? 22 : 30, flexShrink: 0 }}>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="100%" height="100%">
               <defs>
                 <linearGradient id="pubStarGold" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -136,15 +156,16 @@ export function PublicHeader({ lang = "tr", setLang }: PublicHeaderProps) {
           <span
             style={{
               fontFamily: "var(--font-display)",
-              fontSize: "1.22rem",
+              fontSize: isMobile ? "0.88rem" : "1.22rem",
               fontWeight: 900,
-              letterSpacing: "0.22em",
+              letterSpacing: isMobile ? "0.14em" : "0.22em",
               textTransform: "uppercase",
               background: "linear-gradient(135deg, #ffffff 0%, #faeed9 30%, #f5d77f 60%, #d4af37 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",
               filter: "drop-shadow(0 2px 10px rgba(212,175,55,0.4))",
+              whiteSpace: "nowrap",
             }}
           >
             DONA NOVA
@@ -152,8 +173,8 @@ export function PublicHeader({ lang = "tr", setLang }: PublicHeaderProps) {
         </Link>
       </div>
 
-      {/* RIGHT: Star on GitHub + Minimal Borderless Language Switcher */}
-      <div style={{ gridColumn: 3, justifySelf: "end" }}>
+      {/* RIGHT: Star on GitHub (desktop only) + Sleek Language Pill */}
+      <div style={{ flex: isMobile ? "0 0 auto" : "initial", gridColumn: isMobile ? undefined : 3, justifySelf: "end" }}>
         <div
           style={{
             display: "inline-flex",
@@ -161,90 +182,95 @@ export function PublicHeader({ lang = "tr", setLang }: PublicHeaderProps) {
             gap: "0.75rem",
           }}
         >
-          {/* Aesthetic Star on GitHub Pill */}
-          <a
-            id="pub-star-github-btn"
-            href="https://github.com/dobby-aidev/dona-nova-showcase"
-            target="_blank"
-            rel="noopener noreferrer"
-            title="Star Dona Nova on GitHub ⭐"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "0.35rem",
-              padding: "0.22rem 0.65rem",
-              borderRadius: "9999px",
-              border: "1px solid rgba(212, 175, 55, 0.4)",
-              background: "rgba(6, 7, 12, 0.45)",
-              backdropFilter: "blur(10px)",
-              color: "var(--gold-bright)",
-              fontFamily: "var(--font-mono)",
-              fontSize: "0.62rem",
-              fontWeight: 700,
-              letterSpacing: "0.06em",
-              textDecoration: "none",
-              transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
-              boxShadow: "0 0 12px rgba(212,175,55,0.15)",
-            }}
-          >
-            <span style={{ fontSize: "0.72rem", color: "#FFE082" }}>⭐</span>
-            <span className="desktop-only">{activeLang === "tr" ? "Yıldız Ver" : "Star on GitHub"}</span>
-          </a>
+          {/* Aesthetic Star on GitHub Pill — desktop only */}
+          {!isMobile && (
+            <a
+              id="pub-star-github-btn"
+              href="https://github.com/dobby-aidev/dona-nova-showcase"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Star Dona Nova on GitHub ⭐"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.35rem",
+                padding: "0.22rem 0.65rem",
+                borderRadius: "9999px",
+                border: "1px solid rgba(212, 175, 55, 0.4)",
+                background: "rgba(6, 7, 12, 0.45)",
+                backdropFilter: "blur(10px)",
+                color: "var(--gold-bright)",
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.62rem",
+                fontWeight: 700,
+                letterSpacing: "0.06em",
+                textDecoration: "none",
+                transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
+                boxShadow: "0 0 12px rgba(212,175,55,0.15)",
+              }}
+            >
+              <span style={{ fontSize: "0.72rem", color: "#FFE082" }}>⭐</span>
+              <span>{activeLang === "tr" ? "Yıldız Ver" : "Star on GitHub"}</span>
+            </a>
+          )}
 
+          {/* Unified Sleek Language Pill matching AppHeader */}
           <div
             style={{
               display: "inline-flex",
               alignItems: "center",
-              gap: "0.35rem",
-              padding: "0.2rem 0.4rem",
-              background: "transparent",
-              border: "none",
+              borderRadius: "9999px",
+              border: "1px solid rgba(212,175,55,0.28)",
+              background: "rgba(7,8,14,0.72)",
+              backdropFilter: "blur(12px)",
+              WebkitBackdropFilter: "blur(12px)",
+              overflow: "hidden",
             }}
           >
-          <button
-            id="pub-lang-btn-tr"
-            onClick={() => handleToggle("tr")}
-            aria-label="Türkçe"
-            style={{
-              background: "transparent",
-              border: "none",
-              padding: "0.2rem 0.4rem",
-              fontFamily: "var(--font-mono)",
-              fontSize: "0.7rem",
-              fontWeight: 700,
-              letterSpacing: "0.12em",
-              color: activeLang === "tr" ? "var(--gold-primary)" : "rgba(210,205,195,0.45)",
-              cursor: "pointer",
-              transition: "all 0.2s ease",
-              textShadow: activeLang === "tr" ? "0 0 10px rgba(212,175,55,0.7)" : "none",
-            }}
-          >
-            TR
-          </button>
-          <span style={{ color: "rgba(212,175,55,0.25)", fontFamily: "var(--font-mono)", fontSize: "0.6rem" }}>/</span>
-          <button
-            id="pub-lang-btn-en"
-            onClick={() => handleToggle("en")}
-            aria-label="English"
-            style={{
-              background: "transparent",
-              border: "none",
-              padding: "0.2rem 0.4rem",
-              fontFamily: "var(--font-mono)",
-              fontSize: "0.7rem",
-              fontWeight: 700,
-              letterSpacing: "0.12em",
-              color: activeLang === "en" ? "var(--gold-primary)" : "rgba(210,205,195,0.45)",
-              cursor: "pointer",
-              transition: "all 0.2s ease",
-              textShadow: activeLang === "en" ? "0 0 10px rgba(212,175,55,0.7)" : "none",
-            }}
-          >
-            EN
-          </button>
+            <button
+              id="pub-lang-btn-tr"
+              onClick={() => handleToggle("tr")}
+              aria-label="Türkçe"
+              style={{
+                background: activeLang === "tr" ? "var(--gold-primary)" : "transparent",
+                border: "none",
+                padding: isMobile ? "0.32rem 0.65rem" : "0.22rem 0.6rem",
+                fontFamily: "var(--font-mono)",
+                fontSize: isMobile ? "0.68rem" : "0.62rem",
+                fontWeight: 800,
+                letterSpacing: "0.1em",
+                color: activeLang === "tr" ? "#07080e" : "rgba(212,175,55,0.7)",
+                cursor: "pointer",
+                transition: "all 0.18s ease",
+                WebkitTapHighlightColor: "transparent",
+              }}
+            >
+              TR
+            </button>
+            <div style={{ width: 1, height: isMobile ? 14 : 14, background: "rgba(212,175,55,0.2)", flexShrink: 0 }} />
+            <button
+              id="pub-lang-btn-en"
+              onClick={() => handleToggle("en")}
+              aria-label="English"
+              style={{
+                background: activeLang === "en" ? "var(--gold-primary)" : "transparent",
+                border: "none",
+                padding: isMobile ? "0.32rem 0.65rem" : "0.22rem 0.6rem",
+                fontFamily: "var(--font-mono)",
+                fontSize: isMobile ? "0.68rem" : "0.62rem",
+                fontWeight: 800,
+                letterSpacing: "0.1em",
+                color: activeLang === "en" ? "#07080e" : "rgba(212,175,55,0.7)",
+                cursor: "pointer",
+                transition: "all 0.18s ease",
+                WebkitTapHighlightColor: "transparent",
+              }}
+            >
+              EN
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-  </header>
-);
+    </header>
+  );
 }

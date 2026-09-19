@@ -97,10 +97,13 @@
 
 ## FAZ 5 — PERFORMANS & LANSMAN
 
-### 5.1 Performans
-- [ ] LOD sistemi (Level of Detail) globe noktaları için
-- [ ] Veri önbellekleme (Cloudflare KV)
-- [ ] Progressive loading — veri gelirken noktalar ışıklanır
+### 5.1 Performans & 3D Motor İyileştirmeleri
+- [x] LOD sistemi (Level of Detail) globe noktaları için
+- [x] 3D Radar Ayarlar Paneli (DPR 1x / 1.5x / 2x Retina, Otomatik Dönüş hızı, Telemetri sorgulama sıklığı)
+- [x] Mobil duyarlı tam uyumluluk (Simetrik üst bar, dokunmatik buton standartları, yatay taşma/kayma engelleme)
+- [x] MCP v1.2.0 Model Context Protocol sunucusu ve araçları (Cursor, Windsurf, Claude Desktop)
+- [x] Saydam kristal obsidian-gold HUD arayüzü (Bulanıklıksız yüksek performans)
+- [x] Açık Kaynak Dağıtım Hazırlığı (README, CONTRIBUTING, LICENSE, .github)
 
 ### 5.2 Lansman Hazırlığı
 - [ ] Product Hunt varlığı hazırla
@@ -112,7 +115,7 @@
 
 ## ŞU AN YAPILIYOR
 
-> Faz 4 → AI Yorumlama Motoru (Cloudflare AI Gateway & Doğal Dil Sorgulama)
+> Açık kaynak GitHub lansmanı (`dona-nova-showcase`) ve GitHub repository yükleme hazırlığı tamamlandı.
 
 ---
 
