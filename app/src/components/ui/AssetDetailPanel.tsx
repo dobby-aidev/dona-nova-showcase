@@ -38,9 +38,20 @@ const STATUS_STYLE = {
   offline:      { labelTr: "Bakımda / Pasif",           labelEn: "Maintenance / Offline", bg: "rgba(239,68,68,0.12)",  color: "#f87171", dot: "#ef4444" },
 };
 
-function MetricRow({ label, value, icon: Icon }: { label: string; value: string; icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }> }) {
+function MetricRow({
+  label,
+  value,
+  icon: Icon,
+  onClick,
+}: {
+  label: string;
+  value: string;
+  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
+  onClick?: () => void;
+}) {
   return (
     <div
+      onClick={onClick}
       style={{
         display: "flex",
         alignItems: "center",
@@ -48,10 +59,11 @@ function MetricRow({ label, value, icon: Icon }: { label: string; value: string;
         gap: 12,
         padding: "8px 0",
         borderBottom: "1px solid var(--gold-border)",
+        cursor: onClick ? "pointer" : "default",
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0, flexShrink: 0 }}>
-        <Icon style={{ width: 13, height: 13, color: "var(--gold-primary)", flexShrink: 0 }} />
+        <Icon style={{ width: 13, height: 13, color: onClick ? "var(--gold-bright)" : "var(--gold-primary)", flexShrink: 0 }} />
         <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", fontFamily: "var(--font-mono)", letterSpacing: "0.04em" }}>
           {label}
         </span>
@@ -60,12 +72,13 @@ function MetricRow({ label, value, icon: Icon }: { label: string; value: string;
         style={{
           fontSize: "0.75rem",
           fontWeight: 600,
-          color: "var(--text-main)",
+          color: onClick ? "var(--gold-bright)" : "var(--text-main)",
           textAlign: "right",
           overflow: "hidden",
           textOverflow: "ellipsis",
           whiteSpace: "nowrap",
           maxWidth: "220px",
+          textDecoration: onClick ? "underline" : "none",
         }}
         title={value}
       >
@@ -137,10 +150,28 @@ export function AssetDetailPanel({ asset, onClose, lang = "tr" }: AssetDetailPan
   const handleOpenExternal = () => {
     if (!asset) return;
     let targetUrl = "https://github.com/wri/global-power-plant-database";
-    if (asset.coordinates) {
-      // Direct Satellite View via Google Maps Coordinates
-      const cleanCoords = asset.coordinates.replace(/[^0-9.,-]/g, "");
-      targetUrl = `https://www.google.com/maps?q=${encodeURIComponent(asset.coordinates)}&t=k`;
+
+    let lat = asset.lat;
+    let lng = asset.lng;
+
+    // Parse lat/lng if not present as direct numbers
+    if ((lat === undefined || lng === undefined || isNaN(lat) || isNaN(lng)) && asset.coordinates) {
+      const match = asset.coordinates.match(/(-?\d+\.?\d*)\s*°?\s*([NS])?[\s,]+(-?\d+\.?\d*)\s*°?\s*([EW])?/i);
+      if (match) {
+        let pLat = parseFloat(match[1]);
+        let pLng = parseFloat(match[3]);
+        if (match[2] && match[2].toUpperCase() === "S") pLat = -pLat;
+        if (match[4] && match[4].toUpperCase() === "W") pLng = -pLng;
+        if (!isNaN(pLat) && !isNaN(pLng)) {
+          lat = pLat;
+          lng = pLng;
+        }
+      }
+    }
+
+    if (lat !== undefined && lng !== undefined && !isNaN(lat) && !isNaN(lng)) {
+      // Direct Satellite View via Google Maps with exact pinpoint query, map center & level 16 zoom
+      targetUrl = `https://www.google.com/maps?q=${lat},${lng}&ll=${lat},${lng}&z=16&t=k`;
     } else {
       targetUrl = `https://www.google.com/search?q=${encodeURIComponent(asset.name + " " + asset.country + " infrastructure")}`;
     }
@@ -437,7 +468,14 @@ export function AssetDetailPanel({ asset, onClose, lang = "tr" }: AssetDetailPan
                 <div style={{ display: "flex", flexDirection: "column" }}>
                   <MetricRow label={lang === "tr" ? "Kurulu Kapasite" : "Installed Capacity"} value={asset.capacity} icon={Zap} />
                   <MetricRow label={lang === "tr" ? "Sahibi / İşletmeci" : "Owner / Operator"} value={asset.owner || (lang === "tr" ? "Kamu / Konsorsiyum" : "Public / Consortium")} icon={Building2} />
-                  {asset.coordinates && <MetricRow label={lang === "tr" ? "Coğrafi Konum (GPS)" : "GPS Coordinates"} value={asset.coordinates} icon={MapPin} />}
+                  {asset.coordinates && (
+                    <MetricRow
+                      label={lang === "tr" ? "Coğrafi Konum (GPS)" : "GPS Coordinates"}
+                      value={asset.coordinates}
+                      icon={MapPin}
+                      onClick={handleOpenExternal}
+                    />
+                  )}
                   {asset.completionYear && <MetricRow label={lang === "tr" ? "Hizmete Giriş Yılı" : "Commissioning Year"} value={asset.completionYear} icon={Calendar} />}
                   <MetricRow label={lang === "tr" ? "Bağlı Olduğu Ülke" : "Country / Territory"} value={asset.country} icon={MapPin} />
                 </div>
