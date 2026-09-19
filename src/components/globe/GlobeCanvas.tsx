@@ -6,6 +6,7 @@ import { OrbitControls, Html, useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import { Zap, Droplets, Plane, Server } from "lucide-react";
 import type { DataSourceMeta } from "@/types/infrastructure";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 export interface HotspotLocation {
   id: string;
@@ -200,60 +201,26 @@ function InfrastructurePointCloud({ locations }: { locations: HotspotLocation[] 
   );
 }
 
-/* ── Verified NASA Blue Marble Earth Texture Loader ───────────────────── */
-function NASAEarthGlobe({
-  locations,
-  activeFilter,
-  selectedId,
-  onSelectAsset,
-}: {
-  locations: HotspotLocation[];
-  activeFilter: string;
-  selectedId: string | null;
-  onSelectAsset: (loc: HotspotLocation | null) => void;
-}) {
-  const earthGroupRef = useRef<THREE.Group>(null!);
+/* ── Preload Earth Texture ────────────────────────────────────────────── */
+try {
+  useTexture.preload("/textures/earth-blue-marble.jpg");
+} catch {}
 
-  // Suspense-powered reliable texture loader
-  const earthTexture = useTexture("/textures/earth-blue-marble.jpg");
-  earthTexture.colorSpace = THREE.SRGBColorSpace;
-
-  useFrame((state) => {
-    if (earthGroupRef.current) {
-      earthGroupRef.current.rotation.y = state.clock.getElapsedTime() * 0.012;
-    }
-  });
-
-  const filtered = useMemo(() => {
-    if (activeFilter === "all") return locations;
-    return locations.filter((l) => l.category === activeFilter);
-  }, [locations, activeFilter]);
-
-  // Featured pins for interactive inspection
-  const featuredLocations = useMemo(() => {
-    const selectedLoc = locations.find((l) => l.id === selectedId);
-    const topList = filtered.slice(0, 40);
-    if (selectedLoc && !topList.some((l) => l.id === selectedLoc.id)) {
-      return [...topList, selectedLoc];
-    }
-    return topList;
-  }, [filtered, locations, selectedId]);
-
+/* ── Fallback Globe while Texture Loads (Deep Obsidian Sapphire) ──────── */
+function EarthLoadingFallback() {
   return (
-    <group ref={earthGroupRef}>
-      {/* 3D Earth Mesh with Photorealistic NASA Blue Marble */}
+    <group>
       <mesh>
-        <sphereGeometry args={[1, 128, 128]} />
+        <sphereGeometry args={[1, 64, 64]} />
         <meshStandardMaterial
-          map={earthTexture}
-          roughness={0.45}
-          metalness={0.08}
+          color="#0d1b2a"
+          roughness={0.65}
+          metalness={0.15}
         />
       </mesh>
-
-      {/* Atmospheric Halo Glow (depthWrite: false ensures it NEVER occludes Earth) */}
+      {/* Subtle Atmospheric Halo Glow */}
       <mesh scale={1.022}>
-        <sphereGeometry args={[1, 64, 64]} />
+        <sphereGeometry args={[1, 32, 32]} />
         <meshBasicMaterial
           color="#38bdf8"
           transparent
@@ -263,6 +230,93 @@ function NASAEarthGlobe({
           depthWrite={false}
         />
       </mesh>
+    </group>
+  );
+}
+
+/* ── Verified NASA Blue Marble Earth Texture Loader ───────────────────── */
+function NASAEarthGlobe({
+  locations,
+  activeFilter,
+  selectedId,
+  onSelectAsset,
+  settings,
+}: {
+  locations: HotspotLocation[];
+  activeFilter: string;
+  selectedId: string | null;
+  onSelectAsset: (loc: HotspotLocation | null) => void;
+  settings?: {
+    quality: "ultra" | "high" | "performance";
+    autoRotate: boolean;
+    showAtmosphere: boolean;
+    refreshInterval: string;
+  };
+}) {
+  const earthGroupRef = useRef<THREE.Group>(null!);
+  const isMobile = useIsMobile();
+
+  // Suspense-powered reliable texture loader
+  const earthTexture = useTexture("/textures/earth-blue-marble.jpg");
+  earthTexture.colorSpace = THREE.SRGBColorSpace;
+
+  const autoRotateEnabled = settings ? settings.autoRotate : true;
+  const showAtmosphereEnabled = settings ? settings.showAtmosphere : true;
+  const quality = settings ? settings.quality : "high";
+
+  useFrame((state) => {
+    if (earthGroupRef.current && autoRotateEnabled) {
+      earthGroupRef.current.rotation.y = state.clock.getElapsedTime() * 0.012;
+    }
+  });
+
+  const filtered = useMemo(() => {
+    if (activeFilter === "all") return locations;
+    return locations.filter((l) => l.category === activeFilter);
+  }, [locations, activeFilter]);
+
+  // Featured pins for interactive inspection (clean limit on mobile for compositor performance)
+  const featuredLocations = useMemo(() => {
+    const selectedLoc = locations.find((l) => l.id === selectedId);
+    const topList = filtered.slice(0, isMobile ? 8 : 35);
+    if (selectedLoc && !topList.some((l) => l.id === selectedLoc.id)) {
+      return [...topList, selectedLoc];
+    }
+    return topList;
+  }, [filtered, locations, selectedId, isMobile]);
+
+  const meshSegments = useMemo(() => {
+    if (quality === "ultra") return isMobile ? 64 : 128;
+    if (quality === "high") return isMobile ? 48 : 96;
+    return isMobile ? 32 : 64;
+  }, [quality, isMobile]);
+
+  return (
+    <group ref={earthGroupRef}>
+      {/* 3D Earth Mesh with Photorealistic NASA Blue Marble */}
+      <mesh>
+        <sphereGeometry args={[1, meshSegments, meshSegments]} />
+        <meshStandardMaterial
+          map={earthTexture}
+          roughness={0.55}
+          metalness={0.06}
+        />
+      </mesh>
+
+      {/* Atmospheric Halo Glow (Real-time toggleable, depthWrite: false ensures it NEVER occludes Earth) */}
+      {showAtmosphereEnabled && (
+        <mesh scale={1.022}>
+          <sphereGeometry args={[1, isMobile ? 32 : 64, isMobile ? 32 : 64]} />
+          <meshBasicMaterial
+            color="#38bdf8"
+            transparent
+            opacity={0.12}
+            side={THREE.BackSide}
+            blending={THREE.AdditiveBlending}
+            depthWrite={false}
+          />
+        </mesh>
+      )}
 
       {/* 3,160+ Points Point Cloud */}
       <InfrastructurePointCloud locations={filtered} />
@@ -481,41 +535,88 @@ export function GlobeCanvas({
   onSelectAsset?: (location: HotspotLocation | null) => void;
   lang?: "tr" | "en";
 }) {
+  const isMobile = useIsMobile();
+
+  const [globeSettings, setGlobeSettings] = useState(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("dona_radar_settings");
+        if (saved) return JSON.parse(saved);
+      } catch {}
+    }
+    return {
+      quality: "high" as const,
+      autoRotate: true,
+      showAtmosphere: true,
+      refreshInterval: "10",
+    };
+  });
+
+  useEffect(() => {
+    const handleSettingsChange = (e: any) => {
+      if (e.detail) {
+        setGlobeSettings(e.detail);
+      }
+    };
+    window.addEventListener("dona:settings-change", handleSettingsChange);
+    return () => window.removeEventListener("dona:settings-change", handleSettingsChange);
+  }, []);
+
+  const dprRange: [number, number] = useMemo(() => {
+    if (globeSettings.quality === "ultra") return isMobile ? [1, 2.0] : [1, 2.5];
+    if (globeSettings.quality === "high") return isMobile ? [1, 1.5] : [1, 1.75];
+    return [1, 1.0]; // eco performance
+  }, [globeSettings.quality, isMobile]);
+
   return (
-    <div className="absolute inset-0 w-full h-full z-0 overflow-hidden">
+    <div className="absolute inset-0 w-full h-full z-0 overflow-hidden" style={{ background: "#07080e" }}>
       <Canvas
-        camera={{ position: [0, 0, 2.9], fov: 45 }}
-        dpr={[1, 1.75]}
+        camera={{ position: [0, 0, isMobile ? 3.4 : 2.9], fov: isMobile ? 50 : 45 }}
+        dpr={dprRange}
         gl={{
-          antialias: true,
-          alpha: true,
+          antialias: globeSettings.quality !== "performance" && !isMobile,
+          alpha: false,
           powerPreference: "high-performance",
+          preserveDrawingBuffer: false,
+        }}
+        onCreated={({ gl, scene }) => {
+          gl.setClearColor(0x07080e, 1);
+          scene.background = new THREE.Color(0x07080e);
+          gl.toneMapping = THREE.ACESFilmicToneMapping;
+          gl.toneMappingExposure = 1.05;
         }}
       >
-        {/* Rich Three-Point Studio Lighting for NASA Globe */}
-        <ambientLight intensity={1.6} />
-        <directionalLight position={[5, 4, 5]} intensity={2.8} color="#fffcf2" />
-        <directionalLight position={[-5, -2, -4]} intensity={1.2} color="#7dd3fc" />
-        <hemisphereLight groundColor="#0c1322" color="#fef9ee" intensity={0.9} />
+        {/* Calibrated Studio Cinematic Lighting — rich contrast, zero white blowout */}
+        <ambientLight intensity={0.75} color="#dbeafe" />
+        <directionalLight position={[5, 3.5, 5]} intensity={1.45} color="#fffcf2" />
+        <directionalLight position={[-5, -2, -4]} intensity={0.5} color="#38bdf8" />
+        <hemisphereLight groundColor="#07080e" color="#60a5fa" intensity={0.35} />
         
         <StarField />
-        <NASAEarthGlobe
-          locations={locations}
-          activeFilter={activeFilter}
-          selectedId={selectedAsset ? selectedAsset.id : null}
-          onSelectAsset={onSelectAsset || (() => {})}
-        />
+        <React.Suspense fallback={<EarthLoadingFallback />}>
+          <NASAEarthGlobe
+            locations={locations}
+            activeFilter={activeFilter}
+            selectedId={selectedAsset ? selectedAsset.id : null}
+            onSelectAsset={onSelectAsset || (() => {})}
+            settings={globeSettings}
+          />
+        </React.Suspense>
         
         <OrbitControls
           enableZoom={true}
           enablePan={false}
-          zoomSpeed={0.75}
-          rotateSpeed={0.55}
-          minDistance={1.45}
-          maxDistance={4.2}
+          zoomSpeed={isMobile ? 0.55 : 0.75}
+          rotateSpeed={isMobile ? 0.45 : 0.55}
+          minDistance={isMobile ? 1.6 : 1.45}
+          maxDistance={isMobile ? 5.5 : 4.2}
           enableDamping={true}
           dampingFactor={0.05}
           autoRotate={false}
+          touches={{
+            ONE: THREE.TOUCH.ROTATE,
+            TWO: THREE.TOUCH.DOLLY_ROTATE,
+          }}
         />
       </Canvas>
     </div>

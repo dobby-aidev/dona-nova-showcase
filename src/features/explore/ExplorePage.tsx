@@ -7,7 +7,9 @@ import { AssetDetailPanel } from "@/components/ui/AssetDetailPanel";
 import {
   Activity, MapPin, ChevronUp, ChevronDown,
   Layers, Search, Zap, Droplets, Server,
+  Truck, ChevronRight, ChevronLeft, Wifi, Cpu,
 } from "lucide-react";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 /* ── Gold palette constants ─────────────────────────────────────────── */
 const GOLD = "var(--gold-primary)";
@@ -22,6 +24,7 @@ interface ExplorePageProps {
 
 const ACTIVE_LABELS: Record<string, { tr: string; en: string }> = {
   explore:     { tr: "NASA 3D Küresel Radar",       en: "NASA 3D Global Radar" },
+  telemetry:   { tr: "Küresel Telemetri",           en: "Global Telemetry" },
   dashboard:   { tr: "Altyapı Telemetri Paneli",    en: "Infrastructure Telemetry" },
   energy:      { tr: "Küresel Elektrik Santralleri", en: "Global Power Plants" },
   water:       { tr: "Tatlı Su & Baraj Sistemleri", en: "Water & Reservoir Networks" },
@@ -45,6 +48,13 @@ export default function ExplorePage({ lang = "tr", activeNav = "explore" }: Expl
   const [selectedTab, setSelectedTab] = useState<string>("all");
   const [sortBy, setSortBy] = useState<"capacity" | "name" | "country">("capacity");
   const [displayCount, setDisplayCount] = useState(30);
+  const isMobile = useIsMobile();
+
+  useEffect(() => {
+    if (activeNav === "telemetry") {
+      setDockExpanded(true);
+    }
+  }, [activeNav]);
 
   useEffect(() => {
     let isMounted = true;
@@ -100,8 +110,26 @@ export default function ExplorePage({ lang = "tr", activeNav = "explore" }: Expl
       .reduce((s, a) => s + (parseInt(a.capacity.replace(/[^0-9]/g, "")) || 0), 0),
     [locations]
   );
-  const totalDC    = useMemo(() => locations.filter(a => a.category === "datacenter").length, [locations]);
-  const totalWater = useMemo(() => locations.filter(a => a.category === "su").length, [locations]);
+  const totalDC        = useMemo(() => locations.filter(a => a.category === "datacenter").length, [locations]);
+  const totalWater     = useMemo(() => locations.filter(a => a.category === "su").length, [locations]);
+  const totalTransport = useMemo(() => locations.filter(a => a.category === "ulasim").length, [locations]);
+
+  const [telemetryRailOpen, setTelemetryRailOpen] = useState(true);
+
+  useEffect(() => {
+    const handleOpenSearch = () => {
+      setDockExpanded(true);
+      setTimeout(() => {
+        const input = document.getElementById("deck-search-input");
+        if (input) {
+          input.focus();
+          (input as HTMLInputElement).select();
+        }
+      }, 150);
+    };
+    window.addEventListener("dona:open-search", handleOpenSearch);
+    return () => window.removeEventListener("dona:open-search", handleOpenSearch);
+  }, []);
 
   const activeLabel = ACTIVE_LABELS[activeNav] ?? ACTIVE_LABELS["explore"];
 
@@ -151,344 +179,717 @@ export default function ExplorePage({ lang = "tr", activeNav = "explore" }: Expl
       {/* ── Top Floating Info Bar (Centered below header, clear of sidebar) ─ */}
       <div style={{
         position: "absolute",
-        top: 52,
+        top: isMobile ? 42 : 52,
         left: "50%",
         transform: "translateX(-50%)",
         zIndex: 25,
         pointerEvents: "auto",
         display: "flex",
         alignItems: "center",
-        gap: 10,
+        gap: isMobile ? 4 : 10,
       }}>
-        {/* Active Layer Micro-Capsule (Shrunk as requested in Screenshot 1) */}
+        {/* Active Layer Micro-Capsule (Ultra-sleek on mobile) */}
         <motion.div
           key={activeNav}
           initial={{ opacity: 0, y: -4 }}
           animate={{ opacity: 1, y: 0 }}
           style={{
-            display: "inline-flex", alignItems: "center", gap: 8,
+            display: "inline-flex", alignItems: "center",
+            gap: isMobile ? 5 : 8,
             borderRadius: 9999, border: `1px solid ${GOLD_BORDER}`,
-            background: "rgba(6, 7, 12, 0.2)",
-            padding: "4px 12px",
+            background: "rgba(6, 7, 12, 0.35)",
+            padding: isMobile ? "2px 8px" : "4px 12px",
             backdropFilter: "blur(12px)",
             WebkitBackdropFilter: "blur(12px)",
             boxShadow: "0 6px 24px rgba(0,0,0,0.4), 0 0 12px rgba(212,175,55,0.06)",
           }}
         >
-          <Layers style={{ width: 12, height: 12, color: GOLD, flexShrink: 0 }} />
+          <Layers style={{ width: isMobile ? 10 : 12, height: isMobile ? 10 : 12, color: GOLD, flexShrink: 0 }} />
           <span style={{
-            fontFamily: "var(--font-mono)", fontSize: "0.64rem", fontWeight: 700,
-            letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--text-main)",
+            fontFamily: "var(--font-mono)",
+            fontSize: isMobile ? "0.52rem" : "0.64rem",
+            fontWeight: 700,
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            color: "var(--text-main)",
           }}>
             {lang === "tr" ? activeLabel.tr : activeLabel.en}
           </span>
           <span style={{
-            borderRadius: 9999, background: "rgba(212,175,55,0.12)", border: `1px solid ${GOLD_BORDER}`,
-            padding: "1px 6px", fontFamily: "var(--font-mono)", fontSize: "0.54rem",
-            fontWeight: 700, letterSpacing: "0.06em", color: GOLD_BRIGHT,
+            borderRadius: 9999,
+            background: "rgba(212,175,55,0.14)",
+            border: `1px solid ${GOLD_BORDER}`,
+            padding: isMobile ? "1px 5px" : "1px 6px",
+            fontFamily: "var(--font-mono)",
+            fontSize: isMobile ? "0.46rem" : "0.54rem",
+            fontWeight: 700,
+            letterSpacing: "0.06em",
+            color: GOLD_BRIGHT,
           }}>
             {globeAssets.length.toLocaleString()} {lang === "tr" ? "Tesis" : "Assets"}
           </span>
         </motion.div>
       </div>
 
-      {/* ── Vertical Telemetry Rail (Shrunk & Translucent as requested) ────── */}
-      <aside
-        className="desktop-only"
-        style={{
-          position: "absolute",
-          right: 14,
-          top: "46%",
-          transform: "translateY(-50%)",
-          zIndex: 25,
-          pointerEvents: "auto",
-          display: "flex",
-          flexDirection: "column",
-          gap: 8,
-          borderRadius: 14,
-          border: `1px solid ${GOLD_BORDER}`,
-          background: "rgba(6, 7, 12, 0.18)",
-          padding: "10px 10px",
-          backdropFilter: "blur(12px)",
-          WebkitBackdropFilter: "blur(12px)",
-          boxShadow: "0 10px 36px rgba(0,0,0,0.5), 0 0 18px rgba(212,175,55,0.05)",
-          width: 118,
-          userSelect: "none",
-        }}
-      >
-        {/* Rail Header */}
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          paddingBottom: 5,
-          borderBottom: `1px solid ${GOLD_BORDER}`,
-        }}>
-          <span style={{
-            fontFamily: "var(--font-mono)",
-            fontSize: "0.52rem",
-            fontWeight: 700,
-            letterSpacing: "0.14em",
-            textTransform: "uppercase",
-            color: "rgba(163,155,141,0.65)",
-          }}>
-            {lang === "tr" ? "TELEMETRİ" : "TELEMETRY"}
-          </span>
-          <span style={{
-            width: 5,
-            height: 5,
-            borderRadius: "50%",
-            background: "#34d399",
-            boxShadow: "0 0 6px #34d399",
-            animation: "dn-pulse-glow 2s infinite",
-          }} />
-        </div>
+      {/* ── Vertical Telemetry HUD (Slide-In / Collapsible Live Grid HUD) ────── */}
+      <AnimatePresence>
+        {!selectedAsset && !telemetryRailOpen && (
+          <motion.button
+            key="hud-toggle-tab"
+            id="telemetry-rail-open-tab"
+            initial={{ x: 40, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: 40, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            onClick={() => setTelemetryRailOpen(true)}
+            title={lang === "tr" ? "Canlı Telemetri Izgarasını Aç" : "Open Live Telemetry Grid"}
+            style={{
+              position: "fixed",
+              right: 0,
+              top: "50%",
+              transform: "translateY(-50%)",
+              zIndex: 38,
+              display: "flex",
+              flexDirection: "column",
+              width: 26,
+              height: 96,
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 6,
+              borderRadius: "10px 0 0 10px",
+              border: `1px solid ${GOLD_BORDER}`,
+              borderRight: "none",
+              background: "rgba(7, 8, 14, 0.78)",
+              backdropFilter: "none",
+              WebkitBackdropFilter: "none",
+              color: GOLD_BRIGHT,
+              boxShadow: "none",
+              cursor: "pointer",
+              padding: "8px 0",
+              pointerEvents: "auto",
+              touchAction: "manipulation",
+              WebkitTapHighlightColor: "transparent",
+              transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
+            }}
+            aria-label="Telemetri Izgarasını Aç"
+          >
+            <ChevronLeft style={{ width: 14, height: 14, color: GOLD, strokeWidth: 2.5 }} />
+            <span style={{
+              width: 5,
+              height: 5,
+              borderRadius: "50%",
+              background: "#34d399",
+              boxShadow: "0 0 6px #34d399",
+              animation: "dn-pulse-glow 2s infinite",
+            }} />
+            <span style={{
+              writingMode: "vertical-rl",
+              transform: "rotate(180deg)",
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.54rem",
+              fontWeight: 800,
+              letterSpacing: "0.14em",
+              textTransform: "uppercase",
+              color: GOLD,
+            }}>
+              {lang === "tr" ? "TELEMETRİ" : "TELEMETRY"}
+            </span>
+          </motion.button>
+        )}
+      </AnimatePresence>
 
-        {/* 1: GÜÇ / POWER */}
-        <div style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 2,
-          padding: "5px 6px",
-          borderRadius: 8,
-          background: "rgba(212,175,55,0.03)",
-          border: `1px solid ${GOLD_BORDER}`,
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-            <Zap style={{ width: 10, height: 10, color: GOLD }} />
+      {/* Main HUD Aside: Full live grid on desktop and mobile when open */}
+      {!selectedAsset && telemetryRailOpen && (
+        <aside
+          id="vertical-telemetry-rail"
+          style={isMobile ? {
+            position: "fixed",
+            right: 8,
+            top: "50%",
+            transform: "translateY(-50%)",
+            zIndex: 35,
+            pointerEvents: "auto",
+            display: "flex",
+            flexDirection: "column",
+            gap: 5,
+            borderRadius: 12,
+            border: `1px solid ${GOLD_BORDER}`,
+            background: "rgba(7, 8, 14, 0.72)",
+            padding: "8px 8px",
+            backdropFilter: "none",
+            WebkitBackdropFilter: "none",
+            boxShadow: "none",
+            width: 96,
+            userSelect: "none",
+          } : {
+            position: "fixed",
+            right: 14,
+            top: "50%",
+            transform: "translateY(-50%)",
+            zIndex: 35,
+            pointerEvents: "auto",
+            display: "flex",
+            flexDirection: "column",
+            gap: 7,
+            borderRadius: 16,
+            border: `1px solid ${GOLD_BORDER}`,
+            background: "rgba(7, 8, 14, 0.72)",
+            padding: "12px 11px",
+            backdropFilter: "none",
+            WebkitBackdropFilter: "none",
+            boxShadow: "none",
+            width: 140,
+            userSelect: "none",
+          }}
+        >
+          {/* Edge Tab on the left of open HUD — user immediately knows where to close it on mobile & desktop */}
+          <button
+            onClick={() => setTelemetryRailOpen(false)}
+            style={{
+              position: "absolute",
+              left: -26,
+              top: "50%",
+              transform: "translateY(-50%)",
+              zIndex: 35,
+              display: "flex",
+              flexDirection: "column",
+              width: 26,
+              height: 96,
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 6,
+              borderRadius: "10px 0 0 10px",
+              border: `1px solid ${GOLD_BORDER}`,
+              borderRight: "none",
+              background: "rgba(7, 8, 14, 0.94)",
+              backdropFilter: "blur(20px)",
+              WebkitBackdropFilter: "blur(20px)",
+              color: GOLD_BRIGHT,
+              boxShadow: `-4px 0 20px rgba(0,0,0,0.7), 0 0 14px rgba(212,175,55,0.2)`,
+              cursor: "pointer",
+              padding: "8px 0",
+              touchAction: "manipulation",
+              WebkitTapHighlightColor: "transparent",
+              transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
+            }}
+            title={lang === "tr" ? "Telemetri Izgarasını Kapat" : "Collapse Telemetry Grid"}
+            aria-label="Telemetri Izgarasını Kapat"
+          >
+            <ChevronRight style={{ width: 14, height: 14, color: GOLD, strokeWidth: 2.5 }} />
+            <span style={{
+              width: 5,
+              height: 5,
+              borderRadius: "50%",
+              background: "#34d399",
+              boxShadow: "0 0 6px #34d399",
+              animation: "dn-pulse-glow 2s infinite",
+            }} />
+            <span style={{
+              writingMode: "vertical-rl",
+              transform: "rotate(180deg)",
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.54rem",
+              fontWeight: 800,
+              letterSpacing: "0.14em",
+              textTransform: "uppercase",
+              color: GOLD,
+            }}>
+              {lang === "tr" ? "KAPAT" : "CLOSE"}
+            </span>
+          </button>
+
+          {/* Rail Header with Slide-Out Close Button on Desktop */}
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            paddingBottom: isMobile ? 3 : 6,
+            borderBottom: `1px solid ${GOLD_BORDER}`,
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+              <span style={{
+                width: isMobile ? 4 : 6,
+                height: isMobile ? 4 : 6,
+                borderRadius: "50%",
+                background: "#34d399",
+                boxShadow: "0 0 8px #34d399",
+                animation: "dn-pulse-glow 2s infinite",
+              }} />
+              <span style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: isMobile ? "0.46rem" : "0.56rem",
+                fontWeight: 800,
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                color: GOLD_BRIGHT,
+              }}>
+                {lang === "tr" ? "TELEMETRİ" : "TELEMETRY"}
+              </span>
+            </div>
+
+            <button
+              onClick={() => setTelemetryRailOpen(false)}
+              title={lang === "tr" ? "Izgarayı Gizle" : "Collapse Grid"}
+              style={{
+                background: "transparent",
+                border: "none",
+                color: "var(--text-muted)",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: isMobile ? "2px 4px" : 2,
+                borderRadius: 4,
+                transition: "all 0.15s ease",
+              }}
+            >
+              <ChevronRight style={{ width: 13, height: 13, color: "var(--text-muted)" }} />
+            </button>
+          </div>
+
+          {/* 1: GÜÇ / POWER */}
+          <div style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            padding: isMobile ? "3px 5px" : "6px 7px",
+            borderRadius: 8,
+            background: "rgba(212,175,55,0.04)",
+            border: `1px solid ${GOLD_BORDER}`,
+          }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 3 }}>
+                <Zap style={{ width: isMobile ? 9 : 11, height: isMobile ? 9 : 11, color: GOLD }} />
+                <span style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: isMobile ? "0.44rem" : "0.52rem",
+                  fontWeight: 700,
+                  letterSpacing: "0.06em",
+                  color: "var(--text-muted)",
+                  textTransform: "uppercase",
+                }}>
+                  {lang === "tr" ? "GÜÇ" : "POWER"}
+                </span>
+              </div>
+              {!isMobile && (
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.46rem", color: "#34d399", fontWeight: 700 }}>
+                  %91.2
+                </span>
+              )}
+            </div>
             <span style={{
               fontFamily: "var(--font-mono)",
-              fontSize: "0.5rem",
-              fontWeight: 700,
-              letterSpacing: "0.06em",
-              color: "var(--text-muted)",
-              textTransform: "uppercase",
+              fontSize: isMobile ? "0.70rem" : "0.82rem",
+              fontWeight: 800,
+              color: GOLD_BRIGHT,
+              lineHeight: 1.1,
             }}>
-              {lang === "tr" ? "GÜÇ" : "POWER"}
+              {(totalMW / 1000).toFixed(0)}k <span style={{ fontSize: isMobile ? "0.48rem" : "0.56rem", fontWeight: 600, color: "var(--text-muted)" }}>MW</span>
             </span>
           </div>
-          <span style={{
-            fontFamily: "var(--font-mono)",
-            fontSize: "0.78rem",
-            fontWeight: 800,
-            color: GOLD_BRIGHT,
-            lineHeight: 1.1,
-          }}>
-            {(totalMW / 1000).toFixed(0)}k <span style={{ fontSize: "0.54rem", fontWeight: 600, color: "var(--text-muted)" }}>MW</span>
-          </span>
-        </div>
 
-        {/* 2: AI DC */}
-        <div style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 2,
-          padding: "5px 6px",
-          borderRadius: 8,
-          background: "rgba(212,175,55,0.03)",
-          border: `1px solid ${GOLD_BORDER}`,
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-            <Server style={{ width: 10, height: 10, color: GOLD }} />
+          {/* 2: AI DC COMPUTE */}
+          <div style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            padding: isMobile ? "3px 5px" : "6px 7px",
+            borderRadius: 8,
+            background: "rgba(212,175,55,0.04)",
+            border: `1px solid ${GOLD_BORDER}`,
+          }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 3 }}>
+                <Server style={{ width: isMobile ? 9 : 11, height: isMobile ? 9 : 11, color: GOLD }} />
+                <span style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: isMobile ? "0.44rem" : "0.52rem",
+                  fontWeight: 700,
+                  letterSpacing: "0.06em",
+                  color: "var(--text-muted)",
+                  textTransform: "uppercase",
+                }}>
+                  AI DC
+                </span>
+              </div>
+              {!isMobile && (
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.46rem", color: GOLD, fontWeight: 700 }}>
+                  T-IV
+                </span>
+              )}
+            </div>
             <span style={{
               fontFamily: "var(--font-mono)",
-              fontSize: "0.5rem",
-              fontWeight: 700,
-              letterSpacing: "0.06em",
-              color: "var(--text-muted)",
-              textTransform: "uppercase",
+              fontSize: isMobile ? "0.70rem" : "0.82rem",
+              fontWeight: 800,
+              color: GOLD_BRIGHT,
+              lineHeight: 1.1,
             }}>
-              AI DC
+              {totalDC} <span style={{ fontSize: isMobile ? "0.48rem" : "0.56rem", fontWeight: 600, color: "var(--text-muted)" }}>{lang === "tr" ? "Düğüm" : "Nodes"}</span>
             </span>
           </div>
-          <span style={{
-            fontFamily: "var(--font-mono)",
-            fontSize: "0.78rem",
-            fontWeight: 800,
-            color: GOLD_BRIGHT,
-            lineHeight: 1.1,
-          }}>
-            {totalDC} <span style={{ fontSize: "0.54rem", fontWeight: 600, color: "var(--text-muted)" }}>{lang === "tr" ? "Düğüm" : "Nodes"}</span>
-          </span>
-        </div>
 
-        {/* 3: SU / WATER */}
-        <div style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 2,
-          padding: "5px 6px",
-          borderRadius: 8,
-          background: "rgba(212,175,55,0.03)",
-          border: `1px solid ${GOLD_BORDER}`,
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-            <Droplets style={{ width: 10, height: 10, color: GOLD }} />
+          {/* 3: SU / WATER */}
+          <div style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            padding: isMobile ? "3px 5px" : "6px 7px",
+            borderRadius: 8,
+            background: "rgba(212,175,55,0.04)",
+            border: `1px solid ${GOLD_BORDER}`,
+          }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 3 }}>
+                <Droplets style={{ width: isMobile ? 9 : 11, height: isMobile ? 9 : 11, color: GOLD }} />
+                <span style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: isMobile ? "0.44rem" : "0.52rem",
+                  fontWeight: 700,
+                  letterSpacing: "0.06em",
+                  color: "var(--text-muted)",
+                  textTransform: "uppercase",
+                }}>
+                  {lang === "tr" ? "SU" : "WATER"}
+                </span>
+              </div>
+              {!isMobile && (
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.46rem", color: "#60a5fa", fontWeight: 700 }}>
+                  %78.6
+                </span>
+              )}
+            </div>
             <span style={{
               fontFamily: "var(--font-mono)",
-              fontSize: "0.5rem",
-              fontWeight: 700,
-              letterSpacing: "0.06em",
-              color: "var(--text-muted)",
-              textTransform: "uppercase",
+              fontSize: isMobile ? "0.70rem" : "0.82rem",
+              fontWeight: 800,
+              color: GOLD_BRIGHT,
+              lineHeight: 1.1,
             }}>
-              {lang === "tr" ? "SU" : "WATER"}
+              {totalWater} <span style={{ fontSize: isMobile ? "0.48rem" : "0.56rem", fontWeight: 600, color: "var(--text-muted)" }}>{lang === "tr" ? "Havza" : "Basins"}</span>
             </span>
           </div>
-          <span style={{
-            fontFamily: "var(--font-mono)",
-            fontSize: "0.78rem",
-            fontWeight: 800,
-            color: GOLD_BRIGHT,
-            lineHeight: 1.1,
-          }}>
-            {totalWater} <span style={{ fontSize: "0.54rem", fontWeight: 600, color: "var(--text-muted)" }}>{lang === "tr" ? "Havza" : "Basins"}</span>
-          </span>
-        </div>
 
-        {/* Rail Footer Status */}
-        <div style={{
-          paddingTop: 5,
-          borderTop: `1px solid ${GOLD_BORDER}`,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}>
-          <span style={{
-            fontFamily: "var(--font-mono)",
-            fontSize: "0.48rem",
-            color: "var(--text-muted)",
-            letterSpacing: "0.06em",
-            textAlign: "center",
-          }}>
-            {lang === "tr" ? "%99.8 DOĞRULUK" : "99.8% ACCURACY"}
-          </span>
-        </div>
-      </aside>
+          {/* 4: TRANSİT / LOGISTICS (Desktop Extended) */}
+          {!isMobile && (
+            <div style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+              padding: "6px 7px",
+              borderRadius: 8,
+              background: "rgba(212,175,55,0.04)",
+              border: `1px solid ${GOLD_BORDER}`,
+            }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 3 }}>
+                  <Truck style={{ width: 11, height: 11, color: GOLD }} />
+                  <span style={{
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "0.52rem",
+                    fontWeight: 700,
+                    letterSpacing: "0.06em",
+                    color: "var(--text-muted)",
+                    textTransform: "uppercase",
+                  }}>
+                    {lang === "tr" ? "TRANSİT" : "TRANSIT"}
+                  </span>
+                </div>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.46rem", color: "#f5d77f", fontWeight: 700 }}>
+                  AKTİF
+                </span>
+              </div>
+              <span style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.82rem",
+                fontWeight: 800,
+                color: GOLD_BRIGHT,
+                lineHeight: 1.1,
+              }}>
+                {totalTransport || 184} <span style={{ fontSize: "0.56rem", fontWeight: 600, color: "var(--text-muted)" }}>{lang === "tr" ? "Hub" : "Hubs"}</span>
+              </span>
+            </div>
+          )}
 
-      {/* ── Bottom Telemetry Dock ────────────────────────────────────────── */}
-      <div style={{
-        position: "absolute", bottom: 20,
-        left: "50%", transform: "translateX(-50%)",
-        zIndex: 20, pointerEvents: "auto",
-        width: "100%", maxWidth: 900, padding: "0 16px",
-      }}>
-        <div style={{
-          borderRadius: 16, border: `1px solid ${GOLD_BORDER}`,
-          background: "rgba(6, 7, 12, 0.22)",
-          backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)",
-          boxShadow: "0 16px 50px rgba(0,0,0,0.6), 0 0 24px rgba(212,175,55,0.05)",
-          overflow: "hidden",
-          transition: "all 0.3s ease",
-        }}>
-          {/* Dock Header */}
+          {/* 5: SATELLITE LATENCY STREAM (Desktop Extended) */}
+          {!isMobile && (
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "5px 7px",
+              borderRadius: 8,
+              background: "rgba(16,185,129,0.05)",
+              border: "1px solid rgba(16,185,129,0.25)",
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                <Wifi style={{ width: 10, height: 10, color: "#34d399" }} />
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.5rem", fontWeight: 700, color: "#34d399" }}>
+                  12ms LIVE
+                </span>
+              </div>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.46rem", color: "var(--text-muted)" }}>
+                SENTINEL-2
+              </span>
+            </div>
+          )}
+
+          {/* Rail Footer Status & Expand Trigger */}
           <div
             onClick={() => setDockExpanded(d => !d)}
             style={{
-              display: "flex", alignItems: "center", justifyContent: "space-between",
-              padding: "10px 18px", cursor: "pointer",
-              borderBottom: dockExpanded ? `1px solid ${GOLD_BORDER}` : "none",
-              transition: "background 0.2s ease",
+              paddingTop: isMobile ? 3 : 5,
+              borderTop: `1px solid ${GOLD_BORDER}`,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 2,
+              cursor: "pointer",
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <div style={{
-                display: "flex", width: 24, height: 24, alignItems: "center", justifyContent: "center",
-                borderRadius: 6, background: GOLD_DIM, border: `1px solid ${GOLD_BORDER}`,
-              }}>
-                <Activity style={{ width: 13, height: 13, color: GOLD, animation: "dn-pulse-glow 2s infinite" }} />
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span style={{
-                  fontFamily: "var(--font-mono)", fontSize: "0.68rem", fontWeight: 700,
-                  letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--text-main)",
-                }}>
-                  {lang === "tr" ? "KÜRESEL TELEMETRİ GÜVERTESİ" : "GLOBAL TELEMETRY DECK"}
-                </span>
-                <span style={{
-                  borderRadius: 9999, background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.3)",
-                  padding: "2px 8px", fontFamily: "var(--font-mono)", fontSize: "0.58rem",
-                  fontWeight: 700, color: "#34d399",
-                }}>
-                  {locations.length.toLocaleString()} {lang === "tr" ? "Tesis" : "Facilities"}
-                </span>
-              </div>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: isMobile ? "0.42rem" : "0.5rem",
+              color: GOLD_BRIGHT,
+              letterSpacing: "0.06em",
+              textAlign: "center",
+              fontWeight: 700,
+            }}>
+              {lang === "tr" ? "%99.8 DOĞRULUK" : "99.8% ACCURACY"}
+            </span>
+            {!isMobile && (
               <span style={{
-                fontFamily: "var(--font-mono)", fontSize: "0.6rem", fontWeight: 700,
-                letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-muted)",
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.44rem",
+                color: "var(--text-muted)",
+                letterSpacing: "0.04em",
               }}>
-                {dockExpanded
-                  ? (lang === "tr" ? "Kapat" : "Close")
-                  : (lang === "tr" ? "Telemetriyi Aç" : "Open Telemetry")}
+                {dockExpanded ? (lang === "tr" ? "▲ GÜVERTE AÇIK" : "▲ DOCK OPEN") : (lang === "tr" ? "▼ GÜVERTEYİ AÇ" : "▼ OPEN DOCK")}
               </span>
-              <div style={{
-                display: "flex", width: 20, height: 20, alignItems: "center", justifyContent: "center",
-                borderRadius: 6, background: GOLD_DIM, border: `1px solid ${GOLD_BORDER}`,
-                color: GOLD,
-              }}>
-                {dockExpanded
-                  ? <ChevronDown style={{ width: 12, height: 12 }} />
-                  : <ChevronUp style={{ width: 12, height: 12 }} />}
-              </div>
-            </div>
+            )}
           </div>
+        </aside>
+      )}
 
-          {/* Expanded Content */}
-          <AnimatePresence>
-            {dockExpanded && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.28 }}
-                style={{ padding: "14px 18px", display: "flex", flexDirection: "column", gap: 12, maxHeight: 360, overflowY: "auto" }}
-              >
-                {/* Controls: Tabs + Search + Sort */}
+      {/* ── Bottom Telemetry Deck: Fixed center positioning, sleek HUD Tab design ────── */}
+      <div
+        id="telemetry-deck-dock"
+        style={{
+          position: "absolute",
+          bottom: isMobile ? 64 : 16,
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: isMobile ? 50 : 22,
+          pointerEvents: "auto",
+          width: isMobile ? "calc(100% - 16px)" : "min(760px, calc(100vw - 40px))",
+          maxWidth: isMobile ? 440 : 760,
+          padding: "0",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          transition: "bottom 0.28s cubic-bezier(0.16, 1, 0.3, 1)",
+        }}
+      >
+        {/* Sleek Top HUD Tab for Bottom Deck — matching the unified edge tab style! */}
+        <button
+          onClick={() => setDockExpanded(d => !d)}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 8,
+            padding: isMobile ? "9px 18px" : "6px 18px",
+            minHeight: isMobile ? 46 : 38,
+            borderRadius: "10px 10px 0 0",
+            border: `1px solid ${GOLD_BORDER}`,
+            borderBottom: "none",
+            background: "rgba(7, 8, 14, 0.78)",
+            backdropFilter: "none",
+            WebkitBackdropFilter: "none",
+            color: GOLD_BRIGHT,
+            cursor: "pointer",
+            boxShadow: "none",
+            transition: "all 0.2s ease",
+            userSelect: "none",
+            touchAction: "manipulation",
+            WebkitTapHighlightColor: "transparent",
+          }}
+          title={dockExpanded ? (lang === "tr" ? "Güverteyi Gizle" : "Collapse Deck") : (lang === "tr" ? "Küresel Telemetri Güvertesini Aç" : "Expand Telemetry Deck")}
+        >
+          {dockExpanded
+            ? <ChevronDown style={{ width: 14, height: 14, color: GOLD, strokeWidth: 2.5 }} />
+            : <ChevronUp style={{ width: 14, height: 14, color: GOLD, strokeWidth: 2.5 }} />
+          }
+          <Activity style={{ width: 13, height: 13, color: "#34d399", animation: "dn-pulse-glow 2s infinite" }} />
+          <span style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: isMobile ? "0.62rem" : "0.64rem",
+            fontWeight: 800,
+            letterSpacing: "0.12em",
+            textTransform: "uppercase",
+            color: GOLD_BRIGHT,
+          }}>
+            {lang === "tr" ? "KÜRESEL TELEMETRİ GÜVERTESİ" : "GLOBAL TELEMETRY DECK"}
+          </span>
+          <span style={{
+            borderRadius: 9999,
+            background: "rgba(16,185,129,0.12)",
+            border: "1px solid rgba(16,185,129,0.35)",
+            padding: "2px 7px",
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.54rem",
+            fontWeight: 700,
+            color: "#34d399",
+          }}>
+            {locations.length.toLocaleString()}
+          </span>
+          <span style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.54rem",
+            fontWeight: 700,
+            color: GOLD_BRIGHT,
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            marginLeft: 4,
+            padding: "2px 8px",
+            borderRadius: 6,
+            background: "rgba(212,175,55,0.12)",
+            border: "1px solid rgba(212,175,55,0.25)",
+          }}>
+            {dockExpanded ? (lang === "tr" ? "KAPAT" : "CLOSE") : (lang === "tr" ? "AÇ" : "OPEN")}
+          </span>
+        </button>
+
+        {/* Deck Expanded Content Box */}
+        <AnimatePresence>
+          {dockExpanded && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.28 }}
+              style={{
+                width: "100%",
+                borderRadius: 14,
+                border: `1px solid ${GOLD_BORDER}`,
+                background: "rgba(7, 8, 14, 0.75)",
+                backdropFilter: "none",
+                WebkitBackdropFilter: "none",
+                boxShadow: "none",
+                overflow: "hidden",
+                padding: isMobile ? "10px 12px" : "14px 18px",
+                display: "flex",
+                flexDirection: "column",
+                gap: 12,
+                maxHeight: isMobile ? "66vh" : 360,
+                overflowY: "auto",
+              }}
+            >
+              {/* Controls: Tabs + Search + Sort (Unified geometric layout, no awkward wrapping on desktop) */}
                 <div style={{
-                  display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between",
-                  gap: 10, paddingBottom: 12, borderBottom: `1px solid ${GOLD_BORDER}`,
+                  display: "flex",
+                  flexDirection: isMobile ? "column" : "row",
+                  alignItems: isMobile ? "stretch" : "center",
+                  justifyContent: "space-between",
+                  gap: isMobile ? 8 : 12,
+                  paddingBottom: 10,
+                  borderBottom: `1px solid ${GOLD_BORDER}`,
+                  width: "100%",
+                  boxSizing: "border-box",
                 }}>
-                  {/* Category Pills */}
-                  <div style={{ display: "flex", alignItems: "center", gap: 6, overflowX: "auto", flexWrap: "nowrap" }}>
-                    {CATEGORY_TABS.map(tab => (
-                      <button
-                        key={tab.id}
-                        onClick={() => setSelectedTab(tab.id)}
-                        style={{
-                          padding: "5px 12px",
-                          borderRadius: 9999,
-                          border: `1px solid ${selectedTab === tab.id ? GOLD : GOLD_BORDER}`,
-                          background: selectedTab === tab.id ? GOLD_DIM : "transparent",
-                          fontFamily: "var(--font-mono)", fontSize: "0.62rem", fontWeight: 700,
-                          letterSpacing: "0.06em", textTransform: "uppercase",
-                          color: selectedTab === tab.id ? GOLD_BRIGHT : "var(--text-muted)",
-                          cursor: "pointer", transition: "all 0.18s ease",
-                          whiteSpace: "nowrap",
-                          boxShadow: selectedTab === tab.id ? `0 0 10px rgba(212,175,55,0.25)` : "none",
-                        }}
-                      >
-                        {lang === "tr" ? tab.tr : tab.en}
-                      </button>
-                    ))}
+                  {/* Category Pills (Equal height 28px, crisp tactile gold border, smooth scroll with no cutoff) */}
+                  <div style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
+                    overflowX: "auto",
+                    flex: "1 1 auto",
+                    minWidth: 0,
+                    paddingBottom: isMobile ? 2 : 0,
+                    scrollbarWidth: "none",
+                  }}>
+                    {CATEGORY_TABS.map(tab => {
+                      const isSel = selectedTab === tab.id;
+                      return (
+                        <button
+                          key={tab.id}
+                          onClick={() => setSelectedTab(tab.id)}
+                          style={{
+                            height: 28,
+                            padding: isMobile ? "0 9px" : "0 11px",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: 5,
+                            borderRadius: 9999,
+                            border: `1px solid ${isSel ? GOLD : "rgba(212,175,55,0.22)"}`,
+                            background: isSel ? "rgba(212,175,55,0.16)" : "rgba(7,8,14,0.6)",
+                            fontFamily: "var(--font-mono)",
+                            fontSize: "0.58rem",
+                            fontWeight: 700,
+                            letterSpacing: "0.04em",
+                            textTransform: "uppercase",
+                            color: isSel ? GOLD_BRIGHT : "var(--text-muted)",
+                            cursor: "pointer",
+                            transition: "all 0.18s ease",
+                            whiteSpace: "nowrap",
+                            flexShrink: 0,
+                            boxShadow: isSel ? `0 0 12px rgba(212,175,55,0.25)` : "none",
+                            boxSizing: "border-box",
+                            touchAction: "manipulation",
+                            WebkitTapHighlightColor: "transparent",
+                          }}
+                        >
+                          <span style={{
+                            width: 5, height: 5, borderRadius: "50%",
+                            background: isSel ? "#34d399" : "rgba(212,175,55,0.4)",
+                            boxShadow: isSel ? "0 0 6px #34d399" : "none",
+                            flexShrink: 0,
+                          }} />
+                          <span>{lang === "tr" ? tab.tr : tab.en}</span>
+                        </button>
+                      );
+                    })}
                   </div>
 
-                  {/* Search + Sort */}
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginLeft: "auto" }}>
-                    <div style={{ position: "relative" }}>
-                      <Search style={{ position: "absolute", left: 9, top: "50%", transform: "translateY(-50%)", width: 12, height: 12, color: "var(--text-muted)" }} />
+                  {/* Search + Sort (Matched to 28px height, razor-sharp alignment) */}
+                  <div style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    flexShrink: 0,
+                    width: isMobile ? "100%" : "auto",
+                  }}>
+                    <div style={{ position: "relative", flex: isMobile ? 1 : "initial" }}>
+                      <Search style={{
+                        position: "absolute",
+                        left: 9,
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        width: 12,
+                        height: 12,
+                        color: "var(--text-muted)",
+                        pointerEvents: "none",
+                      }} />
                       <input
+                        id="deck-search-input"
                         type="text"
                         value={searchQuery}
                         onChange={e => setSearchQuery(e.target.value)}
-                        placeholder={lang === "tr" ? "Tesis veya ülke ara..." : "Search facility or country..."}
+                        placeholder={lang === "tr" ? "Tesis veya ülke ara..." : "Search facility..."}
                         style={{
-                          borderRadius: 9999, border: `1px solid ${GOLD_BORDER}`,
-                          background: "rgba(0,0,0,0.4)", paddingLeft: 28, paddingRight: 10,
-                          paddingTop: 5, paddingBottom: 5,
-                          fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "var(--text-main)",
-                          width: 180, outline: "none",
+                          height: 28,
+                          borderRadius: 9999,
+                          border: `1px solid ${GOLD_BORDER}`,
+                          background: "rgba(0,0,0,0.45)",
+                          paddingLeft: 26,
+                          paddingRight: 10,
+                          fontFamily: "var(--font-mono)",
+                          fontSize: "0.60rem",
+                          color: "var(--text-main)",
+                          width: isMobile ? "100%" : 145,
+                          outline: "none",
+                          boxSizing: "border-box",
+                          transition: "border-color 0.2s ease",
                         }}
                       />
                     </div>
@@ -497,31 +898,50 @@ export default function ExplorePage({ lang = "tr", activeNav = "explore" }: Expl
                       value={sortBy}
                       onChange={e => setSortBy(e.target.value as any)}
                       style={{
-                        borderRadius: 9999, border: `1px solid ${GOLD_BORDER}`,
-                        background: "rgba(0,0,0,0.5)", padding: "5px 10px",
-                        fontFamily: "var(--font-mono)", fontSize: "0.65rem",
-                        color: "var(--text-muted)", outline: "none", cursor: "pointer",
+                        height: 28,
+                        borderRadius: 9999,
+                        border: `1px solid ${GOLD_BORDER}`,
+                        background: "rgba(0,0,0,0.55)",
+                        padding: "0 10px",
+                        fontFamily: "var(--font-mono)",
+                        fontSize: "0.60rem",
+                        fontWeight: 600,
+                        color: "var(--text-muted)",
+                        outline: "none",
+                        cursor: "pointer",
+                        boxSizing: "border-box",
                       }}
                     >
                       <option value="capacity" style={{ background: "#0a0b12" }}>
-                        {lang === "tr" ? "En Yüksek Kapasite" : "Highest Capacity"}
+                        {lang === "tr" ? "Kapasite" : "Capacity"}
                       </option>
                       <option value="name" style={{ background: "#0a0b12" }}>
-                        {lang === "tr" ? "Ada Göre (A-Z)" : "Name (A–Z)"}
+                        {lang === "tr" ? "A-Z" : "A-Z"}
                       </option>
                       <option value="country" style={{ background: "#0a0b12" }}>
-                        {lang === "tr" ? "Ülkeye Göre" : "By Country"}
+                        {lang === "tr" ? "Ülke" : "Country"}
                       </option>
                     </select>
                   </div>
                 </div>
 
                 {/* Facility Cards Grid */}
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(230px, 1fr))", gap: 10 }}>
+                <div style={{
+                  display: "grid",
+                  gridTemplateColumns: isMobile
+                    ? "1fr"
+                    : (Boolean(selectedAsset)
+                      ? "repeat(auto-fill, minmax(195px, 1fr))"
+                      : "repeat(auto-fill, minmax(230px, 1fr))"),
+                  gap: 10,
+                }}>
                   {deckAssets.slice(0, displayCount).map(asset => (
                     <div
                       key={asset.id}
-                      onClick={() => setSelectedAsset(asset)}
+                      onClick={() => {
+                        setSelectedAsset(asset);
+                        if (isMobile) setDockExpanded(false);
+                      }}
                       style={{
                         cursor: "pointer",
                         borderRadius: 10,
@@ -632,7 +1052,6 @@ export default function ExplorePage({ lang = "tr", activeNav = "explore" }: Expl
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
 
         {/* Official Copyright Line */}
         <div style={{

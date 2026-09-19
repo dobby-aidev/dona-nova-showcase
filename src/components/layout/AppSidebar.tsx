@@ -1,17 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Globe, Zap, Truck, Server,
   Sliders, ChevronLeft, ChevronRight,
   LayoutDashboard, Droplets, Search,
-  ShieldCheck, ArrowUpRight
+  ShieldCheck, ArrowUpRight, Settings
 } from "lucide-react";
 import { CommandPalette } from "@/components/ui/CommandPalette";
-import { SettingsModal } from "@/components/ui/SettingsModal";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface NavItem {
   id: string;
@@ -24,12 +24,11 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { id: "explore",     labelTr: "3D Küresel Radar",    labelEn: "3D Global Radar",     icon: Globe,           group: "radar",  badge: "3.1K",  badgeType: "gold" },
-  { id: "dashboard",   labelTr: "Telemetri Paneli",    labelEn: "Telemetry Deck",      icon: LayoutDashboard, group: "radar" },
-  { id: "energy",      labelTr: "Elektrik Şebekesi",   labelEn: "Power Grid",          icon: Zap,             group: "layers", badge: "CANLI", badgeType: "emerald" },
-  { id: "water",       labelTr: "Su & Baraj Ağları",   labelEn: "Water & Reservoirs",  icon: Droplets,        group: "layers" },
-  { id: "transport",   labelTr: "Ulaşım & Lojistik",   labelEn: "Transport Hubs",      icon: Truck,           group: "layers" },
-  { id: "datacenters", labelTr: "AI Veri Merkezleri",  labelEn: "AI Data Centers",     icon: Server,          group: "layers", badge: "AI DC", badgeType: "gold" },
+  { id: "explore",     labelTr: "3D Küresel Radar",    labelEn: "3D Global Radar",     icon: Globe,    group: "radar",  badge: "3.1K",  badgeType: "gold" },
+  { id: "energy",      labelTr: "Elektrik Şebekesi",   labelEn: "Power Grid",          icon: Zap,      group: "layers", badge: "CANLI", badgeType: "emerald" },
+  { id: "water",       labelTr: "Su & Baraj Ağları",   labelEn: "Water & Reservoirs",  icon: Droplets, group: "layers" },
+  { id: "transport",   labelTr: "Ulaşım & Lojistik",   labelEn: "Transport Hubs",      icon: Truck,    group: "layers" },
+  { id: "datacenters", labelTr: "AI Veri Merkezleri",  labelEn: "AI Data Centers",     icon: Server,   group: "layers", badge: "AI DC", badgeType: "gold" },
 ];
 
 const GROUPS = [
@@ -49,12 +48,14 @@ const GOLD_BORDER = "var(--gold-border)";
 
 export function AppSidebar({ activeNav, setActiveNav, lang }: AppSidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const pathname = usePathname();
+  const isMobile = useIsMobile();
+
+  // Sidebar is replaced by hamburger drawer on mobile — render nothing
+  if (isMobile) return null;
 
   const triggerSearch = () => {
-    const btn = document.getElementById("command-palette-trigger");
-    if (btn) btn.click();
+    window.dispatchEvent(new CustomEvent("dona:open-search"));
   };
 
   const getBadgeStyle = (type?: string) => {
@@ -75,7 +76,7 @@ export function AppSidebar({ activeNav, setActiveNav, lang }: AppSidebarProps) {
   return (
     <>
       <motion.aside
-        animate={{ width: collapsed ? 64 : 246 }}
+        animate={{ width: collapsed ? 0 : 246 }}
         transition={{ type: "spring", stiffness: 380, damping: 34 }}
         style={{
           position: "relative",
@@ -84,56 +85,42 @@ export function AppSidebar({ activeNav, setActiveNav, lang }: AppSidebarProps) {
           flexDirection: "column",
           flexShrink: 0,
           overflow: "visible", // let the toggle button pop out clearly
-          zIndex: 30,
+          zIndex: 50,
           userSelect: "none",
-          background: "rgba(6, 7, 12, 0.06)",
-          backdropFilter: "blur(2px)",
-          WebkitBackdropFilter: "blur(2px)",
-          borderRight: "1px solid rgba(212, 175, 55, 0.18)",
+          background: collapsed ? "transparent" : "rgba(7, 8, 14, 0.72)",
+          backdropFilter: "none",
+          WebkitBackdropFilter: "none",
+          borderRight: collapsed ? "none" : "1px solid rgba(212, 175, 55, 0.20)",
           boxShadow: "none",
         }}
       >
-        {/* ── Brand Header ────────────────────────────────────────────── */}
+        {/* Inner Content Container — hides cleanly when collapsed */}
         <div
           style={{
+            width: 246,
+            minWidth: 246,
+            height: "100%",
             display: "flex",
-            alignItems: "center",
-            height: 56,
-            flexShrink: 0,
-            padding: "0 12px",
+            flexDirection: "column",
             overflow: "hidden",
-            borderBottom: "1px solid rgba(212, 175, 55, 0.15)",
-            background: "transparent",
+            opacity: collapsed ? 0 : 1,
+            pointerEvents: collapsed ? "none" : "auto",
+            transition: "opacity 0.18s ease",
           }}
         >
-          {collapsed ? (
-            <button
-              onClick={() => setCollapsed(false)}
-              style={{
-                margin: "0 auto",
-                cursor: "pointer",
-                background: "transparent",
-                border: "none",
-                padding: "4px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-              title={lang === "tr" ? "Menüyü Genişlet" : "Expand Menu"}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="26" height="26" style={{ filter: "drop-shadow(0 0 8px rgba(212,175,55,0.6))" }}>
-                <defs>
-                  <linearGradient id="sbMiniGold" x1="15%" y1="90%" x2="85%" y2="15%">
-                    <stop offset="0%" stopColor="#D4AF37" /><stop offset="50%" stopColor="#FAEED9" /><stop offset="100%" stopColor="#D4AF37" />
-                  </linearGradient>
-                </defs>
-                <g transform="translate(256,256) scale(1.65) translate(-285,-260)">
-                  <path d="M 228 175 L 272 175 L 272 305 C 272 320 258 338 242 344 C 230 348 214 340 216 328 L 228 300 Z" fill="url(#sbMiniGold)" />
-                  <path d="M 272 175 C 325 175 395 210 395 258 C 395 308 325 348 242 344 C 278 335 348 305 348 258 C 348 212 295 185 272 175 Z" fill="url(#sbMiniGold)" opacity="0.85" />
-                </g>
-              </svg>
-            </button>
-          ) : (
+          {/* ── Brand Header ────────────────────────────────────────────── */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              height: 56,
+              flexShrink: 0,
+              padding: "0 12px",
+              overflow: "hidden",
+              borderBottom: "1px solid rgba(212, 175, 55, 0.15)",
+              background: "transparent",
+            }}
+          >
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="24" height="24" style={{ filter: "drop-shadow(0 0 8px rgba(212,175,55,0.6))", flexShrink: 0 }}>
@@ -192,8 +179,7 @@ export function AppSidebar({ activeNav, setActiveNav, lang }: AppSidebarProps) {
                 </span>
               </div>
             </div>
-          )}
-        </div>
+          </div>
 
         {/* ── Search & Navigation Area ─────────────────────────────────── */}
         <nav style={{
@@ -244,11 +230,6 @@ export function AppSidebar({ activeNav, setActiveNav, lang }: AppSidebarProps) {
               }}>⌘K</span>
             )}
           </button>
-
-          {/* Hidden CommandPalette modal anchor */}
-          <div style={{ display: "none" }}>
-            <CommandPalette />
-          </div>
 
           {/* Core Navigation Groups */}
           {GROUPS.map(({ key, labelTr, labelEn }) => {
@@ -373,7 +354,7 @@ export function AppSidebar({ activeNav, setActiveNav, lang }: AppSidebarProps) {
         }}>
           {/* Radar Preferences Button */}
           <button
-            onClick={() => setIsSettingsOpen(true)}
+            onClick={() => window.dispatchEvent(new CustomEvent("dona:open-settings"))}
             style={{
               display: "flex",
               width: "100%",
@@ -390,12 +371,12 @@ export function AppSidebar({ activeNav, setActiveNav, lang }: AppSidebarProps) {
               background: "transparent",
               border: "1px solid rgba(212,175,55,0.2)",
             }}
-            title={collapsed ? (lang === "tr" ? "Radar Tercihleri" : "Radar Preferences") : undefined}
+            title={collapsed ? (lang === "tr" ? "Ayarlar" : "Settings") : undefined}
           >
-            <Sliders style={{ width: 12, height: 12, flexShrink: 0, color: GOLD }} />
+            <Settings style={{ width: 12, height: 12, flexShrink: 0, color: GOLD }} />
             {!collapsed && (
               <span style={{ fontFamily: "var(--font-sans)", fontWeight: 600, color: "var(--text-main)", fontSize: "0.72rem" }}>
-                {lang === "tr" ? "Radar Tercihleri" : "Radar Preferences"}
+                {lang === "tr" ? "Ayarlar" : "Settings"}
               </span>
             )}
           </button>
@@ -502,45 +483,73 @@ export function AppSidebar({ activeNav, setActiveNav, lang }: AppSidebarProps) {
             </Link>
           )}
         </div>
+      </div>
 
-        {/* ── ENHANCED COLLAPSE TOGGLE BUTTON (Bigger, perfectly clickable, prominent) ── */}
+        {/* ── UNIFIED HUD EDGE TAB TOGGLE (Exact 26x96px symmetrical match to right Telemetry tab) ── */}
         <button
-          onClick={() => setCollapsed(c => !c)}
+          onClick={() => {
+            setCollapsed(c => {
+              const next = !c;
+              if (typeof window !== "undefined") {
+                window.dispatchEvent(new CustomEvent("dona:sidebar-toggle", { detail: { collapsed: next } }));
+              }
+              return next;
+            });
+          }}
           style={{
             position: "absolute",
-            right: -15,
-            top: 68,
+            right: -26,
+            top: "50%",
+            transform: "translateY(-50%)",
             zIndex: 45,
             display: "flex",
-            width: 30,
-            height: 30,
+            flexDirection: "column",
+            width: 26,
+            height: 96,
             alignItems: "center",
             justifyContent: "center",
-            borderRadius: "50%",
-            border: `1.5px solid var(--gold-primary)`,
-            background: "rgba(10, 11, 18, 0.95)",
-            backdropFilter: "blur(12px)",
-            color: "var(--gold-bright)",
-            boxShadow: `0 4px 18px rgba(0,0,0,0.9), 0 0 12px rgba(212,175,55,0.45)`,
+            gap: 6,
+            borderRadius: "0 10px 10px 0",
+            border: `1px solid ${GOLD_BORDER}`,
+            borderLeft: "none",
+            background: "rgba(7, 8, 14, 0.78)",
+            backdropFilter: "none",
+            WebkitBackdropFilter: "none",
+            color: GOLD_BRIGHT,
+            boxShadow: "none",
             cursor: "pointer",
+            padding: "8px 0",
             transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
           }}
           aria-label={collapsed ? "Menüyü Aç" : "Menüyü Kapat"}
-          title={collapsed ? (lang === "tr" ? "Menüyü Aç" : "Expand Menu") : (lang === "tr" ? "Menüyü Kapat" : "Collapse Menu")}
+          title={collapsed ? (lang === "tr" ? "Menüyü Genişlet" : "Expand Menu") : (lang === "tr" ? "Menüyü Daralt" : "Collapse Menu")}
         >
           {collapsed
-            ? <ChevronRight style={{ width: 16, height: 16, color: "var(--gold-bright)", strokeWidth: 2.5 }} />
-            : <ChevronLeft style={{ width: 16, height: 16, color: "var(--gold-bright)", strokeWidth: 2.5 }} />
+            ? <ChevronRight style={{ width: 14, height: 14, color: GOLD, strokeWidth: 2.5 }} />
+            : <ChevronLeft style={{ width: 14, height: 14, color: GOLD, strokeWidth: 2.5 }} />
           }
+          <span style={{
+            width: 5,
+            height: 5,
+            borderRadius: "50%",
+            background: "#34d399",
+            boxShadow: "0 0 6px #34d399",
+            animation: "dn-pulse-glow 2s infinite",
+          }} />
+          <span style={{
+            writingMode: "vertical-rl",
+            transform: "rotate(180deg)",
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.54rem",
+            fontWeight: 800,
+            letterSpacing: "0.14em",
+            textTransform: "uppercase",
+            color: GOLD,
+          }}>
+            {collapsed ? (lang === "tr" ? "MENÜ" : "MENU") : (lang === "tr" ? "KAPAT" : "CLOSE")}
+          </span>
         </button>
       </motion.aside>
-
-      {/* Radar Preferences Modal */}
-      <SettingsModal
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
-        lang={lang}
-      />
     </>
   );
 }
